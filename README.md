@@ -182,7 +182,7 @@ Abre una nueva rama con el siguiente nombre `bug/<error>`, corrige el error, cor
 
 <p align="right">(<a href="#top">volver arriba</a>)</p>
 
-<hr/>
+
 
 <!-- LICENSE -->
 
@@ -192,7 +192,6 @@ El siguiente proyecto está distribuido bajo MIT License. Ver [LICENSE.txt](http
 
 <p align="right">(<a href="#top">volver arriba</a>)</p>
 
-<hr/>
 
 <!-- Contributors -->
 
