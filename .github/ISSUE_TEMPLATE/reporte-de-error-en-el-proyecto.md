@@ -7,6 +7,8 @@ assignees: ''
 
 ---
 
+# Reporte de error
+
 **Describe el error**
 Un descripción clara y concreta de cuál es el error.
 
