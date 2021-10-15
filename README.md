@@ -21,8 +21,10 @@
     <br />
     <a href="https://github.com/ArielTriana/battle-sim/blob/main/doc/report/Informe.pdf"><strong>Ver informe »</strong></a>
     <br />
+    <a href="https://github.com/ArielTriana/battle-sim/raw/main/doc/report/Informe.pdf"><strong> Descargar informe</strong></a> 
     <br />
-    <a href="https://github.com/ArielTriana/battle-sim/issues/new?assignees=&labels=bug%2C+help+wanted&template=reporte-de-error-en-el-proyecto.md&title=%5BERROR%5D">Informar Error</a>
+    <br />
+    <a href="https://github.com/ArielTriana/battle-sim/issues/new?assignees=&labels=bug%2C+help+wanted&template=reporte-de-error-en-el-proyecto.md&title=%5BERROR%5D">Reportar Error</a>
     ·
     <a href="https://github.com/ArielTriana/battle-sim/issues/new?assignees=&labels=enhancement&template=solicitud-de-funci-n.md&title=%5BSOLICITUD%5D">Solicitar Función</a>
   </p>
