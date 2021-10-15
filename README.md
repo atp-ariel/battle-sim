@@ -197,7 +197,7 @@ Abre una nueva rama con el siguiente nombre `bug/<error>`, corrige el error, cor
 
 <!-- LICENSE -->
 
-## License
+## Licencia
 
 El siguiente proyecto está distribuido bajo MIT License. Ver [LICENSE.txt](https://github.com/ArielTriana/battle-sim/blob/main/LICENSE) para más información.
 
