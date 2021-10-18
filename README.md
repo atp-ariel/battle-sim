@@ -71,7 +71,16 @@
 <!-- ABOUT THE PROJECT -->
 ## Acerca del proyecto
 
-> AQUI VA LA DESCRIPCION DEL PROYECTO
+A lo largo de la historia, los conflictos bélicos han estado fuertemente ligados al desarrollo de la humanidad. Existen pruebas que desde la prehistoria, los hombres luchaban entre ellos por tierras y recursos naturales. Con el pasar del tiempo, los hombres fueron evolucionando, y así también lo hicieron los objetivos de los conflictos bélicos, los armamentos y estrategias utilizados en estos conflictos.
+
+El  objetivo  de  este  proyecto  es  el  desarrollo  de  un  programa  que  permita  la  simulación  de diferentes batallas que se hayan producido en un pasado distante, en  épocas más recientes e incluso simular batallas futuristas o con elementos de fantasía. Además se podrían simular batallas entre diferentes épocas, por ejemplo podríamos enfrentar 300 soldados armados con las más modernas armas contra 1000 soldados armados con espadas y escudos.
+
+Para  esto  se  tienen  pensado  los  siguientes  aspectos  que  van  a  ser  fijos  en  cada  una  de  las simulaciones:
+
+- La existencia de un mapa o terreno donde ocurre el enfrentamiento.
+- Las acciones serán por turnos.
+  
+Se tiene la idea de poder implementar una opción para que el usuario pueda definir las reglas de la simulación a través del lenguaje de dominio específico, como por ejemplo: definir si las unidades serán destruidas cuando se acaben sus puntos de vida o serán baja al recibir un único impacto, si algunas en específico solo pueden ser destruidas por otras unidades que cumplen ciertas características, etc. Así  mismo  el  usuario  debe  definir  cuál  es  el  objetivo  de  cada  bando  y  poder  elaborar  una estrategia para cada uno. Cuando un bando consiga su objetivo se declara como ganador.
 
 <p align="right">(<a href="#top">volver arriba</a>)</p>
 
@@ -208,7 +217,7 @@ El siguiente proyecto está distribuido bajo MIT License. Ver [LICENSE.txt](http
 
 ## Desarrolladores
 
-- <a href="https://github.com/rocioog"><img height='35' src="https://images.weserv.nl/?url=avatars.githubusercontent.com/u/56322127?v=4&h=300&w=300&fit=cover&mask=circle"/></a> Rocio Ortiz Gancedo - [@rocioog](https://t.me/rocioog) - [rocio.ortiz@estudiantes.matcom.uh.cu](mailto:rocio.ortiz@estudiantes.matcom.uh.cu)
+- <a href="https://github.com/rocioog00"><img height='35' src="https://images.weserv.nl/?url=avatars.githubusercontent.com/u/56322127?v=4&h=300&w=300&fit=cover&mask=circle"/></a> Rocio Ortiz Gancedo - [@rocioog](https://t.me/rocioog) - [rocio.ortiz@estudiantes.matcom.uh.cu](mailto:rocio.ortiz@estudiantes.matcom.uh.cu)
 
 - <a href="https://github.com/CTS-crypto"><img height='35' src="https://images.weserv.nl/?url=https://avatars.githubusercontent.com/u/72420685&v=4&w=300&h=300&fit=cover&mask=circle&fit=cover"/></a> Carlos Toledo Silva - [@cts-crypto](https://t.me/cts-crypto) - [carlos.toledo@estudiantes.matcom.uh.cu](mailto:carlos.toledo@estudiantes.matcom.uh.cu)
 
