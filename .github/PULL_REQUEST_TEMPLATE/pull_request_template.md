@@ -2,13 +2,13 @@
 
 Antes de hacer el pull request asegúrese de cumplir la siguiente **checklist**, ponga una `x` donde se cumpla:
 
-[ ] Lea la [Guía de Contribuciones](https://github.com/ArielTriana/battle-sim/blob/main/CONTRIBUTING.md)
-[ ] Usted está haciendo pull request desde una rama de trabajo específica para este cambio(parte derecha). No desde su `main` o `dev`.
-[ ] Está haciendo el pull request hacia `dev`
-[ ] La aplicación se ejecuta sin errores ni warnings
-[ ] Cree casos de prueba
-[ ] Todos los casos pasan satisfactoriamente
-[ ] Extienda la documentación de ser necesaria.
+- [ ] Lea la [Guía de Contribuciones](https://github.com/ArielTriana/battle-sim/blob/main/CONTRIBUTING.md)
+- [ ] Usted está haciendo pull request desde una rama de trabajo específica para este cambio(parte derecha). No desde su `main` o `dev`.
+- [ ] Está haciendo el pull request hacia `dev`
+- [ ] La aplicación se ejecuta sin errores ni warnings
+- [ ] Cree casos de prueba
+- [ ] Todos los casos pasan satisfactoriamente
+- [ ] Extienda la documentación de ser necesaria.
 
 > Complete la información necesaria para hacer la pull request
 
