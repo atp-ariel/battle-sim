@@ -208,9 +208,9 @@ El siguiente proyecto está distribuido bajo MIT License. Ver [LICENSE.txt](http
 
 ## Desarrolladores
 
-- <a href="https://github.com/ArielTriana"><img height='35' src="https://images.weserv.nl/?url=avatars.githubusercontent.com/u/56322127?v=4&h=300&w=300&fit=cover&mask=circle"/></a> Rocio Ortiz Gancedo - [@rocioog](https://t.me/rocioog) - [rocio.ortiz@estudiantes.matcom.uh.cu](mailto:rocio.ortiz@estudiantes.matcom.uh.cu)
+- <a href="https://github.com/rocioog"><img height='35' src="https://images.weserv.nl/?url=avatars.githubusercontent.com/u/56322127?v=4&h=300&w=300&fit=cover&mask=circle"/></a> Rocio Ortiz Gancedo - [@rocioog](https://t.me/rocioog) - [rocio.ortiz@estudiantes.matcom.uh.cu](mailto:rocio.ortiz@estudiantes.matcom.uh.cu)
 
-- <a href="https://github.com/ArielTriana"><img height='35' src="https://images.weserv.nl/?url=avatars.githubusercontent.com/u/72420685?v=4&h=300&w=300&fit=cover&mask=circle"/></a> Carlos Toledo Silva - [@cts-crypto](https://t.me/cts-crypto) - [carlos.toledo@estudiantes.matcom.uh.cu](mailto:carlos.toledo@estudiantes.matcom.uh.cu)
+- <a href="https://github.com/CTS-crypto"><img height='35' src="https://images.weserv.nl/?url=https://avatars.githubusercontent.com/u/72420685&v=4&w=300&h=300&fit=cover&mask=circle&fit=cover"/></a> Carlos Toledo Silva - [@cts-crypto](https://t.me/cts-crypto) - [carlos.toledo@estudiantes.matcom.uh.cu](mailto:carlos.toledo@estudiantes.matcom.uh.cu)
 
 - <a href="https://github.com/ArielTriana"><img height='35' src="https://images.weserv.nl/?url=avatars.githubusercontent.com/u/61637781?v=4&h=300&w=300&fit=cover&mask=circle"/></a> Ariel Alfonso Triana Pérez - [@atp-ariel](https://t.me/atp-ariel) - [ariel.triana@estudiantes.matcom.uh.cu](mailto:ariel.triana@estudiantes.matcom.uh.cu)
 
