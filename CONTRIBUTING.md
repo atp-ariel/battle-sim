@@ -35,7 +35,7 @@ Se tendrán dos ramas principales:
 
 ## Respuesta a nuevas funcionalidades
 
-Abre una nueva rama a partir de `main` con el siguiente nombre `features/<funcionalidad>` y ahí implementa la funcionalidad, realiza los casos de prueba y haz un [pull request](https://docs.github.com/en/github/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests) para revisar entre todos los cambios, para posteriormente aprobar los cambios.
+Abre una nueva rama a partir de `dev` con el siguiente nombre `features/<funcionalidad>` y ahí implementa la funcionalidad, realiza los casos de prueba y haz un [pull request](https://docs.github.com/en/github/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests) para revisar entre todos los cambios, para posteriormente aprobar los cambios.
 
 #0# Arreglo de errores
 
