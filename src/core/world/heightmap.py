@@ -1,5 +1,5 @@
 from typing import List, Optional, Tuple, Union
-from numpy import zeros, array, amin, amax, floor, uint8
+from numpy import zeros, amin, amax, floor, uint8
 from PIL import Image
 
 class HeightMap:
