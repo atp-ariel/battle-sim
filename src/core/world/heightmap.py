@@ -30,6 +30,8 @@ class HeightMap:
         return self.__map__[index]
 
     def __add__(self, other):
+        if not other.shape == self.shape:
+            raise Exception("You can't add heightmaps with diferents shape")
         new = self.__map__ + other.__map__
         return HeightMap.build_from_map(new)
 
