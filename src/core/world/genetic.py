@@ -1,10 +1,9 @@
 from math import prod
 from typing import List, Tuple
-
 from numpy.core.fromnumeric import mean
 from heightmap import HeightMap
 from numpy import  sum, array, vectorize, zeros, linspace, meshgrid
-from random import sample, randint, uniform
+from random import randint
 import noise
 
 class GAT_Generator:
