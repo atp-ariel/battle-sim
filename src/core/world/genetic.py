@@ -1,8 +1,10 @@
 from math import prod
 from typing import List, Tuple
+
+from numpy.core.fromnumeric import mean
 from heightmap import HeightMap
 from numpy import  sum, array, vectorize, zeros, linspace, meshgrid
-from random import sample, randint
+from random import sample, randint, uniform
 import noise
 
 class GAT_Generator:
@@ -49,7 +51,6 @@ class GAT_Generator:
 
                 # add to new poblation 
                 new_poblation.append(child)
-
             # convert new poblation to numpy array
             new_poblation = sorted(new_poblation, key=self.fit_func, reverse=True)
             self.__poblation__ = array(new_poblation) 
@@ -57,6 +58,7 @@ class GAT_Generator:
             self.__fitness__ = array(sorted(self.__fitness__, reverse=True))
             
             i += 1
+
         if verbose:
             print(f"GAT Generator:\nfitness:\t{self.__fitness__[0]}\niter:\t{i}")
         return self.__poblation__[0]
@@ -120,10 +122,20 @@ class GAT_Generator:
         return (h0 + h1).normalize()
     
     def _mutate(self, h: HeightMap) -> HeightMap:
-        tmp = HeightMap.build_from_map(h.__map__)
-        tmp *= -1.5
-        return (h + tmp).normalize()
+        tmp = HeightMap.build_from_map(self.__generate_member())
 
-a = GAT_Generator(.9, (300, 300), sea_level=0.45, poblation_size=7, iter=100)
+        if self.percentage <= .4:
+            for i in range(h.shape[0]):
+                for j in range(h.shape[1]):
+                    if h[i][j] > self.__sea__:
+                        w = h[i][j] - self.__sea__
+                        h[i][j] = h[i][j] - w * (tmp[i][j] + h[i][j])
+        else: 
+            tmp *= 1.5
+            h = h + tmp
+        return h.normalize()
+        
+a = GAT_Generator(.5, (100, 100), sea_level=0.45, poblation_size=7, iter=100)
 world = a(True)
+
 world.get_img().show()
