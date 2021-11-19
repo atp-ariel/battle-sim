@@ -135,7 +135,3 @@ class GAT_Generator:
             h = h + tmp
         return h.normalize()
         
-a = GAT_Generator(.5, (100, 100), sea_level=0.45, poblation_size=7, iter=100)
-world = a(True)
-
-world.get_img().show()
