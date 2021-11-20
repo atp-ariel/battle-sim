@@ -37,6 +37,19 @@ Se tendrán dos ramas principales:
 
 Abre una nueva rama a partir de `main` con el siguiente nombre `features/<funcionalidad>` y ahí implementa la funcionalidad, realiza los casos de prueba y haz un [pull request](https://docs.github.com/en/github/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests) para revisar entre todos los cambios, para posteriormente aprobar los cambios.
 
-#0# Arreglo de errores
+## Arreglo de errores
 
 Abre una nueva rama con el siguiente nombre `bug/<error>`, corrige el error, corre los casos de prueba, y haz el pull request correspondiente. Para posteriormente mezclar.
+
+## Casos de prueba
+
+Usted debe siempre que arregle un error o añada nuevas funcionalidades agregar casos de prueba utilizando la librería `pytest` y el plugin `pytest-cov` para verificar cuanto de su código está probando con sus casos de prueba. Antes de hacer un pull request todo su código debe pasar los casos de prueba con un coverage mayor a 90%, y no introducir que fallen los casos de prueba de otras funcionalidades.
+
+Sus casos de prueba deben ir en la carpeta `test`. Para ejecutar los casos de pruba ejecute los comandos siguientes:
+
+```
+pytest test
+pytest --cov
+```
+
+El primer comando ejecutará todos los comandos en la carpeta `test` y calculará el `coverage` de los casos de prueba.

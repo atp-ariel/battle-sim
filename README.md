@@ -59,6 +59,7 @@
             <li><a href="#estuctura-del-repositorio">Estructura del repositorio</a></li>
             <li><a href="#respuesta-a-nuevas-funcionalidades">Respuesta a nuevas funcionalidades</a></li>
             <li><a href="#arreglo-de-errores">Arreglo de errores</a></li>
+            <li><a href="#casos-de-prueba">Casos de prueba</a></li>
         </ul>
     </li>
     <li><a href="#licencia">Licencia</a></li>
@@ -85,22 +86,17 @@ Se tiene la idea de poder implementar una opción para que el usuario pueda defi
 <p align="right">(<a href="#top">volver arriba</a>)</p>
 
 
-<!-- 
 
-### Built With
 
-* [Next.js](https://nextjs.org/)
-* [React.js](https://reactjs.org/)
-* [Vue.js](https://vuejs.org/)
-* [Angular](https://angular.io/)
-* [Svelte](https://svelte.dev/)
-* [Laravel](https://laravel.com)
-* [Bootstrap](https://getbootstrap.com)
-* [JQuery](https://jquery.com)
+### Construido con
+
+* [Python](https://python.org)
+* [Pytest](https://pytest.org)
+* [Pytest-cov](https://pytest-cov.readthedocs.io)
 
 <p align="right">(<a href="#top">volver arriba</a>)</p>
 
--->
+
 
 <!--
 ## Getting Started
