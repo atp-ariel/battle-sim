@@ -1,5 +1,4 @@
 import pytest
-import context
 from numpy import array
 from src.core.world.heightmap import HeightMap
 

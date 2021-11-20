@@ -11,7 +11,7 @@ class GAT_Generator:
     def poblation(self) -> List:
         return self.__poblation__
 
-    def __init__(self, percentage: float, shape: Tuple[int, int], sea_level=0.5, poblation_size=10, iter=100, merge_weight=0.95, tol=0.03):
+    def __init__(self, percentage: float, shape: Tuple[int, int], sea_level=0.45, poblation_size=7, iter=100, merge_weight=0.95, tol=0.03):
         self.percentage = percentage
 
         self.__shape__ = shape
@@ -130,7 +130,7 @@ class GAT_Generator:
                         w = h[i][j] - self.__sea__
                         h[i][j] = h[i][j] - w * (tmp[i][j] + h[i][j])
         else: 
-            tmp *= 1.5
+            tmp *= -1.5
             h = h + tmp
         return h.normalize()
         
