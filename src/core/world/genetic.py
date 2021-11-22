@@ -3,7 +3,7 @@ from typing import List, Tuple
 from numpy.core.fromnumeric import mean
 from heightmap import HeightMap
 from numpy import  sum, array, vectorize, zeros, linspace, meshgrid
-from random import randint
+from random import randint, sample
 import noise
 
 class GAT_Generator:
@@ -130,7 +130,8 @@ class GAT_Generator:
                         w = h[i][j] - self.__sea__
                         h[i][j] = h[i][j] - w * (tmp[i][j] + h[i][j])
         else: 
-            tmp *= -1.5
+            tmp *= -0.3
             h = h + tmp
-        return h.normalize()
+            h.normalize()
+        return h
         
