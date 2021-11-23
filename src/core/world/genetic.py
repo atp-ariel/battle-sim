@@ -6,6 +6,7 @@ from numpy import  sum, array, vectorize, zeros, linspace, meshgrid
 from random import randint, sample
 import noise
 
+
 class GAT_Generator:
     @property
     def poblation(self) -> List:
