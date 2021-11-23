@@ -15,7 +15,7 @@ def test_create_from_map():
 def test_index_heightmap():
     a = HeightMap.build_from_map(LIST_1)
 
-    assert LIST_1[1, 1] == a.__map__[1, 1] 
+    assert LIST_1[1, 1] == a.__map__[1, 1]
 
 
 def test_add_height_map():
@@ -30,9 +30,10 @@ def test_add_height_map():
 def test_add_float():
     a = HeightMap.build_from_map(LIST_1)
 
-    a +=  2.3
+    a += 2.3
 
     assert (2.3 + LIST_1 == a.__map__).all()
+
 
 def test_mul_float():
     a = HeightMap.build_from_map(LIST_1)
@@ -41,6 +42,7 @@ def test_mul_float():
 
     assert (LIST_1 * 2.3 == a.__map__).all()
 
+
 def test_normalize():
     a = HeightMap.build_from_map(LIST_1)
 
@@ -48,10 +50,12 @@ def test_normalize():
 
     assert (a.__map__ <= 1).all() and (a.__map__ >= 0).all()
 
-def test_create():
-    a = HeightMap((100,100))
 
-    assert (a.__map__ == 0).all() and a.shape == (100,100)
+def test_create():
+    a = HeightMap((100, 100))
+
+    assert (a.__map__ == 0).all() and a.shape == (100, 100)
+
 
 @pytest.mark.xfail(raises=Exception)
 def test_add():
