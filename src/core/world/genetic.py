@@ -2,7 +2,7 @@ from math import prod
 from typing import List, Tuple
 from numpy.core.fromnumeric import mean
 from .heightmap import HeightMap
-from numpy import  sum, array, vectorize, zeros, linspace, meshgrid
+from numpy import sum, array, vectorize, zeros, linspace, meshgrid
 from random import randint, sample
 import noise
 
@@ -32,7 +32,7 @@ class GAT_Generator:
 
         self.__poblation__ = array(sorted(self.__poblation__, key=self.fit_func, reverse=True))
         self.__fitness__ = array(sorted(self.__fitness__, reverse=True))
-        
+
         i = 0
         while i < self.__iter:
             if self.__fitness__[0] > self.percentage - self.__tol__ and self.__fitness__[0] < self.percentage + self.__tol__:
@@ -49,20 +49,20 @@ class GAT_Generator:
                 # Mutate
                 child = self._mutate(child)
 
-                # add to new poblation 
+                # add to new poblation
                 new_poblation.append(child)
             # convert new poblation to numpy array
             new_poblation = sorted(new_poblation, key=self.fit_func, reverse=True)
-            self.__poblation__ = array(new_poblation) 
+            self.__poblation__ = array(new_poblation)
             self._calculate_fitness()
             self.__fitness__ = array(sorted(self.__fitness__, reverse=True))
-            
+
             i += 1
 
         if verbose:
             print(f"GAT Generator:\nfitness:\t{self.__fitness__[0]}\niter:\t{i}")
         return self.__poblation__[0]
-            
+
     def fit_func(self, heightmap: HeightMap):
         count = sum(sum(heightmap.__map__ > self.__sea__))
         per = count / prod(self.__shape__)
@@ -75,8 +75,8 @@ class GAT_Generator:
         y_idx = linspace(0, 1, self.__shape__[1])
         world_x, world_y = meshgrid(x_idx, y_idx)
 
-        world = vectorize(noise.pnoise2)(world_x/.5,
-                                world_y/.5,
+        world = vectorize(noise.pnoise2)(world_x / .5,
+                                world_y / .5,
                                 octaves=6,
                                 # accidentalidad
                                 persistence=.1,
@@ -86,7 +86,7 @@ class GAT_Generator:
                                 base=randint(0, 1024))
         world = HeightMap.build_from_map(world)
         world.normalize()
-        #world.get_img().show()
+        # world.get_img().show()
         return world
 
     def _generate_poblation(self):
@@ -99,7 +99,7 @@ class GAT_Generator:
         for item in self.poblation:
             fitness.append(self.fit_func(item))
         self.__fitness__ = array(fitness)
-    
+
     def _selection(self) -> Tuple[HeightMap, HeightMap]:
         # Seleccion competitiva
         index = sample(range(0, self.__poblation_size__), 4)
@@ -118,9 +118,9 @@ class GAT_Generator:
         # Suma ponderada
         h0, h1 = heightmaps
         h0 *= self.__merge__
-        h1 *= 1-self.__merge__
+        h1 *= 1 - self.__merge__
         return (h0 + h1).normalize()
-    
+
     def _mutate(self, h: HeightMap) -> HeightMap:
         tmp = HeightMap.build_from_map(self.__generate_member())
 
@@ -130,9 +130,8 @@ class GAT_Generator:
                     if h[i][j] > self.__sea__:
                         w = h[i][j] - self.__sea__
                         h[i][j] = h[i][j] - w * (tmp[i][j] + h[i][j])
-        else: 
+        else:
             tmp *= -0.3
             h = h + tmp
             h.normalize()
         return h
-        
