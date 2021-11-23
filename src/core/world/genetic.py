@@ -12,7 +12,14 @@ class GAT_Generator:
     def poblation(self) -> List:
         return self.__poblation__
 
-    def __init__(self, percentage: float, shape: Tuple[int, int], sea_level=0.45, poblation_size=7, iter=100, merge_weight=0.95, tol=0.03):
+    def __init__(self, 
+                 percentage: float, 
+                 shape: Tuple[int, int], 
+                 sea_level=0.45, 
+                 poblation_size=7, 
+                 iter=100, 
+                 merge_weight=0.95, 
+                 tol=0.03):
         self.percentage = percentage
 
         self.__shape__ = shape
