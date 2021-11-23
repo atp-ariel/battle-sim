@@ -11,10 +11,12 @@ def test_create_from_map():
 
     assert (LIST_1 == a.__map__).all()
 
+
 def test_index_heightmap():
     a = HeightMap.build_from_map(LIST_1)
 
     assert LIST_1[1, 1] == a.__map__[1, 1] 
+
 
 def test_add_height_map():
     a = HeightMap.build_from_map(LIST_1)
@@ -23,6 +25,7 @@ def test_add_height_map():
     c = a + b
 
     assert (2 * LIST_1 == c.__map__).all()
+
 
 def test_add_float():
     a = HeightMap.build_from_map(LIST_1)
