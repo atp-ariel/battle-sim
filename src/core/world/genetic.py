@@ -1,7 +1,7 @@
 from math import prod
 from typing import List, Tuple
 from numpy.core.fromnumeric import mean
-from heightmap import HeightMap
+from world.heightmap import HeightMap
 from numpy import  sum, array, vectorize, zeros, linspace, meshgrid
 from random import randint, sample
 import noise
@@ -101,17 +101,17 @@ class GAT_Generator:
     
     def _selection(self) -> Tuple[HeightMap, HeightMap]:
         # Seleccion competitiva
-        # index = sample(range(0, self.__poblation_size__), 4)
-        # tournment = self.poblation[index]
-        # fitness = self.__fitness__[index]
+        index = sample(range(0, self.__poblation_size__), 4)
+        tournment = self.poblation[index]
+        fitness = self.__fitness__[index]
 
-        # grp1 = sorted(tournment[:2], key=self.fit_func, reverse=True)
-        # grp2 = sorted(tournment[2:], key=self.fit_func, reverse=True)
+        grp1 = sorted(tournment[:2], key=self.fit_func, reverse=True)
+        grp2 = sorted(tournment[2:], key=self.fit_func, reverse=True)
 
-        # final = sorted([grp1[0], grp2[0]], key=self.fit_func, reverse=True)
-        # return tuple(final)
+        final = sorted([grp1[0], grp2[0]], key=self.fit_func, reverse=True)
+        return tuple(final)
 
-        return self.poblation[0:2]
+        # return self.poblation[0:2]
 
     def _merge(self, heightmaps: Tuple[HeightMap, HeightMap]) -> HeightMap:
         # Suma ponderada
