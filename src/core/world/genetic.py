@@ -42,7 +42,7 @@ class GAT_Generator:
 
         i = 0
         while i < self.__iter:
-            if self.__fitness__[0] > self.percentage - self.__tol__ and self.__fitness__[0] < self.percentage + self.__tol__:
+            if self.percentage - self.__tol__ <= self.__fitness__[0] <= self.percentage + self.__tol__:
                 break
 
             new_poblation = []
