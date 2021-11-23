@@ -92,7 +92,6 @@ class GAT_Generator:
                                          base=randint(0, 1024))
         world = HeightMap.build_from_map(world)
         world.normalize()
-        # world.get_img().show()
         return world
 
     def _generate_poblation(self):
@@ -117,8 +116,6 @@ class GAT_Generator:
 
         final = sorted([grp1[0], grp2[0]], key=self.fit_func, reverse=True)
         return tuple(final)
-
-        # return self.poblation[0:2]
 
     def _merge(self, heightmaps: Tuple[HeightMap, HeightMap]) -> HeightMap:
         # Suma ponderada
