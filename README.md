@@ -59,6 +59,7 @@
             <li><a href="#estuctura-del-repositorio">Estructura del repositorio</a></li>
             <li><a href="#respuesta-a-nuevas-funcionalidades">Respuesta a nuevas funcionalidades</a></li>
             <li><a href="#arreglo-de-errores">Arreglo de errores</a></li>
+            <li><a href="#casos-de-prueba">Casos de prueba</a></li>
         </ul>
     </li>
     <li><a href="#licencia">Licencia</a></li>
@@ -85,22 +86,17 @@ Se tiene la idea de poder implementar una opción para que el usuario pueda defi
 <p align="right">(<a href="#top">volver arriba</a>)</p>
 
 
-<!-- 
 
-### Built With
 
-* [Next.js](https://nextjs.org/)
-* [React.js](https://reactjs.org/)
-* [Vue.js](https://vuejs.org/)
-* [Angular](https://angular.io/)
-* [Svelte](https://svelte.dev/)
-* [Laravel](https://laravel.com)
-* [Bootstrap](https://getbootstrap.com)
-* [JQuery](https://jquery.com)
+### Construido con
+
+* [Python](https://python.org)
+* [Pytest](https://pytest.org)
+* [Pytest-cov](https://pytest-cov.readthedocs.io)
 
 <p align="right">(<a href="#top">volver arriba</a>)</p>
 
--->
+
 
 <!--
 ## Getting Started
@@ -199,6 +195,19 @@ Abre una nueva rama a partir de `main` con el siguiente nombre `features/<funcio
 ### Arreglo de errores
 
 Abre una nueva rama con el siguiente nombre `bug/<error>`, corrige el error, corre los casos de prueba, y haz el pull request correspondiente. Para posteriormente mezclar.
+
+### Casos de prueba
+
+Usted debe siempre que arregle un error o añada nuevas funcionalidades agregar casos de prueba utilizando la librería `pytest` y el plugin `pytest-cov` para verificar cuanto de su código está probando con sus casos de prueba. Antes de hacer un pull request todo su código debe pasar los casos de prueba con un coverage mayor a 90%, y no introducir que fallen los casos de prueba de otras funcionalidades.
+
+Sus casos de prueba deben ir en la carpeta `test`. Para ejecutar los casos de pruba ejecute los comandos siguientes:
+
+```
+pytest test
+pytest --cov
+```
+
+El primer comando ejecutará todos los comandos en la carpeta `test` y calculará el `coverage` de los casos de prueba.
 
 <p align="right">(<a href="#top">volver arriba</a>)</p>
 
