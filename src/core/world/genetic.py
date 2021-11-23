@@ -83,14 +83,13 @@ class GAT_Generator:
         world_x, world_y = meshgrid(x_idx, y_idx)
 
         world = vectorize(noise.pnoise2)(world_x / .5,
-                                world_y / .5,
-                                octaves=6,
-                                # accidentalidad
-                                persistence=.1,
-                                lacunarity=2.,
-                                repeatx=1024,
-                                repeaty=1024,
-                                base=randint(0, 1024))
+                                         world_y / .5,
+                                         octaves=6,
+                                         persistence=.1,
+                                         lacunarity=2.,
+                                         repeatx=1024,
+                                         repeaty=1024,
+                                         base=randint(0, 1024))
         world = HeightMap.build_from_map(world)
         world.normalize()
         # world.get_img().show()
