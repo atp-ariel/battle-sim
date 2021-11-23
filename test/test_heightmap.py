@@ -2,7 +2,9 @@ import pytest
 from numpy import array
 from src.core.world.heightmap import HeightMap
 
-LIST_1 = array([[0.1, 1, 3],[3,2,10], [3,2,1]])
+
+LIST_1 = array([[0.1, 1, 3], [3, 2, 10], [3, 2, 1]])
+
 
 def test_create_from_map():
     a = HeightMap.build_from_map(LIST_1)
@@ -12,7 +14,7 @@ def test_create_from_map():
 def test_index_heightmap():
     a = HeightMap.build_from_map(LIST_1)
 
-    assert LIST_1[1, 1] == a.__map__[1,1] 
+    assert LIST_1[1, 1] == a.__map__[1, 1] 
 
 def test_add_height_map():
     a = HeightMap.build_from_map(LIST_1)
@@ -20,7 +22,7 @@ def test_add_height_map():
 
     c = a + b
 
-    assert (2*LIST_1 == c.__map__).all() 
+    assert (2 * LIST_1 == c.__map__).all()
 
 def test_add_float():
     a = HeightMap.build_from_map(LIST_1)
