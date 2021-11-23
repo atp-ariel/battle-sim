@@ -1,7 +1,7 @@
 from math import prod
 from typing import List, Tuple
 from numpy.core.fromnumeric import mean
-from world.heightmap import HeightMap
+from .heightmap import HeightMap
 from numpy import  sum, array, vectorize, zeros, linspace, meshgrid
 from random import randint, sample
 import noise
