@@ -40,9 +40,10 @@ class GAT_Generator:
         self.__poblation__ = array(sorted(self.__poblation__, key=self.fit_func, reverse=True))
         self.__fitness__ = array(sorted(self.__fitness__, reverse=True))
 
+        interval_error = (self.percentage - self.__tol__, self.percentage + self.__tol__)
         i = 0
         while i < self.__iter:
-            if self.percentage - self.__tol__ <= self.__fitness__[0] <= self.percentage + self.__tol__:
+            if interval_error[0] <= self.__fitness__[0] <= interval_error[1]:
                 break
 
             new_poblation = []
