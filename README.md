@@ -222,17 +222,49 @@ El siguiente proyecto está distribuido bajo MIT License. Ver [LICENSE.txt](http
 <p align="right">(<a href="#top">volver arriba</a>)</p>
 
 
+
 <!-- Contributors -->
 
 ## Desarrolladores
 
-- <a href="https://github.com/rocioog00"><img height='35' src="https://images.weserv.nl/?url=avatars.githubusercontent.com/u/56322127?v=4&h=300&w=300&fit=cover&mask=circle"/></a> Rocio Ortiz Gancedo - [@rocioog](https://t.me/rocioog) - [rocio.ortiz@estudiantes.matcom.uh.cu](mailto:rocio.ortiz@estudiantes.matcom.uh.cu)
+<table align="center">
+   <tr>
+       <td align="center">
+            <a href="https://github.com/rocioog00"><img height='60' src="https://images.weserv.nl/?url=avatars.githubusercontent.com/u/56322127?v=4&h=300&w=300&fit=cover&mask=circle"/></a>
+            <br/>
+            Rocio Ortiz Gancedo
+            <br/>
+            🤔📝
+            <br/>
+            <a href="https://github.com/rocioog00"><img src="https://upload.wikimedia.org/wikipedia/commons/a/ae/Github-desktop-logo-symbol.svg" height="18"></a>
+            <a href="https://t.me/rocioog"><img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" height="18"/></a>
+            <a href="mailto:rocio.ortiz@estudiantes.matcom.uh.cu"><img src="https://upload.wikimedia.org/wikipedia/commons/9/97/Android_Email_4.0_Icon.png" height="18"/></a>
+       </td>
+       <td align="center">
+            <a href="https://github.com/CTS-crypto"><img height='60' src="https://images.weserv.nl/?url=https://avatars.githubusercontent.com/u/72420685&v=4&w=300&h=300&fit=cover&mask=circle&fit=cover"/></a>
+            <br/>
+            Carlos Toledo Silva
+            <br/>
+            💻🤔📝
+            <br/>
+            <a href="https://github.com/CTS-crypto"><img src="https://upload.wikimedia.org/wikipedia/commons/a/ae/Github-desktop-logo-symbol.svg" height="18"></a>
+            <a href="https://t.me/cts-crypto"><img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" height="18"/></a>
+            <a href="mailto:carlos.toledo@estudiantes.matcom.uh.cu"><img src="https://upload.wikimedia.org/wikipedia/commons/9/97/Android_Email_4.0_Icon.png" height="18"/></a>
+       </td>
+       <td align="center">
+            <a href="https://github.com/ArielTriana"><img height='60' src="https://images.weserv.nl/?url=avatars.githubusercontent.com/u/61637781?v=4&h=300&w=300&fit=cover&mask=circle"/></a>
+            <br/>
+            Ariel Alfonso Triana Pérez
+            <br/>
+            💻🤔📝
+            <br/>
+            <a href="https://github.com/atp_ariel"><img src="https://upload.wikimedia.org/wikipedia/commons/a/ae/Github-desktop-logo-symbol.svg" height="18"></a>
+            <a href="https://t.me/atp_ariel"><img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" height="18"/></a>
+            <a href="mailto:usich37@gmail.com"><img src="https://upload.wikimedia.org/wikipedia/commons/9/97/Android_Email_4.0_Icon.png" height="18"/></a>
+       </td>
+   </tr>
+</table>
 
-- <a href="https://github.com/CTS-crypto"><img height='35' src="https://images.weserv.nl/?url=https://avatars.githubusercontent.com/u/72420685&v=4&w=300&h=300&fit=cover&mask=circle&fit=cover"/></a> Carlos Toledo Silva - [@cts-crypto](https://t.me/cts-crypto) - [carlos.toledo@estudiantes.matcom.uh.cu](mailto:carlos.toledo@estudiantes.matcom.uh.cu)
-
-- <a href="https://github.com/ArielTriana"><img height='35' src="https://images.weserv.nl/?url=avatars.githubusercontent.com/u/61637781?v=4&h=300&w=300&fit=cover&mask=circle"/></a> Ariel Alfonso Triana Pérez - [@atp-ariel](https://t.me/atp-ariel) - [ariel.triana@estudiantes.matcom.uh.cu](mailto:ariel.triana@estudiantes.matcom.uh.cu)
-
-Link del proyecto: [https://github.com/ArielTriana/battle-sim](https://github.com/ArielTriana/battle-sim)
 
 <p align="right">(<a href="#top">volver arriba</a>)</p>
 
