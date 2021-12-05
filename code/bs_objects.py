@@ -41,7 +41,7 @@ class BSStaticObject(BSObject):
 class BSUnit(BSObject,ABC):
     
     @abstractclassmethod
-    def __init__(self,id,life_points,defense,side,moral,attack,ofensive,min_range,max_range,radio,vision,intelligence,solidarity,recharge_turns):
+    def __init__(self,id,life_points,defense,side,moral,attack,ofensive,min_range,max_range,radio,vision,intelligence,recharge_turns,movil):
         BSObject.__init__(id,life_points,defense)
         self.side=side
         self.moral=moral
@@ -56,6 +56,7 @@ class BSUnit(BSObject,ABC):
         self.intelligence=intelligence
         self.recharge_turns=recharge_turns
         self.turns_recharging=0
+        self.movil=movil
         self.no_defeated_units=0
         self.visited_cells=set()
 
