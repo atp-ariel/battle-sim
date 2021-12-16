@@ -44,7 +44,7 @@ class Simulator:
                 self.units.append(unit)
 
     def event_is_pos(self,unit):
-        if unit.life_points == 0: #Saber si la unidad se destruyó según las condiciones del usuario
+        if unit.life_points <= 0: #Saber si la unidad se destruyó según las condiciones del usuario
             return False
 
         return True
