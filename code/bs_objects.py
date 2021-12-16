@@ -41,12 +41,13 @@ class BSStaticObject(BSObject):
 class BSUnit(BSObject,ABC):
     
     @abstractclassmethod
-    def __init__(self,id,life_points,defense,side,moral,attack,ofensive,min_range,max_range,radio,vision,intelligence,recharge_turns,movil):
+    def __init__(self,id,life_points,defense,side,moral,attack,solidarity,ofensive,min_range,max_range,radio,vision,intelligence,recharge_turns,movil):
         BSObject.__init__(id,life_points,defense)
         self.side=side
         self.moral=moral
         self.attack=attack
-        self.ofensie=ofensive
+        self.solidarity=solidarity
+        self.ofensive=ofensive
         self.min_range=min_range
         self.max_range=max_range
         if not (radio>=1 and radio<=9):
@@ -310,7 +311,7 @@ class BSUnit(BSObject,ABC):
                         if bs_object is BSUnit and bs_object.life_points<=0:
                             self.no_defeated_units+=1
         
-        if enemy.life_points<0:
+        if enemy.life_points<=0:
             self.no_defeated_units+=1
 
     #moverse a una celda
