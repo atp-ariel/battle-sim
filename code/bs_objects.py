@@ -72,12 +72,12 @@ class BSUnit(BSObject,ABC):
     def move_cost_calculate(self,cell,type):
 
         def nearby_friend():
-            for i in range(cell.row-1:cel.row+2):
+            for i in range(cell.row-1,cel.row+2):
                 if i>=self.map.no_rows:
                     break
                 if i<0:
                     continue
-                for j in range(cell.col-1:cell.col+2):
+                for j in range(cell.col-1,cell.col+2):
                     if j>=self.map.no_cols:
                         break
                     if j<0 or (i==cell.row and j==cell.column) or (i==self.cell.row and j==self.cell.col):
@@ -88,7 +88,7 @@ class BSUnit(BSObject,ABC):
             
         def enemy_in_range():
     
-            for k in range(self.min_range:self.max_range+1):
+            for k in range(self.min_range,self.max_range+1):
                     
                 i=cell.row-k
                 if i>=0:
@@ -118,12 +118,12 @@ class BSUnit(BSObject,ABC):
             
         def in_range_of_enemy():
                 
-            for i in range(cell.row-self.vision:cel.row+self.vision+1):
+            for i in range(cell.row-self.vision,cel.row+self.vision+1):
                 if i>=self.map.no_rows:
                     break
                 if i<0:
                     continue
-                for j in range(cell.col-1:cell.col+2):
+                for j in range(cell.col-1,cell.col+2):
                     if j>=self.map.no_cols:
                         break
                     if j<0 or (i==cell.row and j==cell.column) or (i==self.cell.row and j==self.cell.col):
@@ -183,7 +183,7 @@ class BSUnit(BSObject,ABC):
                     break
                 if i<0:
                     continue
-                for j in range(cell.col-1:cell.col+2):
+                for j in range(cell.col-1,cell.col+2):
                     if j>=self.map.no_cols:
                         break
                     if j<0 or (i==self.cell.row and j==self.cell.col):
@@ -192,7 +192,7 @@ class BSUnit(BSObject,ABC):
                         return True
             return False
 
-        for k in range(self.min_range:self.max_range+1):
+        for k in range(self.min_range,self.max_range+1):
                 
             cost=-1
             attacked_enemy=None
@@ -254,7 +254,7 @@ class BSUnit(BSObject,ABC):
                     break
                 if i<0:
                     continue
-                for j in range(cell.col-1:cell.col+2):
+                for j in range(cell.col-1,cell.col+2):
                     if j>=self.map.no_cols:
                         break
                     if j<0 or (i==self.cell.row and j==self.cell.col):
@@ -281,7 +281,7 @@ class BSUnit(BSObject,ABC):
                     
                     randint=random.randint(0,cells_to_attack)
                     position=positions[randint]
-                    positions.remove(position)
+                    positions.pop(randint)
                     
                     if self.map[self.cell.row+eposition[0]][self.cell.col+position[1]].bs_object!=None:
                         bs_object=self.map[self.cell.row+position[0]][self.cell.col+position[1]]
@@ -300,7 +300,7 @@ class BSUnit(BSObject,ABC):
                     
                     randint=random.randint(0,cells_to_attack)
                     position=positions[randint]
-                    positions.remove(position)
+                    positions.pop(randint)
                     
                     if self.map[self.cell.row+eposition[0]][self.cell.col+position[1]].bs_object!=None:
                         bs_object=self.map[self.cell.row+position[0]][self.cell.col+position[1]]
@@ -334,7 +334,7 @@ class BSUnit(BSObject,ABC):
                     break
                 if i<0:
                     continue
-                for j in range(cell.col-1:cell.col+2):
+                for j in range(cell.col-1,cell.col+2):
                     if j>=self.map.no_cols:
                         break
                     if j<0 or (i==self.cell.row and j==self.cell.col):
