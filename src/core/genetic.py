@@ -4,8 +4,7 @@ from numpy.core.fromnumeric import mean
 from .heightmap import HeightMap
 from numpy import sum, array, vectorize, zeros, linspace, meshgrid
 from random import randint, sample
-import noise
-
+from perlin_noise import PerlinNoise
 
 class GAT_Generator:
     @property
@@ -77,20 +76,17 @@ class GAT_Generator:
         return per if per < self.percentage else 0
 
     def __generate_member(self) -> HeightMap:
+        noise = PerlinNoise(octaves=2, seed=randint(0, 1024))
+
         world = zeros(self.__shape__)
 
         x_idx = linspace(0, 1, self.__shape__[0])
         y_idx = linspace(0, 1, self.__shape__[1])
-        world_x, world_y = meshgrid(x_idx, y_idx)
 
-        world = vectorize(noise.pnoise2)(world_x / .5,
-                                         world_y / .5,
-                                         octaves=6,
-                                         persistence=.1,
-                                         lacunarity=2.,
-                                         repeatx=1024,
-                                         repeaty=1024,
-                                         base=randint(0, 1024))
+        for i in range(self.__shape__[0]):
+            for j in range(self.__shape__[1]):
+                world[i, j] = noise([x_idx[i], y_idx[j]])
+
         world = HeightMap.build_from_map(world)
         world.normalize()
         return world
