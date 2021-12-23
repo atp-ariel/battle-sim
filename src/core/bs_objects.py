@@ -341,7 +341,7 @@ class BSUnit(BSObject, ABC):
     # turno de la unidad
     def turn(self, type):
 
-        enemy = self.enemy_to_attack(self)
+        enemy = self.enemy_to_attack()
         if enemy != None and self.turns_recharging == 0:
             self.attack_enemy()
             self.turns_recharging = self.recharge_turns
@@ -379,7 +379,7 @@ class BSLandUnit(BSUnit):
         BSUnit.put_in_cell(map, "earth", row, col)
 
     def turn(self):
-        BSUnit.turn('earth')
+        BSUnit.turn(self,'earth')
 
 
 class BSNavalUnit(BSUnit):
@@ -391,7 +391,7 @@ class BSNavalUnit(BSUnit):
         BSUnit.put_in_cell(map, "water", row, col)
 
     def turn(self):
-        BSUnit.turn('earth')
+        BSUnit.turn(self,'earth')
 
 
 class BSAirUnit(BSUnit):
