@@ -25,7 +25,6 @@ def test_simulator():
 
 
     for i in range(10):
-        s2.add_unit(BSLandUnit(i + 1, 10, r(1, 10), s2, r(1, 10), r(1, 10),
                             r(1, 3), r(3, 8), r(1, 8), r(1, 9), r(1, 10), r(5, 10), r(1, 10), r(1,10)))
 
     S = Simulator(maps, maps, [s1, s2], 10)

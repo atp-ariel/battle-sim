@@ -27,7 +27,6 @@ class BSObject(ABC):
             self.cell = map[row][col]
 
     # tomar danio
-    def take_damage(self, attack: int):
         self.life_points -= attack / self.defense
         if self.life_points <= 0:
             self.cell.bs_object = None
@@ -376,7 +375,6 @@ class BSLandUnit(BSUnit):
                         min_range, max_range, radio, vision, intelligence, recharge_turns, movil)
 
     def put_in_cell(self, map, row, col):
-        BSUnit.put_in_cell(map, "earth", row, col)
 
     def turn(self):
         BSUnit.turn(self,'earth')
@@ -400,4 +398,3 @@ class BSAirUnit(BSUnit):
                         min_range, max_range, radio, vision, intelligence, recharge_turns, movil)
 
     def put_in_cell(self, map, row, col):
-        BSUnit.put_in_cell(map, "air", row, col)
