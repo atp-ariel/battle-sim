@@ -87,9 +87,9 @@ class BSUnit(BSObject, ABC):
                 for j in range(cell.col-1, cell.col+2):
                     if j >= self.map.no_columns:
                         break
-                    if j < 0 or (i == cell.row and j == cell.column) or (i == self.cell.row and j == self.cell.col):
+                    if j < 0 or (i == cell.row and j == cell.col) or (i == self.cell.row and j == self.cell.col):
                         continue
-                    if self.map[i][j].bs_unit != None and self.map[i][j].bs_unit.side == self.side:
+                    if self.map[i][j].bs_object != None and isinstance(self.map[i][j].bs_object, BsUnit) and self.map[i][j].bs_object.side == self.side:
                         return True
             return False
 
@@ -215,7 +215,11 @@ class BSUnit(BSObject, ABC):
             i = self.cell.row-k
             if i >= 0:
                 for j in range(self.cell.col-k, self.cell.col+k+1):
-                    if self.map[i][j].bs_object is BSUnit and self.map[i][j].bs_object.side != self.side:
+                    if j >= self.map.no_columns:
+                        break
+                    if j < 0 or (i == self.cell.row and j == self.cell.col):
+                        continue
+                    if isinstance(self.map[i][j].bs_object, BSUnit) and self.map[i][j].bs_object.side != self.side:
                         if self.radio > 1 and friend_in_danger(self.map[i][j]):
                             continue
                         new_cost = cost_calculate(self.map[i][j].bs_object)
@@ -226,7 +230,11 @@ class BSUnit(BSObject, ABC):
             i = self.cell.row+k
             if i < self.map.no_rows:
                 for j in range(self.cell.col-k, self.cell.col+k+1):
-                    if self.map[i][j].bs_object is BSUnit and self.map[i][j].bs_object.side != self.side:
+                    if j >= self.map.no_columns:
+                        break
+                    if j < 0 or (i == self.cell.row and j == self.cell.col):
+                        continue
+                    if isinstance(self.map[i][j].bs_object, BSUnit) and self.map[i][j].bs_object.side != self.side:
                         if self.radio > 1 and friend_in_danger(self.map[i][j]):
                             continue
                         new_cost = cost_calculate(self.map[i][j].bs_object)
@@ -237,7 +245,11 @@ class BSUnit(BSObject, ABC):
             j = self.cell.col-k
             if j >= 0:
                 for i in range(self.cell.row-k+1, self.cell.row+k):
-                    if self.map[i][j].bs_object is BSUnit and self.map[i][j].bs_object.side != self.side:
+                    if i >= self.map.no_rows:
+                        break
+                    if i < 0:
+                        continue
+                    if isinstance(self.map[i][j].bs_object, BSUnit) and self.map[i][j].bs_object.side != self.side:
                         if self.radio > 1 and friend_in_danger(self.map[i][j]):
                             continue
                         new_cost = cost_calculate(self.map[i][j].bs_object)
@@ -248,7 +260,11 @@ class BSUnit(BSObject, ABC):
             j = self.cell.col+k
             if j < self.map.no_columns:
                 for i in range(self.cell.row-k+1, self.cell.row+k):
-                    if self.map[i][j].bs_object is BSUnit and self.map[i][j].bs_object.side != self.side:
+                    if i >= self.map.no_rows:
+                            break
+                    if i < 0:
+                        continue
+                    if isinstance(self.map[i][j].bs_object, BSUnit) and self.map[i][j].bs_object.side != self.side:
                         if self.radio > 1 and friend_in_danger(self.map[i][j]):
                             continue
                         new_cost = cost_calculate(self.map[i][j].bs_object)
@@ -349,6 +365,7 @@ class BSUnit(BSObject, ABC):
             if self.turns_recharging != 0:
                 self.turns_recharging -= 1
             cost = 10000
+            cell=self.cell
             for i in range(self.cell.row-1, self.cell.row+2):
                 if i >= self.map.no_rows:
                     break
