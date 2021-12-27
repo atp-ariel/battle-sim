@@ -85,7 +85,7 @@ class BSUnit(BSObject, ABC):
                 if i < 0:
                     continue
                 for j in range(cell.col-1, cell.col+2):
-                    if j >= self.map.no_cols:
+                    if j >= self.map.no_columns:
                         break
                     if j < 0 or (i == cell.row and j == cell.column) or (i == self.cell.row and j == self.cell.col):
                         continue
@@ -104,7 +104,7 @@ class BSUnit(BSObject, ABC):
                             return (True, self.map[i][j])
 
                 i = cell.row + k
-                if i < self.map.no_row:
+                if i < self.map.no_rows:
                     for j in range(cell.col-k, cell.col+k+1):
                         if self.map[i][j].bs_object is BSUnit and self.map[i][j].bs_object.side != self.side:
                             return (True, self.map[i][j])
@@ -116,7 +116,7 @@ class BSUnit(BSObject, ABC):
                             return (True, self.map[i][j])
 
                 j = cell.col + k
-                if j < self.map.no_col:
+                if j < self.map.no_columns:
                     for i in range(cell.row-k+1, cell.row+k):
                         if self.map[i][j].bs_object is BSUnit and self.map[i][j].bs_object.side != self.side:
                             return (True, self.map[i][j])
@@ -131,7 +131,7 @@ class BSUnit(BSObject, ABC):
                 if i < 0:
                     continue
                 for j in range(cell.col-1, cell.col+2):
-                    if j >= self.map.no_cols:
+                    if j >= self.map.no_columns:
                         break
                     if j < 0 or (i == cell.row and j == cell.column) or (i == self.cell.row and j == self.cell.col):
                         continue
@@ -199,7 +199,7 @@ class BSUnit(BSObject, ABC):
                 if i < 0:
                     continue
                 for j in range(cell.col-1, cell.col+2):
-                    if j >= self.map.no_cols:
+                    if j >= self.map.no_columns:
                         break
                     if j < 0 or (i == self.cell.row and j == self.cell.col):
                         continue
@@ -224,7 +224,7 @@ class BSUnit(BSObject, ABC):
                             attacked_enemy = self.map[i][j].bs_object
 
             i = self.cell.row+k
-            if i < self.map.no_row:
+            if i < self.map.no_rows:
                 for j in range(self.cell.col-k, self.cell.col+k+1):
                     if self.map[i][j].bs_object is BSUnit and self.map[i][j].bs_object.side != self.side:
                         if self.radio > 1 and friend_in_danger(self.map[i][j]):
@@ -246,7 +246,7 @@ class BSUnit(BSObject, ABC):
                             attacked_enemy = self.map[i][j].bs_object
 
             j = self.cell.col+k
-            if j < self.map.no_col:
+            if j < self.map.no_columns:
                 for i in range(self.cell.row-k+1, self.cell.row+k):
                     if self.map[i][j].bs_object is BSUnit and self.map[i][j].bs_object.side != self.side:
                         if self.radio > 1 and friend_in_danger(self.map[i][j]):
@@ -270,7 +270,7 @@ class BSUnit(BSObject, ABC):
             if i < 0:
                 continue
             for j in range(self.cell.col-1, self.cell.col+2):
-                if j >= self.map.no_cols:
+                if j >= self.map.no_columns:
                     break
                 if j < 0 or (i == self.cell.row and j == self.cell.col):
                     continue
@@ -355,7 +355,7 @@ class BSUnit(BSObject, ABC):
                 if i < 0:
                     continue
                 for j in range(cell.col-1, cell.col+2):
-                    if j >= self.map.no_cols:
+                    if j >= self.map.no_columns:
                         break
                     if j < 0 or (i == self.cell.row and j == self.cell.col):
                         continue
