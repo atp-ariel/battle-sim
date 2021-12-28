@@ -20,13 +20,11 @@ def test_simulator():
 
     # Units creation
     for i in range(10):
-        s1.add_unit(BSLandUnit(i + 1, 10, r(1, 10), s1, r(1, 10), r(1, 10),
-                            r(1, 3), r(3, 8), r(1, 8), r(1, 9), r(1, 10), r(5, 10), r(1, 10), r(1,10)))
+        s1.add_unit(BSLandUnit(i+1,r(1,10),r(1,10),s1,r(1,10),r(1,10),r(1,10),r(1,10),r(1,1),r(1,2),1,r(1,10),0,True,True))
         s1.units[-1].put_in_cell(maps, 0, i)
 
     for i in range(10):
-        s2.add_unit(BSLandUnit(i + 10 + 1, 10, r(1, 10), s2, r(1, 10), r(1, 10),
-                            r(1, 3), r(3, 8), r(1, 8), r(1, 9), r(1, 10), r(5, 10), r(1, 10), r(1,10)))
+        s2.add_unit(BSLandUnit(i+10+1,r(1,10),r(1,10),s1,r(1,10),r(1,10),r(1,10),r(1,10),r(1,1),r(1,2),1,r(1,10),0,True,True))
         s2.units[-1].put_in_cell(maps, n-1, i)
 
 

@@ -1,12 +1,11 @@
 import math
 import random
-from abc import ABC, abstractclassmethod
+from abc import ABC,abstractmethod
 from .maps import Map
-
 
 class BSObject(ABC):
 
-    @abstractclassmethod
+    @abstractmethod
     def __init__(self, id: int, life_points: int, defense: int):
         self.id = id
         self.life_points = life_points
@@ -36,17 +35,17 @@ class BSObject(ABC):
 class BSStaticObject(BSObject):
 
     def __init__(self, id: int, life_points: int, defense: int):
-        BSObject.__init__(id, life_points, defense)
+        BSObject.__init__(self,id, life_points, defense)
 
     def put_in_cell(self, map: Map, row: int, col: int):
         BSObject.put_in_cell(map, "earth", row, col)
 
 
-class BSUnit(BSObject, ABC):
+class BSUnit(BSObject):
 
-    @abstractclassmethod
-    def __init__(self, id, life_points, defense, side, moral, attack, solidarity, ofensive, min_range, max_range, radio, vision, intelligence, recharge_turns, movil):
-        BSObject.__init__(id, life_points, defense)
+    @abstractmethod
+    def __init__(self, id, life_points, defense, side, attack, moral, ofensive, min_range, max_range, radio, vision, intelligence, recharge_turns, solidarity,movil):
+        BSObject.__init__(self,id, life_points, defense)
         self.side = side
         self.moral = moral
         self.attack = attack
@@ -55,7 +54,7 @@ class BSUnit(BSObject, ABC):
         self.min_range = min_range
         self.max_range = max_range
         if not (radio >= 1 and radio <= 9):
-            return Exception('radio invalido')
+            Exception('radio invalido')
         self.radio = radio
         self.vision = vision
         self.intelligence = intelligence
@@ -89,7 +88,7 @@ class BSUnit(BSObject, ABC):
                         break
                     if j < 0 or (i == cell.row and j == cell.col) or (i == self.cell.row and j == self.cell.col):
                         continue
-                    if self.map[i][j].bs_object != None and isinstance(self.map[i][j].bs_object, BsUnit) and self.map[i][j].bs_object.side == self.side:
+                    if self.map[i][j].bs_object != None and isinstance(self.map[i][j].bs_object, BSUnit) and self.map[i][j].bs_object.side == self.side:
                         return True
             return False
 
@@ -100,28 +99,28 @@ class BSUnit(BSObject, ABC):
                 i = cell.row - k
                 if i >= 0:
                     for j in range(cell.col-k, cell.col+k+1):
-                        if self.map[i][j].bs_object is BSUnit and self.map[i][j].bs_object.side != self.side:
+                        if isinstance(self.map[i][j].bs_object, BSUnit) and self.map[i][j].bs_object.side != self.side:
                             return (True, self.map[i][j])
 
                 i = cell.row + k
                 if i < self.map.no_rows:
                     for j in range(cell.col-k, cell.col+k+1):
-                        if self.map[i][j].bs_object is BSUnit and self.map[i][j].bs_object.side != self.side:
+                        if isinstance(self.map[i][j].bs_object, BSUnit) and self.map[i][j].bs_object.side != self.side:
                             return (True, self.map[i][j])
 
                 j = cell.col - k
                 if j >= 0:
                     for i in range(cell.row-k+1, cell.row+k):
-                        if self.map[i][j].bs_object is BSUnit and self.map[i][j].bs_object.side != self.side:
+                        if isinstance(self.map[i][j].bs_object, BSUnit) and self.map[i][j].bs_object.side != self.side:
                             return (True, self.map[i][j])
 
                 j = cell.col + k
                 if j < self.map.no_columns:
                     for i in range(cell.row-k+1, cell.row+k):
-                        if self.map[i][j].bs_object is BSUnit and self.map[i][j].bs_object.side != self.side:
+                        if isinstance(self.map[i][j].bs_object, BSUnit) and self.map[i][j].bs_object.side != self.side:
                             return (True, self.map[i][j])
 
-                return (False, None)
+            return (False, None)
 
         def in_range_of_enemy():
 
@@ -133,9 +132,9 @@ class BSUnit(BSObject, ABC):
                 for j in range(cell.col-1, cell.col+2):
                     if j >= self.map.no_columns:
                         break
-                    if j < 0 or (i == cell.row and j == cell.column) or (i == self.cell.row and j == self.cell.col):
+                    if j < 0 or (i == cell.row and j == cell.col) or (i == self.cell.row and j == self.cell.col):
                         continue
-                    if self.map[i][j].bs_object is BSUnit and self.map[i][j].bs_object.side != self.side:
+                    if isinstance(self.map[i][j].bs_object, BSUnit) and self.map[i][j].bs_object.side != self.side:
                         enemy = self.map[i][j].bs_object
                         limits_max_range = (
                             (enemy.cell.row-enemy.max_range,
@@ -154,7 +153,7 @@ class BSUnit(BSObject, ABC):
                                 cost += 1.1
             return False
 
-        if cell.passable == 0 or cell.type != type or cell.bs_object != None or abs(cell.heigth-self.cell.heigth) > 0.01:
+        if cell.passable == 0 or cell.type != type or cell.bs_object != None or abs(cell.heigth-self.cell.heigth) > 0.05:
             return 1000000
 
         cost = 10-cell.passable/2
@@ -203,15 +202,14 @@ class BSUnit(BSObject, ABC):
                         break
                     if j < 0 or (i == self.cell.row and j == self.cell.col):
                         continue
-                    if self.map[i][j].bs_object != None and self.map[i][j] is BSUnit and self.map[i][j].bs_object.side == self.side:
+                    if self.map[i][j].bs_object != None and isinstance(self.map[i][j].bs_object, BSUnit) and self.map[i][j].bs_object.side == self.side:
                         return True
             return False
 
+        cost = -1
+        attacked_enemy = None
+
         for k in range(self.min_range, self.max_range+1):
-
-            cost = -1
-            attacked_enemy = None
-
             i = self.cell.row-k
             if i >= 0:
                 for j in range(self.cell.col-k, self.cell.col+k+1):
@@ -261,7 +259,7 @@ class BSUnit(BSObject, ABC):
             if j < self.map.no_columns:
                 for i in range(self.cell.row-k+1, self.cell.row+k):
                     if i >= self.map.no_rows:
-                            break
+                        break
                     if i < 0:
                         continue
                     if isinstance(self.map[i][j].bs_object, BSUnit) and self.map[i][j].bs_object.side != self.side:
@@ -273,6 +271,9 @@ class BSUnit(BSObject, ABC):
                             attacked_enemy = self.map[i][j].bs_object
 
         return attacked_enemy
+
+    def take_damage(self, damage):
+        self.life_points -= damage/(self.defense+self.moral)
 
     # atacar enemigo
     def attack_enemy(self, enemy):
@@ -383,14 +384,9 @@ class BSUnit(BSObject, ABC):
             if cost < 10000:
                 self.move_to_cell(cell)
 
-    def take_damage(self, damage):
-        self.life_points -= damage/(self.defense+self.moral)
-
-
 class BSLandUnit(BSUnit):
-    def __init__(self, id, life_points, defense, side, moral, attack, min_range, max_range, radio, vision, intelligence, solidarity, recharge_turns, movil):
-        BSUnit.__init__(id, life_points, defense, side, moral, attack, solidarity, attack,
-                        min_range, max_range, radio, vision, intelligence, recharge_turns, movil)
+    def __init__(self, id, life_points, defense, side, attack, moral, ofensive,min_range, max_range, radio, vision, intelligence, recharge_turns, solidarity, movil):
+        BSUnit.__init__(self,id,life_points,defense,side,attack,moral,ofensive,min_range,max_range,radio,vision,intelligence,recharge_turns,solidarity,movil)
 
     def put_in_cell(self, map, row, col):
         BSUnit.put_in_cell(self,map, "earth", row, col)
@@ -400,9 +396,8 @@ class BSLandUnit(BSUnit):
 
 
 class BSNavalUnit(BSUnit):
-    def __init__(self, id, life_points, defense, side, moral, attack, min_range, max_range, radio, vision, intelligence, solidarity, recharge_turns, movil):
-        BSUnit.__init__(id, life_points, defense, side, moral, attack, solidarity, attack,
-                        min_range, max_range, radio, vision, intelligence, recharge_turns, movil)
+    def __init__(self, id, life_points, defense, side, attack, moral, ofensive,min_range, max_range, radio, vision, intelligence, recharge_turns, solidarity, movil):
+        BSUnit.__init__(self,id,life_points,defense,side,attack,moral,ofensive,min_range,max_range,radio,vision,intelligence,recharge_turns,solidarity,movil)
 
     def put_in_cell(self, map, row, col):
         BSUnit.put_in_cell(self,map, "water", row, col)
@@ -412,9 +407,8 @@ class BSNavalUnit(BSUnit):
 
 
 class BSAirUnit(BSUnit):
-    def __init__(self, id, life_points, defense, side, moral, attack, min_range, max_range, radio, vision, intelligence, solidarity, recharge_turns, movil):
-        BSUnit.__init__(id, life_points, defense, side, moral, attack, solidarity, attack,
-                        min_range, max_range, radio, vision, intelligence, recharge_turns, movil)
+    def __init__(self, id, life_points, defense, side, attack, moral, ofensive,min_range, max_range, radio, vision, intelligence, recharge_turns, solidarity, movil):
+        BSUnit.__init__(self,id,life_points,defense,side,attack,moral,ofensive,min_range,max_range,radio,vision,intelligence,recharge_turns,solidarity,movil)
 
     def put_in_cell(self, map, row, col):
         BSUnit.put_in_cell(self,map, "air", row, col)
