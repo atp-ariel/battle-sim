@@ -1,6 +1,6 @@
 import pytest
-from src.core.heightmap import HeightMap
-from src.core.genetic import GAT_Generator
+from src.core.maps.heightmap import HeightMap
+from src.core.maps.genetic import GAT_Generator
 from numpy import array
 
 

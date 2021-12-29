@@ -1,6 +1,6 @@
 import pytest
 from numpy import array
-from src.core.heightmap import HeightMap
+from src.core.maps.heightmap import HeightMap
 
 
 LIST_1 = array([[0.1, 1, 3], [3, 2, 10], [3, 2, 1]])

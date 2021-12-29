@@ -1,7 +1,7 @@
 import math
 import random
 from abc import ABC,abstractmethod
-from .maps import Map
+from .maps.maps import Map
 
 class BSObject(ABC):
 
@@ -65,9 +65,7 @@ class BSUnit(BSObject):
         self.visited_cells = set()
 
     # calcular distancia entre dos celdas
-    # ! Must to be in cell class
-    # TODO Must to be implemented in CELL class
-    def calculate_distance(cell1, cell2):
+    def calculate_distance(self, cell1, cell2):
 
         distance_row = abs(cell1.row-cell2.row)
         distance_col = abs(cell1.col-cell2.col)
@@ -76,7 +74,7 @@ class BSUnit(BSObject):
 
     # calcular el costo de moverse a la celda
     def move_cost_calculate(self, cell, type):
-
+        cost = 0
         def nearby_friend():
             for i in range(cell.row-1, cell.row+2):
                 if i >= self.map.no_rows:
@@ -171,7 +169,7 @@ class BSUnit(BSObject):
 
         if near_enemy:
             cost -= self.ofensive*1 / \
-                math.sqrt(self.calculate_distance(cell, enemy_cell)-self.min_range)
+                math.sqrt(self.calculate_distance(self.cell, enemy_cell)-self.min_range)
 
         in_range_of_enemy()
 
@@ -360,7 +358,7 @@ class BSUnit(BSObject):
 
         enemy = self.enemy_to_attack()
         if enemy != None and self.turns_recharging == 0:
-            self.attack_enemy()
+            self.attack_enemy(enemy)
             self.turns_recharging = self.recharge_turns
         else:
             if self.turns_recharging != 0:
