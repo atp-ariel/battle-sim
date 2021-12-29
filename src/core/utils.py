@@ -26,6 +26,9 @@ class Side:
     def get_units(self):
         return self.units
 
+    def __iter__(self):
+        for unit in self.units:
+            yield unit
 
 class Simulator:
     def __init__(self, earth_map, air_map, sides, time_end, time_beg=0):
