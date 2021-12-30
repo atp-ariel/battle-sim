@@ -3,7 +3,6 @@ import scipy
 from scipy import stats
 import random as rd
 
-
 class Side:
     def __init__(self,id,name):
         self.id=id
@@ -27,7 +26,6 @@ class Side:
         return self.units
 
 
-
 class Simulator:
     def __init__(self,earth_map,air_map,sides,time_end,time_beg=0):
         self.earth_map=earth_map
@@ -44,46 +42,38 @@ class Simulator:
                 self.units.append(unit)
 
     def event_is_pos(self,unit):
-        if unit.life_points <= 0: #Saber si la unidad se destruyó según las condiciones del usuario
+        if unit.life_points == 0: #Saber si la unidad se destruyó según las condiciones del usuario
             return False
 
         return True
 
-    def get_events(self):
-        pos_events=[]
-        mask=[]
+    def get_events(self,moment):
+        events={}
+
         for side in self.sides:
             units=side.get_units()
             for unit in units:
-                pos_events.append(unit)
-                mask.append(False)
+                events[unit]=0
 
-        cant_events=len(pos_events)
-        cant_int=rd.randint(cant_events//2, cant_events-1)
 
-        events={}
-        for i in range(cant_int):
-            selected_event=rd.randint(0,cant_events-1)
-
-            if mask[selected_event]:
-                continue
-
-            mask[selected_event]=True
-            var_time=stats.beta.rvs(3, 4, loc=self.time_beg, scale=self.time_end, size=1, random_state=None)
+        for event in events:
+            var_time=stats.beta.rvs(1, 3, loc=moment, scale=1, size=1, random_state=None)
+                
             var_time=var_time[0]
-            events[var_time]=pos_events[selected_event]
+            events[event]=var_time
 
-        key=sorted(events)
-        sorted_events={}
-        for i in key:
-            sorted_events[i]=events[i]
+        sorted_events = sorted(events.items(), key=lambda x: x[1])
         
         return sorted_events
             
     def simulator_by_turns(self):
-        events = self.get_events()
+        time_beg=int(self.time_beg)
+        time_end=int(self.time_end)
 
-        for time in events.keys():
-            if self.event_is_pos(events[time]):
-                events[time].turn()
-
+        for i in range(time_beg,time_end):
+            events=self.get_events(i)
+            for event in events:
+                if event[1]>self.time_beg and event[1]<self.time_end:
+                    if self.event_is_pos(event[0]):
+                        event[0].turn()
+    
