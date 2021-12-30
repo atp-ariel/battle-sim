@@ -74,7 +74,9 @@ class BSUnit(BSObject):
 
     # calcular el costo de moverse a la celda
     def move_cost_calculate(self, cell, type):
+        
         cost = 0
+        
         def nearby_friend():
             for i in range(cell.row-1, cell.row+2):
                 if i >= self.map.no_rows:
@@ -97,30 +99,46 @@ class BSUnit(BSObject):
                 i = cell.row - k
                 if i >= 0:
                     for j in range(cell.col-k, cell.col+k+1):
+                        if j<0:
+                            continue
+                        if j>=self.map.no_columns:
+                            break
                         if isinstance(self.map[i][j].bs_object, BSUnit) and self.map[i][j].bs_object.side != self.side:
                             return (True, self.map[i][j])
 
                 i = cell.row + k
                 if i < self.map.no_rows:
                     for j in range(cell.col-k, cell.col+k+1):
+                        if j<0:
+                            continue
+                        if j>=self.map.no_columns:
+                            break
                         if isinstance(self.map[i][j].bs_object, BSUnit) and self.map[i][j].bs_object.side != self.side:
                             return (True, self.map[i][j])
 
                 j = cell.col - k
                 if j >= 0:
                     for i in range(cell.row-k+1, cell.row+k):
+                        if i<0:
+                            continue
+                        if i>=self.map.no_rows:
+                            break
                         if isinstance(self.map[i][j].bs_object, BSUnit) and self.map[i][j].bs_object.side != self.side:
                             return (True, self.map[i][j])
 
                 j = cell.col + k
                 if j < self.map.no_columns:
                     for i in range(cell.row-k+1, cell.row+k):
+                        if i<0:
+                            continue
+                        if i>=self.map.no_rows:
+                            break
                         if isinstance(self.map[i][j].bs_object, BSUnit) and self.map[i][j].bs_object.side != self.side:
                             return (True, self.map[i][j])
 
             return (False, None)
 
-        def in_range_of_enemy():
+        def in_range_of_enemy(cost):
 
             for i in range(cell.row-self.vision, cell.row+self.vision+1):
                 if i >= self.map.no_rows:
@@ -149,7 +167,7 @@ class BSUnit(BSObject):
                         if cell.row >= limits_max_range[0][0] and cell.col >= limits_max_range[0][1] and cell.row <= limits_max_range[1][0] and cell.col <= limits_max_range[1][1]:
                             if cell.row <= limits_min_range[0][0] or cell.row >= limits_min_range[1][0] or cell.col <= limits_min_range[0][1] or cell.col >= limits_min_range[1][1]:
                                 cost += 1.1
-            return False
+            return cost
 
         if cell.passable == 0 or cell.type != type or cell.bs_object != None or abs(cell.heigth-self.cell.heigth) > 0.05:
             return 1000000
@@ -171,7 +189,7 @@ class BSUnit(BSObject):
             cost -= self.ofensive*1 / \
                 math.sqrt(self.calculate_distance(self.cell, enemy_cell)-self.min_range)
 
-        in_range_of_enemy()
+        cost=in_range_of_enemy(cost)
 
         return cost
 
@@ -289,7 +307,7 @@ class BSUnit(BSObject):
                     break
                 if j < 0 or (i == self.cell.row and j == self.cell.col):
                     continue
-                if self.map[i][j].bs_object != None and self.calculate_distance(self.cell, self.map[i][j] <= enemy_distance):
+                if self.map[i][j].bs_object != None and self.calculate_distance(self.cell, self.map[i][j]) <= enemy_distance:
                     block_objects.append(self.map[i][j].bs_object)
 
         precision = random.uniform(0, 1)
@@ -298,7 +316,7 @@ class BSUnit(BSObject):
                           abs(enemy.cell.col-self.cell.col))
 
         miss_distance = (range_enemy-self.min_range) / \
-            (self.max_range-self.min_range)/10
+            (self.max_range-self.min_range+0.1)/10
 
         positions = [(-1, 1), (-1, 0), (-1, 1), (0, -1),
                      (0, 1), (1, -1), (1, 0), (1, 1)]
