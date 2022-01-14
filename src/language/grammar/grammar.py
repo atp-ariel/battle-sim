@@ -69,7 +69,7 @@ class Production:
 class NonTerminal(Symbol):
     def __init__(self, name: str, productions: Optional[List[Production]] = None):
         Symbol.__init__(self, name)
-        self.productions: List[Production] = productions
+        self.productions: List[Production] = [] if productions is None else productions
         for prod in self.productions:
             prod.__head__ = self
     
@@ -79,6 +79,16 @@ class NonTerminal(Symbol):
     def __getitem__(self, index):
         return self.productions[index]
 
+    def add(self, prod: Production):
+        self.productions.append(prod)
+        prod.__head__ = self
+
+    def __iadd__(self, prod: Production):
+        if isinstance(prod, Production):
+            self.add(prod)
+            return self
+        raise ValueError()
+        
     def __repr__(self):
         return f"NT({self.__str__()})"
 
