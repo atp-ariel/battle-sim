@@ -16,6 +16,9 @@ class Symbol(metaclass=ABCMeta):
     def __repr__(self):
         return self.__str__()
     
+    def __hash__(self):
+        return hash(self.name)
+    
     def __eq__(self, other):
         if isinstance(other, str):
             return self.name == str
@@ -38,7 +41,7 @@ class Terminal(Symbol):
 
 class Production:
     @property
-    def head(self) -> NonTerminal:
+    def head(self):
         if self.__head__ is None:
             raise ValueError("Production head missing.")
         return self.__head__
@@ -60,6 +63,9 @@ class Production:
     def __repr__(self):
         prod_str = "-> " + " ".join(str(symbol) for symbol in self.symbols)
         return prod_str
+    
+    def __len__(self):
+        return len(self.symbols)
 
     def __str__(self):
         return self.__repr__()
