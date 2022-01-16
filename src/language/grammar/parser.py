@@ -141,25 +141,3 @@ class Automaton:
                 
         return states            
                 
-
-i=Terminal("i") 
-plus=Terminal("+")
-eq=Terminal("=")
-
-E=NonTerminal("E")
-
-A=NonTerminal("A") 
-
-E+=Production([A,eq,A])
-
-E+=Production([i])  
-
-A+=Production([i,plus,A])
-
-A+=Production([i])
-
-g=Grammar([E,A])
-
-a=Automaton(g)
-
-print(len(a.build()))
