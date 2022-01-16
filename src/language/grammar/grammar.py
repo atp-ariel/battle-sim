@@ -114,7 +114,6 @@ class Grammar:
         self.T: Set[Terminal] = self.get_terminals()
         self.N: Set[NonTerminal] = self.get_non_terminals()
         self.P: List[Production] = self.get_productions()
-        self.S: Set[Symbol] = self.T.union(self.N)
 
     def __getattr__(self, item):
         if item in self.exp_dict:
@@ -132,7 +131,6 @@ class Grammar:
 
         if exp not in self.N:
             self.N.add(exp)
-            self.S.add(exp)
         
         for p in exp.productions:
             self.P.append(p)
@@ -143,7 +141,6 @@ class Grammar:
                     self.T.add(sym)
                 else: 
                     continue
-                self.S.add(sym)
 
         return self
 
