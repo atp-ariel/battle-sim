@@ -28,6 +28,7 @@ class Parser:
 
     primary  = \( exp \)
             | char              literal {push char}
+            | .
     '''
     def __init__(self, lexer: Lexer):
         self.lexer : Lexer  = lexer
@@ -72,3 +73,6 @@ class Parser:
         elif self.lookahead.name == 'CHAR':
             self.tokens.append(self.lookahead)
             self.consume('CHAR')
+        elif self.lookahead.name == "DOT":
+            self.tokens.append(self.lookahead)
+            self.consume("DOT")
