@@ -16,6 +16,9 @@ class Symbol(metaclass=ABCMeta):
     def __repr__(self):
         return self.__str__()
     
+    def __hash__(self):
+        return hash(self.name)
+    
     def __eq__(self, other):
         if isinstance(other, str):
             return self.name == str
@@ -38,7 +41,7 @@ class Terminal(Symbol):
 
 class Production:
     @property
-    def head(self) -> NonTerminal:
+    def head(self):
         if self.__head__ is None:
             raise ValueError("Production head missing.")
         return self.__head__
@@ -60,6 +63,9 @@ class Production:
     def __repr__(self):
         prod_str = "-> " + " ".join(str(symbol) for symbol in self.symbols)
         return prod_str
+    
+    def __len__(self):
+        return len(self.symbols)
 
     def __str__(self):
         return self.__repr__()
@@ -69,7 +75,7 @@ class Production:
 class NonTerminal(Symbol):
     def __init__(self, name: str, productions: Optional[List[Production]] = None):
         Symbol.__init__(self, name)
-        self.productions: List[Production] = productions
+        self.productions: List[Production] = [] if productions is None else productions
         for prod in self.productions:
             prod.__head__ = self
     
@@ -79,6 +85,16 @@ class NonTerminal(Symbol):
     def __getitem__(self, index):
         return self.productions[index]
 
+    def add(self, prod: Production):
+        self.productions.append(prod)
+        prod.__head__ = self
+
+    def __iadd__(self, prod: Production):
+        if isinstance(prod, Production):
+            self.add(prod)
+            return self
+        raise TypeError(f"Argument {prod} must be a production")
+
     def __repr__(self):
         return f"NT({self.__str__()})"
 
@@ -86,49 +102,66 @@ class NonTerminal(Symbol):
 class Grammar:
     @property
     def start(self) -> NonTerminal:
-        if self.__start__ is None:
-            raise ValueError("Grammar has no start expression.")
-        return self.__start__
+        if self.exps:
+            return self.exps[0]
+        raise ValueError("Grammar has no start expression.")
 
 
     def __init__(self, exp: List[NonTerminal] = None):
         self.exps = [ ] if exp is None else exp
-        self.__start__ = None
-        if exp:
-            self.__start__ = self.exps[0]
         self.exp_dict: Dict[str, NonTerminal] = {e.name: e for e in self.exps}
-    
+
+        self.T: Set[Terminal] = self.get_terminals()
+        self.N: Set[NonTerminal] = self.get_non_terminals()
+        self.P: List[Production] = self.get_productions()
+
     def __getattr__(self, item):
         if item in self.exp_dict:
             return self.exp_dict[item]
         raise AttributeError()
     
     def __iadd__(self, exp: NonTerminal):
+        if not isinstance(exp, NonTerminal):
+            raise TypeError(f"Expression {exp} must be a non terminal")
+
         if exp.name in self.exp_dict:
             raise ValueError(f"Grammar expression {exp} already exists.")
         self.exps.append(exp)
         self.exp_dict[exp.name] = exp
+
+        if exp not in self.N:
+            self.N.add(exp)
+        
+        for p in exp.productions:
+            self.P.append(p)
+            for sym in p.symbols:
+                if not sym.is_terminal:
+                    self.N.add(sym)
+                elif sym.name != "EPS":
+                    self.T.add(sym)
+                else: 
+                    continue
+
         return self
 
-    @property
-    def terminals(self) -> Set[Terminal]:
+    def get_terminals(self) -> Set[Terminal]:
         terminals = set()
 
         for e in self.exp_dict.values():
             for p in e.productions:
                 for sym in p.symbols:
-                    if sym.is_terminal and sym.name not in ["EPS"]:
+                    if sym.is_terminal and sym.name != "EPS":
                         terminals.add(sym)
         return terminals
     
-    @property
-    def productions(self) -> Iterable[Tuple[NonTerminal, Production]]:
+    def get_productions(self) -> List[Production]:
+        prods = []
         for e in self.exps:
             for p in e.productions:
-                yield (e, p)
+                prods.append(p)
+        return prods
 
-    @property
-    def non_terminals(self) -> Set[NonTerminal]:
+    def get_non_terminals(self) -> Set[NonTerminal]:
         non_terminals = set()
         
         for e in self.exp_dict.values():
