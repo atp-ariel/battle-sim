@@ -76,27 +76,39 @@ class State:
         q=deque(self.kernel)
         
         while len(q)!=0:
+            
             item=q.popleft()
+            if item.index==len(item.production):
+                continue
             sym=item.production[item.index]
+            
+            if sym in self.expected_symbols:
+                self.expected_symbols[sym].add(item)
+            else:
+                self.expected_symbols[sym]=set([item])
             
             if not sym.is_terminal:
                 for i in initial_items[sym]:
-                    lookahead=Terminal('$') if i.index+1==len(i.production) else i.production[i.index+1]
+                    lookahead=item.lookahead if item.index+1==len(item.production) else item.production[item.index+1]
                     new_item=ItemLR1(i.production, i.index, lookahead)
-                    self.add_item(new_item)
+                    if new_item not in self.items:
+                        self.add_item(new_item)
+                        q.append(new_item)
                     
     def go_to(self,sym:Symbol,states,q:deque,initial_items):
         new_kernel=[]
+        
         for i in self.expected_symbols[sym]:
-            new_item=copy.copy(i)
-            new_item.index+=1
+            new_item=ItemLR1(i.production, i.index+1, i.lookahead)
             new_kernel.append(new_item)
         new_state=State(new_kernel)
+        
         if new_state not in states:
             new_state.build(initial_items)
             states.add(new_state)
             q.append(new_state)
-            self.nexts[sym]=new_state
+        
+        self.nexts[sym]=new_state
             
         
 class Automaton:
@@ -107,9 +119,9 @@ class Automaton:
     def build(self):
         
         s=NonTerminal('S')
-        s+=Production([self.grammar.P[0].head])
+        s+=Production([self.grammar.start])
         
-        initial_items={s:[Item(s[0],0)]}
+        initial_items={s:[ItemLR1(s[0],0,Terminal('$'))]}
         
         for nt in self.grammar.N:
             initial_items[nt]=[]
@@ -118,14 +130,14 @@ class Automaton:
                 
         i0=State(initial_items[s])
         
-        states=set()
+        states=set([i0])
         q=deque([i0])
            
         while len(q)!=0:
             state=q.popleft()
             state.build(initial_items)
-            for sym in state.nexts:
-                state.go_to(sym, states)
+            for sym in state.expected_symbols:
+                state.go_to(sym, states,q,initial_items)
                 
         return states            
                 
@@ -150,6 +162,4 @@ g=Grammar([E,A])
 
 a=Automaton(g)
 
-x=a.build()
-   
-print(type(x))
+print(len(a.build()))
