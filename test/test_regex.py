@@ -69,7 +69,9 @@ def test_star():
 mix_re = {
     "ab+c": [('ab', False), ("bbbc", False), ("abc", True), ("abbbbbbc", True), ("", False)], 
     " a": [("a", False), (" ", False), (" a", True)],
-    "a∗(baa∗)∗(b?)": [("bab", True), ("aba", True), ("baabaaaaaab", True), ("bb", False)]
+    "a∗(baa∗)∗(b?)": [("bab", True), ("aba", True), ("baabaaaaaab", True), ("bb", False)],
+    "b.a": [("aa", False), ("b.a", True), ("bba", True), ("ba", False)],
+    "\++": [("", False), ("+", True), ("\+", False), ("\++", False), ("+"*10, True), ]
 }
 def test_mix():
     for _ in star_re.keys():
