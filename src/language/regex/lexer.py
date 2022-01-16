@@ -4,7 +4,7 @@ from .token import Token
 class Lexer:
     def __init__(self, pattern):
         self.source = pattern
-        self.symbols = {'(':'LEFT_PAREN', ')':'RIGHT_PAREN', '*':'STAR', '|':'ALT', '\x08':'CONCAT', '+':'PLUS', '?':'QMARK'}
+        self.symbols = {'(':'LEFT_PAREN', ')':'RIGHT_PAREN', '*':'STAR', '|':'ALT', '\x08':'CONCAT', '+':'PLUS', '?':'QMARK', '.': "DOT"}
         self.current = 0
         self.length = len(self.source)
        
