@@ -73,11 +73,23 @@ class Branch(Stament):
                 return False
             
         return True
-
-class ClassDef(Stament):
+    
+class AttrDef(Node):
     name: str
-    parent : str
-    body : List[Stament]
+    type: str
+    init: Expression
+
+class MethodDef(Node):
+    name: str
+    return_type: str
+    arg_names: List[str]
+    arg_types: List[str]
+    body: List[Stament]
+
+class ClassDef(Node):
+    name: str
+    attributes: List[AttrDef]
+    methods: List[MethodDef]
 
 class WhileDef(Stament):
     condition : Expression
