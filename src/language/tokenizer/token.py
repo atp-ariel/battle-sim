@@ -1,4 +1,6 @@
+from dataclasses import dataclass
 from enum import Enum
+from typing import Generator
 from ..regex import Regex
 
 class TokenType(Enum):
@@ -35,6 +37,22 @@ class TokenType(Enum):
     Pow = Regex("\*\*")
     Not = Regex("!")
 
+class TokenMatch:
+    is_match: bool
+    ttype: TokenType
+    value : str
+    line : int
+    col : int
+    remain: str
+
+
+class TokenDefinition:
+    def __init__(self, ttype: TokenType, precendence: int):
+        self.type : TokenType = ttype
+        self.precendece : int = precendence
+
+    def find_match(self, inputstr: str) -> Generator[TokenMatch]:
+        
 class Token:
     @property
     def regex(self) -> Regex:
