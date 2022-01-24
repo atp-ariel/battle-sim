@@ -38,7 +38,6 @@ elif_def ->     'elif' expression '->' block elif_def
 else_def -> 'else' '->' block
 
 class_def ->    'class' NAME 'is' NAME '->' block
-            |   'class' NAME' '->' block
 
 while_def ->    'while' expression '->' block
 
@@ -46,21 +45,15 @@ type ->     'number'
         |   NAME
 
 assign ->  type NAME '=' expression
-        |  type NAME augassign expression
 
 return_stmt ->  'return' expression
             |   'return'
 
-block ->    NEWLINE INDENT statements DEDENT
+block ->    NEWLINE "{" statements "}"
 
 params ->   type NAME ',' params
         |  type NAME
 
-augassign ->    '+='
-            |   '-='
-            |   '*='
-            |   '/='
-            |   '%='
 
 expressions ->  expression ','  expressions
             |   expression
@@ -102,7 +95,7 @@ factor ->   '+' factor
         |   '-' factor
         |   pow
 
-pow ->  primary '^' 2
+pow ->  primary '^' factor
     |   primary
 
 primary ->  primary '.' NAME
