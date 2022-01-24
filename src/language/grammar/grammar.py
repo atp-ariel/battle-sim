@@ -53,6 +53,7 @@ class Production:
     def __init__(self, symbols: List[Symbol]):
         self.symbols: List[Symbol] = symbols
         self.__head__: NonTerminal = None
+        self.id : int = -1
 
     def __getitem__(self, index):
         return self.symbols[index]
@@ -86,6 +87,7 @@ class NonTerminal(Symbol):
         return self.productions[index]
 
     def add(self, prod: Production):
+        prod.id = len(self.productions)
         self.productions.append(prod)
         prod.__head__ = self
 
