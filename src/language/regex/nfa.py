@@ -47,8 +47,9 @@ class Handler:
     def __init__(self):
         self.handlers : Dict[str, Callable] = {'CHAR':self.handle_char, 'CONCAT':self.handle_concat,
                          'ALT':self.handle_alt, 'STAR':self.handle_rep,
-                         'PLUS':self.handle_rep, 'QMARK':self.handle_qmark}
+                         'PLUS':self.handle_rep, 'QMARK':self.handle_qmark, "DOT": self.handle_dot}
         self.state_count : int = 0
+        self.vocabulary: Set[str] = set([chr(i) for i in range(int("21", 16), int("7e", 16))])
 
     def create_state(self) -> State:
         self.state_count += 1
@@ -67,7 +68,23 @@ class Handler:
         s0.transitions[t.value] = s1
         nfa = NFA(s0, s1)
         nfa_stack.append(nfa)
-    
+
+    def handle_dot(self, t, nfa_stack) -> None:
+        """
+        Build a nfa for a dot token
+
+             |---e-----|
+             |         v
+        (s0) -all char-> (s1)
+        """
+
+        s0 = self.create_state()
+        s1 = self.create_state()
+        for item in self.vocabulary:
+            s0.transitions[str(item)] = s1
+        nfa = NFA(s0, s1)
+        nfa_stack.append(nfa)
+
     def handle_concat(self, t, nfa_stack) -> None:
         """
         Build a NFA for concat.
