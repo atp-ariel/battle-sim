@@ -27,7 +27,7 @@ class Context:
         self.children=[]
         self._var_context={}
         self._func_context={}
-        self._type_context=[]
+        self._type_context={}
         #self._symbol_context={}
 
     def check_var(self,var):
@@ -71,17 +71,31 @@ class Context:
 
             return self.father.check_func_args(func,args)
 
-    def define_var(self,var,value=0):
-        self._var_context[var]=value
-            
-    def define_func(self,func,args):
-        data=[[0]*len(args),[0]*len(args)]
+    def get_type(self,var):
+        return self._var_context[var][0]
 
-        for i in range(len(args)):
-            data[0][i]=args[i]
-            data[1][i]=type(args[i])
+    def define_var(self,var,_type,value=NULL):
+        if not var in self._var_context and _type in self._type_context:
+            self._var_context[var]=[_type,value]
+
+        elif self._var_context[var][0]==_type:
+            self._var_context[var][1]=value
+
+        else:
+            raise Exception("Type Error")
+   
+    def define_func(self,func,_type,args,_type_args):
+        if _type in self._type_context:
+            data=[[0]*len(args),[0]*len(args)]
+
+            for i in range(len(args)):
+                data[1][i]=args[i]
+                data[0][i]=_type_args[i]
         
-        self._func_context[func]=data
+            self._func_context[func]=data
+
+        else:
+            raise Exception("Type Error")
 
     def create_child_context(self):
         child=Context(self)
@@ -90,7 +104,7 @@ class Context:
      
     def create_type(self,name):
         t=Type(name)
-        self._type_context.append(t)
+        self._type_context[name]=t
         return t
 
     #def define_symbol(symbol,type)
