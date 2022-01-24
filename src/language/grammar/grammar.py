@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from typing import Any, Dict, Iterable, List, Optional, Set, Tuple
+from typing import Any, Callable, Dict, Iterable, List, Optional, Set, Tuple
 
 class Symbol(metaclass=ABCMeta):
     @property
@@ -50,10 +50,12 @@ class Production:
     def is_eps(self) -> bool:
         return len(self.symbols) == 1 and self.symbols[0] == "EPS"
 
-    def __init__(self, symbols: List[Symbol]):
+    def __init__(self, symbols: List[Symbol], func_ast: Callable = None):
         self.symbols: List[Symbol] = symbols
         self.__head__: NonTerminal = None
         self.id : int = -1
+        self.func_ast = func_ast
+
 
     def __getitem__(self, index):
         return self.symbols[index]

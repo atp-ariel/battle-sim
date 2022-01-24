@@ -1,4 +1,3 @@
-from src.language.grammar.grammar import NonTerminal
 from .grammar import *
 
 eof = Terminal("EOF")
@@ -104,22 +103,22 @@ simple_stat += Production([_break])
 simple_stat += Production([_continue])
 simple_stat += Production([expressions])
 
-func_def += Production([function, _type, name, lparent, params, rparent, arrow, block])
-func_def += Production([function, _type, name, lparent, rparent, arrow, block])
+func_def += Production([function, _type, name, lparent, params, rparent, arrow, block], True)
+func_def += Production([function, _type, name, lparent, rparent, arrow, block], True)
 
-if_def += Production([_if, expression, arrow, block, elif_def])
-if_def += Production([_if, expression, arrow, block, else_def])
-if_def += Production([_if, expression, arrow, block])
+if_def += Production([_if, expression, arrow, block, elif_def], True)
+if_def += Production([_if, expression, arrow, block, else_def], True)
+if_def += Production([_if, expression, arrow, block], True)
 
-elif_def += Production([_elif, expression, arrow, block, elif_def])
-elif_def += Production([_elif, expression, arrow, block, else_def])
-elif_def += Production([_elif, expression, arrow, block])
+elif_def += Production([_elif, expression, arrow, block, elif_def], True)
+elif_def += Production([_elif, expression, arrow, block, else_def], True)
+elif_def += Production([_elif, expression, arrow, block], True)
 
-else_def += Production([_else, arrow, block])
+else_def += Production([_else, arrow, block], True)
 
-class_def += Production([_class, name, _is, name, arrow, block])
+class_def += Production([_class, name, _is, name, arrow, block], True)
 
-while_def += Production([_while, expression, arrow, block])
+while_def += Production([_while, expression, arrow, block], True)
 
 return_type += Production([void])
 return_type += Production([_type])
