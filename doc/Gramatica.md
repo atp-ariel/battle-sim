@@ -24,8 +24,8 @@ simple_stat ->  assign
             |   'continue'
             |   expressions
 
-func_def ->     'function' NAME '(' params ')' '->' block
-            |   'function' NAME '(' ')' '->' block
+func_def ->     'function' return_type NAME '(' params ')' '->' block
+            |   'function' return_type NAME '(' ')' '->' block
 
 if_def ->   'if' expression '->' block elif_def
         |   'if' expression '->' block else_def
@@ -40,6 +40,9 @@ else_def -> 'else' '->' block
 class_def ->    'class' NAME 'is' NAME '->' block
 
 while_def ->    'while' expression '->' block
+
+return_type ->  "void"
+            |   type
 
 type ->     'number' 
         |   NAME

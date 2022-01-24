@@ -77,8 +77,8 @@ false = Terminal("False")
 none = Terminal("None")
 number = Terminal("NUMBER")
 _while = Terminal("while", "while")
-
-
+void = Terminal("void", "void")
+return_type = NonTerminal("return_type")
 
 
 bs_file += Production([statements, eof])
@@ -104,8 +104,8 @@ simple_stat += Production([_break])
 simple_stat += Production([_continue])
 simple_stat += Production([expressions])
 
-func_def += Production([function, name, lparent, params, rparent, arrow, block])
-func_def += Production([function, name, lparent, rparent, arrow, block])
+func_def += Production([function, _type, name, lparent, params, rparent, arrow, block])
+func_def += Production([function, _type, name, lparent, rparent, arrow, block])
 
 if_def += Production([_if, expression, arrow, block, elif_def])
 if_def += Production([_if, expression, arrow, block, else_def])
@@ -120,6 +120,9 @@ else_def += Production([_else, arrow, block])
 class_def += Production([_class, name, _is, name, arrow, block])
 
 while_def += Production([_while, expression, arrow, block])
+
+return_type += Production([void])
+return_type += Production([_type])
 
 _type += Production([tnumber])
 _type += Production([name])
