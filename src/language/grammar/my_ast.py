@@ -1,6 +1,7 @@
 from abc import ABC,abstractmethod
 from dataclasses import dataclass
 from typing import  List
+import enum
 
 @dataclass
 class Node(ABC):
@@ -136,51 +137,29 @@ class Continue(Stament):
 #endregion
 
 #region BinaryExpressions
+class Operator(enum.Enum):
+    Add: enum.auto()
+    Sub: enum.auto()
+    Mult: enum.auto()
+    Div: enum.auto()
+    Mod: enum.auto()
+    And: enum.auto()
+    Or: enum.auto()
+    Eq: enum.auto()
+    Neq: enum.auto()
+    Gte: enum.auto()
+    Lte: enum.auto()
+    Gt: enum.auto()
+    Lt: enum.auto()
+
+
 class BinaryExpression(Expression):
+    op: Operator
     left : Expression
     right : Expression
     
     def validate(self, context: Context) -> bool:
         return self.left.validate(context) and self.right.validate(context)
-    
-class Add(BinaryExpression):
-    pass
-
-class Sub(BinaryExpression):
-    pass
-
-class Mult(BinaryExpression):
-    pass
-
-class Div(BinaryExpression):
-    pass
-
-class Mod(BinaryExpression):
-    pass
-
-class And(BinaryExpression):
-    pass
-
-class Or(BinaryExpression):
-    pass
-
-class Eq(BinaryExpression):
-    pass
-
-class Neq(BinaryExpression):
-    pass
-
-class Gte(BinaryExpression):
-    pass
-
-class Lte(BinaryExpression):
-    pass
-
-class Gt(BinaryExpression):
-    pass
-
-class Lt(BinaryExpression):
-    pass
 
 #endregion
 
