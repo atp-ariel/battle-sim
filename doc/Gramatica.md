@@ -1,28 +1,24 @@
 # Battle Script grammar
 
 ```
-bs_file ->  statements EOF                                      *
-        |   EOF                                                 *
+bs_file ->  classes statements EOF                                      *
+        |   EOF
 
-statements ->   statement statements                           
+classes -> class_def NEWLINE classes
+        |  class_def                                                *
+
+statements ->   statement NEWLINE statements                           
             |   statement
 
-statement ->    simple_stmts
-            |   complex_stmt
-
-simple_stmts -> simple_stat NEWLINE simple_stmts
-            |   simple_stat
-
-complex_stmt -> func_def
+statement ->    func_def
             |   if_def
-            |   class_def
             |   while_def
-
-simple_stat ->  assign
+            |   assign
             |   return_stat
             |   'break'                                         *                
             |   'continue'                                      *
             |   expressions
+
 
 func_def ->     'function' return_type NAME '(' params ')' '->' block       *
             |   'function' return_type NAME '(' ')' '->' block              *
@@ -105,9 +101,6 @@ primary ->  primary '.' NAME            *
         |   primary '(' args ')'        *
         |   primary '(' ')'             *
         |   atom
-
-args -> expression ',' args
-    |   expression
 
 atom -> NAME                            *
     |   'True'                          *

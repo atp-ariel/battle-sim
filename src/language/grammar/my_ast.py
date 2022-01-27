@@ -3,14 +3,23 @@ from dataclasses import dataclass
 from typing import  List
 import enum
 
+class Context:
+    pass
+
 @dataclass
 class Node(ABC):
     @abstractmethod
     def validate(self, context: Context) -> bool:
         pass
+    
+class Statement(Node):
+    pass
+
+class Expression(Node):
+    pass
 
 class BsFile(Node):
-    staments: List[Stament]
+    staments: List[Statement]
     
     def validate(self, context: Context) -> bool:
         for st in self.statements:
@@ -18,17 +27,13 @@ class BsFile(Node):
                 return False
         return True
 
-class Stament(Node):
-    pass
-
-class Expression(Node):
-    pass
-
-#region Staments    
-class FuncDef(Stament):
+#region Statements    
+class FuncDef(Statement):
     name: str
-    args : List[str]
-    body : List[Stament]
+    return_type: str
+    arg_names: List[str]
+    arg_types: List[str]
+    body : List[Statement]
     
     def validate(self, context: Context) -> bool:
         inner_context = context.create_child_context()
@@ -42,9 +47,9 @@ class FuncDef(Stament):
         
         return context.define_fun(self.name, self.args)
 
-class If(Stament):
+class If(Statement):
     condition : Expression
-    body : List[Stament]
+    body : List[Statement]
     
     def validate(self, context: Context) -> bool:
         inner_context = context.create_child_context()
@@ -58,9 +63,9 @@ class If(Stament):
         
         return True      
 
-class Branch(Stament):
+class Branch(Statement):
     ifs : List[If]
-    else_body : List[Stament]
+    else_body : List[Statement]
     
     def validate(self, context)->bool:
         
@@ -85,16 +90,16 @@ class MethodDef(Node):
     return_type: str
     arg_names: List[str]
     arg_types: List[str]
-    body: List[Stament]
+    body: List[Statement]
 
 class ClassDef(Node):
     name: str
     attributes: List[AttrDef]
     methods: List[MethodDef]
 
-class WhileDef(Stament):
+class WhileDef(Statement):
     condition : Expression
-    body : List[Stament]
+    body : List[Statement]
     
     def validate(self, context) -> bool:
         if not self.condition.validate(context):
@@ -109,7 +114,8 @@ class WhileDef(Stament):
         return True
         
     
-class Assign(Stament):
+class Assign(Statement):
+    type : str
     name: str
     expression: Expression
     
@@ -120,50 +126,51 @@ class Assign(Stament):
             return False
         return True
     
-class Return(Stament):
+class Return(Statement):
     expression : Expression
     
     def validate(self, context : Context) -> bool:
         return expression.validate(context)
         
-class Break(Stament):
+class Break(Statement):
     def validate(self, context: Context) -> bool:
         return True
 
-class Continue(Stament):
+class Continue(Statement):
     def validate(self, context: Context) -> bool:
         return True
 
 #endregion
 
 #region BinaryExpressions
-class Operator(enum.Enum):
-    Add: enum.auto()
-    Sub: enum.auto()
-    Mult: enum.auto()
-    Div: enum.auto()
-    Mod: enum.auto()
-    And: enum.auto()
-    Or: enum.auto()
-    Eq: enum.auto()
-    Neq: enum.auto()
-    Gte: enum.auto()
-    Lte: enum.auto()
-    Gt: enum.auto()
-    Lt: enum.auto()
-
 
 class BinaryExpression(Expression):
-    op: Operator
+    op: str
     left : Expression
     right : Expression
     
     def validate(self, context: Context) -> bool:
         return self.left.validate(context) and self.right.validate(context)
+    
+class AritmeticBinaryExpression(BinaryExpression):
+    pass
+        
+    
+class TernaryExpression(Expression):
+    left : Expression
+    condition : Expression
+    right : Expression
+    
+    def validate(self, context:Context)->bool:
+        return self.condition.validate(context) and self.left.validate(context) and self.right.validate(context)
 
 #endregion
 
 #region AtomicExpressions
+class Inversion(Expression):
+    expression : Expression
+
+
 class FuncCall(Expression):
     name : str
     args: List[Expression]
@@ -186,5 +193,63 @@ class Number(Expression):
 
     def validate(self, context: Context) -> bool:
         return True
+    
+class Bool(Expression):
+    value: str
+
+    def validate(self, context: Context) -> bool:
+        return True
+    
+class MyList(Expression):
+    inner_list : List[Expression]
 
 #endregion
+
+@dataclass
+class ReturnType:
+    type : str
+    
+@dataclass
+class Type:
+    type : str
+
+@dataclass    
+class Params:
+    type : str
+    name : str
+    params : Params
+
+@dataclass    
+class Block:
+    statements: List[Statement]
+
+@dataclass    
+class Statements:
+    statement : Statement
+    statements : Staments 
+
+@dataclass
+class ElseDef:
+    body : List[Statement]
+
+@dataclass    
+class ElifDef:
+    expression : Expression
+    body : Block
+    elif_def : ElifDef
+    else_def : ElseDef
+
+@dataclass    
+class Expressions:
+    expression : expression
+    expressions : Expressions 
+
+@dataclass    
+class ComparePar:
+    op : str
+    expression : Expression
+
+@dataclass    
+class Primary:
+    primary : Primary
+    extra : object

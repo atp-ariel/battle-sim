@@ -180,7 +180,7 @@ class TableActionGoTo:
             for l in lookahead_item:
                 if l in state_action:
                     raise Exception('Conflicto Shift-Reduce')
-                state_action[l.name]=('R',lookahead_item[l].production.head.name,len(lookahead_item[l].production))
+                state_action[l.name]=('R',lookahead_item[l].production.id)
                 if l.name=='$' and lookahead_item[l].production.head.name=='S':
                     state_action[l.name]=('OK',)
                     
@@ -195,7 +195,8 @@ class TableActionGoTo:
             json.dump(go_to, fout)
             
 class Parser:
-    def __init__(self,action,go_to):
+    def __init__(self,grammar:Grammar,action,go_to):
+        self.grammar=grammar
         self.action=action
         self.go_to=go_to
         
@@ -203,6 +204,7 @@ class Parser:
         
         tokens_stack=[]
         states_stack=[0]
+        nodes=[]
         
         while len(secuence)>0 or len(tokens_stack)>0:
             
@@ -224,7 +226,10 @@ class Parser:
                 tokens_stack.append(token.name)
                 secuence.popleft()
             else:
-                out=do[2]
+                prod=self.grammar.P[do[1]]
+                if prod.func_ast is not None:
+                    prod.func_ast(tokens_stack,nodes)
+                out=len(prod)                
                 while out!=0:
                     tokens_stack.pop()
                     states_stack.pop()
@@ -232,10 +237,10 @@ class Parser:
                 
                 
                 state_go_to=go_to[states_stack[len(states_stack)-1]]
-                if do[1] not in state_go_to:
+                if prod.head.name not in state_go_to:
                     raise Exception('Cadena invalida')
-                tokens_stack.append(do[1])
-                states_stack.append(state_go_to[do[1]])
+                tokens_stack.append(prod.head.name)
+                states_stack.append(state_go_to[prod.head.name])
                     
                         
                     
@@ -277,7 +282,7 @@ file=open("go_to.json")
 go_to=json.load(file)
 file.close()
 
-parser=Parser(action, go_to)
+parser=Parser(g,action, go_to)
 
 secuence=deque([Terminal('int'),Terminal('+'),Terminal('int'),Terminal('*'),Terminal('int'),Terminal('$')])
 
