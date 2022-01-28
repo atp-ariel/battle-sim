@@ -1,11 +1,11 @@
 # Battle Script grammar
 
 ```
-bs_file ->  classes statements EOF     build_program
-        |   EOF                        build_program
+bs_file ->  classes NEWLINE statements EOF     build_program
+        |   EOF                       
 
-classes -> class_def NEWLINE classes
-        |  class_def                                                
+classes -> class_def NEWLINE classes         build_classes1
+        |  class_def                         build_classes2                                         
 
 statements ->   statement NEWLINE statements      build_statements1
             |   statement                         build_statements2
@@ -33,15 +33,32 @@ elif_def ->     'elif' expression '->' block elif_def                       buil
 
 else_def -> 'else' '->' block                                               build_else_def
 
-class_def ->    'class' NAME 'is' NAME '->' block
+class_def ->    'class' NAME 'is' NAME '->' '{' constructor NEWLINE functions '}'   build_class_def1
+class_def ->    'class' NAME 'is' NAME '->' '{' constructor '}'                     build_class_def2
 
-while_def ->    'while' expression '->' block                               build_while_def
 
-return_type ->  "void"                        build_return_type
+functions -> func_def \n functions                     build_functions1
+           | func_def                                  build_functions2
+
+constructor -> 'constructor' '(' params ')' '->' '{' attributes '}'              build_constructor1
+constructor -> 'constructor' '(' ')' '->' '{' attributes '}'                     build_constructor2
+constructor -> 'constructor' '(' ')' '->' '{' '}'                                build_constructor3
+
+
+attributes -> attr_def \n attributes             build_attributes1
+            | attr_def                           build_attributes2
+
+attr_def ->  type 'this' '.' NAME '=' expression           build_attr_def
+
+
+while_def ->    'while' expression '->' block              build_while_def
+
+return_type ->  'void'                        build_return_type
             |   type                          build_return_type
 
-type ->     'number'        build_type
-        |   NAME            build_type   
+type ->   'number'        build_type
+      |   'bool'          build_type
+      |   NAME            build_type
 
 assign ->  type NAME '=' expression                                         build_assign
 

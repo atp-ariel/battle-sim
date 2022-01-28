@@ -1,7 +1,6 @@
 from abc import ABC,abstractmethod
 from dataclasses import dataclass
-from typing import  List
-import enum
+from typing import List
 
 class Context:
     pass
@@ -85,15 +84,9 @@ class AttrDef(Node):
     type: str
     init: Expression
 
-class MethodDef(Node):
-    name: str
-    return_type: str
-    arg_names: List[str]
-    arg_types: List[str]
-    body: List[Statement]
-
 class ClassDef(Node):
     name: str
+    parent : str
     attributes: List[AttrDef]
     methods: List[MethodDef]
 
@@ -245,7 +238,23 @@ class ComparePar:
     op : str
     expression : Expression
 
-class Primary:
-    expression : Expression
-    name : str
-    args : List[Expression]
+@dataclass
+class Functions:
+    function : FuncDef
+    functions : Functions
+
+@dataclass
+class Attributes:
+    attr_def: AttrDef
+    attributes: Attributes
+
+@dataclass    
+class Constructor:
+    arg_names: List[str]
+    arg_types: List[str]
+    attributes : List[AttrDef]
+
+@dataclass
+class Classes:
+    class_def : ClassDef
+    classes : Classes

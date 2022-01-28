@@ -6,6 +6,12 @@ def obtain_statements(list_statements:List,statements:Statements):
         obtain_statements(list_statements, statements.statements)
     return list_statements
 
+def obtain_classes(list_classes:List, classes:Classes):
+    list_classes.append(classes.class_def)
+    if classes.class_def is not None:
+        obtain_classes(list_classes, classes.classes)
+    return list_classes
+
 def obtain_params(list_params:List,params:Params):
     list_params.append((params.name,params.type))
     if params.params is not None:
@@ -25,9 +31,22 @@ def obtain_expressions(list_expressions:List,expressions:Expressions):
         obtain_expressions(list_expressions, expressions.expressions)
     return list_expressions
 
+def obtain_functions(list_func:List,functions:Functions):
+    list_func.append(functions.function)
+    if functions.functions is not None:
+        obtain_functions(list_func, functions.function)
+    return list_func
+
+def obtain_attributes(list_attr:List,attributes:Attributes):
+    list_attr.append(attributes.attr_def)
+    if attributes.attributes is not None:
+        obtain_functions(list_attr, attributes.attributes)
+    return list_attr
+
 def build_program(tokens:List[str],nodes:List):
     statements=nodes.pop()
-    bs_file=BsFile(obtain_statements([],statements))
+    classes=nodes.pop()
+    bs_file=BsFile(obtain_classes([],classes),obtain_statements([],statements))
     nodes=[bs_file]
     
 def build_statements1(tokens:List[str],nodes:List):
@@ -77,7 +96,7 @@ def build_func_def1(tokens:List[str],nodes:List):
     block=nodes.pop()
     params=obtain_params([], nodes.pop())
     args_name=[t[0] for t in params]
-    args_type=[t[0] for t in params]
+    args_type=[t[1] for t in params]
     return_type=nodes.pop()
     func_def=FuncDef(name,return_type.type,args_name,arg_type,block.statements)
     nodes.append(func_def)
@@ -291,3 +310,92 @@ def build_list1(tokens:List[str],nodes:List):
 def build_list2(tokens:List[str],nodes:List):
     exp_list=MyList([])
     nodes.append(exp_list)
+    
+def build_functions1(tokens:List[str],nodes:List):
+    functions=nodes.pop()
+    func=nodes.pop()
+    
+    functions=Functions(func, functions)
+    
+    nodes.append(functions)
+    
+def build_functions2(tokens:List[str],nodes:List):
+    func=nodes.pop()
+    
+    functions=Functions(func, None)
+    
+    nodes.append(function)
+
+def build_attr_def(tokens:List[str],nodes:List):
+    exp=nodes.pop()
+    type=nodes.pop()
+    name=tokens[len(tokens)-3]
+    
+    attribute=AttrDef(name,type.type,exp)
+    
+    nodes.append(attribute)
+    
+def build_attributes1(tokens:List[str],nodes:List):
+    attributes = nodes.pop()
+    attr_def=nodes.pop()
+    
+    attributes=Attributes(attr_def, attributes)
+    
+    nodes.append(attributes)
+
+def build_attributes2(tokens:List[str],nodes:List):
+    attr_def=nodes.pop()
+    
+    attributes=Attributes(attr_def, None)
+    
+    nodes.append(attributes)
+    
+def build_constructor1(tokens:List[str],nodes:List):
+    attributes=nodes.pop()
+    params=obtain_params([], nodes.pop())
+    args_names=[t[0] for t in params]
+    args_types=[t[1] for t in params]
+    
+    constructor=Constructor(arg_names, arg_types, obtain_attributes([], attributes))
+    
+    nodes.append(constructor)
+    
+def build_constructor2(tokens:List[str],nodes:List):
+    attributes=nodes.pop()
+    
+    constructor=Constructor([], [], obtain_attributes([], attributes))
+    
+    nodes.append(constructor)
+    
+def build_constructor3(tokens:List[str],nodes:List):
+    nodes.append(Constructor([], [], []))    
+
+def build_class_def1(tokens:List[str],nodes:List):
+    functions=nodes.pop()
+    constructor=nodes.pop()
+    name=tokens[len(tokens)-8]
+    parent_name=tokens[len(tokens)-6]
+    
+    class_def=ClassDef(parent,name,constructor.attributes,obtain_functions([],functions))
+    
+    nodes.append(class_def)
+    
+def build_class_def2(tokens:List[str],nodes:List):
+    constructor=nodes.pop()
+    name=tokens[len(tokens)-8]
+    parent_name=tokens[len(tokens)-6]
+    
+    class_def=ClassDef(parent,name,constructor.attributes,[])
+    
+    nodes.append(class_def)
+    
+def build_classes1(tokens:List[str],nodes:List):
+    classes=nodes.pop()
+    class_def=nodes.pop()
+    classes=Classes(class_def, classes)
+    nodes.append(classes)
+    
+def build_classes2(tokens:List[str],nodes:List):
+    class_def=nodes.pop()
+    classes=Classes(class_def, None)
+    nodes.append(class_def) 
