@@ -25,12 +25,6 @@ def obtain_expressions(list_expressions:List,expressions:Expressions):
         obtain_expressions(list_expressions, expressions.expressions)
     return list_expressions
 
-def obtain_extras(list_extras:List,primary:Primary):
-    list_extras.append(primary.extra)
-    if primary.primary is not None:
-        obtain_extras(list_extras, primary.primary)
-    return list_extras
-
 def build_program(tokens:List[str],nodes:List):
     statements=nodes.pop()
     bs_file=BsFile(obtain_statements([],statements))
@@ -179,10 +173,14 @@ def build_assign(tokens:List[str],nodes:List):
     
     nodes.append(assign)
     
-def build_return(tokens:List[str],nodes:List):
+def build_return1(tokens:List[str],nodes:List):
     expression=nodes.pop()
     return_stm=Return(expression)
     nodes.append(return_stm)
+    
+def build_return2(tokens:List[str],nodes:List):
+    return_stm=Return(None)
+    nodes.append(return_stm)    
     
 def build_expressions1(tokens:List[str],nodes:List):
     expressions=nodes.pop()
@@ -190,7 +188,7 @@ def build_expressions1(tokens:List[str],nodes:List):
     expressions=Expressions(expression, expressions)
     nodes.append(expressions)
     
-def build_enxpressions2(tokens:List[str],nodes:List):
+def build_expressions2(tokens:List[str],nodes:List):
     expression=nodes.pop()
     expressions=Expressions(expression, None)
     nodes.append(expression)
@@ -248,7 +246,30 @@ def build_aritmetic_expression(tokens:List[str],nodes:List):
     
     aritexp=AritmeticBinaryExpression(op,left,right)
     
-    nodes.append(binexp)  
+    nodes.append(binexp)
+    
+def build_primary1(tokens:List[str],nodes:List):
+    exp=nodes.pop()
+    name=tokens[len(tokens)-1]
+    
+    primary=Primary(exp,name,None)
+    
+    nodes.append(primary)
+    
+def build_primary2(tokens:List[str],nodes:List):
+    expressions=nodes.pop()
+    exp=nodes.pop()
+    
+    primary=Primary(exp,None,obtain_expressions([],expressions))
+    
+    nodes.append(primary)
+
+def build_primary3(tokens:List[str],nodes:List):
+    exp=nodes.pop()
+    
+    primary=Primary(exp,None,[])
+    
+    nodes.append(primary) 
 
 def build_Variable(tokens:List[str],nodes:List):
     nodes.append(Variable(tokens[len(tokens)-1]))
@@ -259,8 +280,14 @@ def build_Bool(tokens:List[str],nodes:List):
 def build_Number(tokens:List[str],nodes:List):
     nodes.append(Number(tokens[len(tokens)-1]))
     
-def build_List1(tokens:List[str],nodes:List):
+def build_None(tokens:List[str],nodes:List):
+    nodes.append(MyNone())
+    
+def build_list1(tokens:List[str],nodes:List):
     expressions=nodes.pop()
     exp_list=MyList(obtain_expressions([],expressions))
     nodes.append(exp_list)
     
+def build_list2(tokens:List[str],nodes:List):
+    exp_list=MyList([])
+    nodes.append(exp_list)

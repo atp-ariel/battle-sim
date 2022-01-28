@@ -1,114 +1,114 @@
 # Battle Script grammar
 
 ```
-bs_file ->  classes statements EOF                                      *
-        |   EOF
+bs_file ->  classes statements EOF     build_program
+        |   EOF                        build_program
 
 classes -> class_def NEWLINE classes
-        |  class_def                                                *
+        |  class_def                                                
 
-statements ->   statement NEWLINE statements                           
-            |   statement
+statements ->   statement NEWLINE statements      build_statements1
+            |   statement                         build_statements2
 
 statement ->    func_def
             |   if_def
             |   while_def
             |   assign
             |   return_stat
-            |   'break'                                         *                
-            |   'continue'                                      *
+            |   'break'                            build_breack                             
+            |   'continue'                         build_continue             
             |   expressions
 
 
-func_def ->     'function' return_type NAME '(' params ')' '->' block       *
-            |   'function' return_type NAME '(' ')' '->' block              *
+func_def ->     'function' return_type NAME '(' params ')' '->' block       build_func_def1
+            |   'function' return_type NAME '(' ')' '->' block              build_func_def2
 
-if_def ->   'if' expression '->' block elif_def                             *
-        |   'if' expression '->' block else_def                             *
-        |   'if' expression '->' block                                      *
+if_def ->   'if' expression '->' block elif_def                             build_if_def1
+        |   'if' expression '->' block else_def                             build_if_def2
+        |   'if' expression '->' block                                      build_if_def3
 
-elif_def ->     'elif' expression '->' block elif_def                       *
-            |   'elif' expression '->' block else_def                       *
-            |   'elif' expression '->' block                                *
+elif_def ->     'elif' expression '->' block elif_def                       build_elif_def1
+            |   'elif' expression '->' block else_def                       build_elif_def2
+            |   'elif' expression '->' block                                build_elif_def3
 
-else_def -> 'else' '->' block                                               *
+else_def -> 'else' '->' block                                               build_else_def
 
-class_def ->    'class' NAME 'is' NAME '->' block                           *
+class_def ->    'class' NAME 'is' NAME '->' block
 
-while_def ->    'while' expression '->' block                               *
+while_def ->    'while' expression '->' block                               build_while_def
 
-return_type ->  "void"
-            |   type
+return_type ->  "void"                        build_return_type
+            |   type                          build_return_type
 
-type ->     'number' 
-        |   NAME
+type ->     'number'        build_type
+        |   NAME            build_type   
 
-assign ->  type NAME '=' expression                                         *
+assign ->  type NAME '=' expression                                         build_assign
 
-return_stmt ->  'return' expression                                         *
-            |   'return'                                                    *
+return_stmt ->  'return' expression                                        build_return1
+            |   'return'                                                   build_return2
 
-block ->    NEWLINE "{" statements "}"                                      *
+block ->    NEWLINE "{" statements "}"   build_block
 
-params ->   type NAME ',' params                                           
-        |  type NAME                                                        
-
-
-expressions ->  expression ','  expressions                                 
-            |   expression
-
-expression ->   disjunction 'if' disjunction 'else' expression              *
-            |   disjunction                                                 *
-
-disjunction ->  conjunction 'or' disjunction                                *
-            | conjunction                                                   *
-
-conjunction ->  inversion 'and' conjunction                                 *
-            |   inversion                                                   *
-
-inversion ->    'not' inversion                                             *
-            |    comparision                                                *
+params ->   type NAME ',' params      build_params1
+        |  type NAME                  build_params2                                 
 
 
-comparision ->  sum compare_par
+expressions ->  expression ','  expressions               build_expressions1
+            |   expression                                build_expressions2
+
+expression ->   disjunction 'if' disjunction 'else' expression              build_ternary_expression
+            |   disjunction                                                 
+
+disjunction ->  conjunction 'or' disjunction                                build_disjunction
+            | conjunction                                                   
+
+conjunction ->  inversion 'and' conjunction                                 build_conjuction
+            |   inversion                                                   
+
+inversion ->    'not' inversion                                             build_inversion
+            |    comparision                                                
+
+
+comparision ->  sum compare_par                                            build_comparision
             |   sum
 
-compare_par ->  'eq' sum
-            |   'neq' sum
-            |   'lte' sum
-            |   'lt' sum
-            |   'gte' sum
-            |   'gt' sum
+compare_par ->  'eq' sum                        build_compare_par
+            |   'neq' sum                       build_compare_par
+            |   'lte' sum                       build_compare_par
+            |   'lt' sum                        build_compare_par
+            |   'gte' sum                       build_compare_par
+            |   'gt' sum                        build_compare_par
 
 
-sum ->  sum '+' term
-    |   sum '-' term
-    |   term
+sum ->  sum '+' term                            build_aritmetic_expression
+    |   sum '-' term                            build_aritmetic_expression
+    |   term 
 
-term -> term '*' factor
-    |   term '/' factor
-    |   term '%' factor
+term -> term '*' factor                         build_aritmetic_expression
+    |   term '/' factor                         build_aritmetic_expression
+    |   term '%' factor                         build_aritmetic_expression
     |   factor
 
 factor ->   '+' factor
         |   '-' factor
         |   pow
 
-pow ->  primary '^' factor              *
-    |   primary                         *
+pow ->  primary '^' factor              build_aritmetic_expression
+    |   primary
 
-primary ->  primary '.' NAME            *
-        |   primary '(' args ')'        *
-        |   primary '(' ')'             *
+primary ->  primary '.' NAME            build_primary1
+        |   primary '(' args ')'        build_primary2
+        |   primary '(' ')'             build_primary3
         |   atom
 
-atom -> NAME                            *
-    |   'True'                          *
-    |   'False'                         *
-    |   'None'                          *
-    |   NUMBER                          *
-    |   list                            *
+atom -> NAME                            build_Variable
+    |   'True'                          build_Bool
+    |   'False'                         build_Bool
+    |   'None'                          build_None
+    |   NUMBER                          build_Number
+    |   list
 
-list -> '[' expressions ']'             *
-    |   '[' ']'                         *
+list -> '[' expressions ']'             build_list1
+    |   '[' ']'                         build_list2
 ```

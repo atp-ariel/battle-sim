@@ -170,17 +170,10 @@ class TernaryExpression(Expression):
 class Inversion(Expression):
     expression : Expression
 
-
-class FuncCall(Expression):
+class Primary(Expression):
+    expression : Expression
     name : str
-    args: List[Expression]
-    
-    def validate(self, context: Context) -> bool:
-        for expr in self.args:
-            if not expr.validate(context):
-                return False
-
-        return context.check_fun(self.name, len(self.args))
+    args : List[Expression]
     
 class Variable(Expression):
     name : str
@@ -199,6 +192,9 @@ class Bool(Expression):
 
     def validate(self, context: Context) -> bool:
         return True
+    
+class MyNone(Expression):
+    value: str = 'None'    
     
 class MyList(Expression):
     inner_list : List[Expression]
@@ -249,7 +245,7 @@ class ComparePar:
     op : str
     expression : Expression
 
-@dataclass    
 class Primary:
-    primary : Primary
-    extra : object
+    expression : Expression
+    name : str
+    args : List[Expression]
