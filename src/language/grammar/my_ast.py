@@ -5,6 +5,7 @@ from typing import List
 class Context:
     pass
 
+
 @dataclass
 class Node(ABC):
     @abstractmethod

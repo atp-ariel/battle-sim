@@ -53,7 +53,7 @@ class Production:
     def __init__(self, symbols: List[Symbol], func_ast: Callable = None):
         self.symbols: List[Symbol] = symbols
         self.__head__: NonTerminal = None
-        self.id : int = -1
+        self.id: int = -1
         self.func_ast = func_ast
 
 

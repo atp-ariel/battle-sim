@@ -163,7 +163,7 @@ compare_par += Production([_gt, _sum])
 
 _sum += Production([_sum, plus, term])
 _sum += Production([_sum, minus, term])
-_sum += Production([ term])
+_sum += Production([term])
 
 term += Production([term, mul, factor])
 term += Production([term, div, factor])
