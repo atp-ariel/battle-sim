@@ -4,6 +4,7 @@ from .lexer import Lexer
 from .parser import Parser
 from .nfa import NFA, Handler, Match
 
+
 class Regex:
     def __init__(self, pattern: str):
         self.pattern : str = pattern

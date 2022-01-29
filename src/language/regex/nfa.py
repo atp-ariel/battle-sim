@@ -9,12 +9,11 @@ class State:
         self.transitions : Dict[str, State]= {} 
         self.name : str = name
         self.is_end : bool = False
-    
 
-    
+
 @dataclass
 class Match:
-    start: int 
+    start: int
     end: int
     value: str
 
@@ -60,7 +59,7 @@ class NFA:
 
         match = None
 
-        for i, c in enumerate(string): 
+        for i, c in enumerate(string):
             nstates = set()
             matched = False
             for s in states:
@@ -81,7 +80,7 @@ class NFA:
             for s in states:
                 if s.is_end:
                     matches.append(match)
-        
+
         m = []
 
         __max__ = matches[0] if len(matches) else None
@@ -92,10 +91,10 @@ class NFA:
             elif match.start != __max__.start:
                 m.append(__max__)
             __max__ = match
-        
+
         if __max__ not in m and __max__ is not None:
             m.append(__max__)
-            
+
         return m
 
 class Handler:
