@@ -45,7 +45,7 @@ class BSStaticObject(BSObject):
 class BSUnit(BSObject):
 
     @abstractmethod
-    def __init__(self, id: int, side, life_points: float, defense: float, attack: float, moral: float, ofensive: float, min_range: int, max_range:int, radio:int, vision:int, intelligence:float, recharge_turns:int, solidarity:bool, movil:bool):
+    def __init__(self, id: int, side, life_points: float, defense: float, attack: float, moral: float, ofensive: float, min_range: int, max_range: int, radio: int, vision: int, intelligence: float, recharge_turns: int, solidarity: bool, movil: bool):
         BSObject.__init__(self, id, life_points, defense)
         if not (radio >= 1 and radio <= 9):
             raise Exception('radio invalido')
@@ -92,7 +92,7 @@ class BSUnit(BSObject):
         return False
 
     # chequea si hay enemigos en rango moviendose a esa celda
-    def enemy_in_range(self, cell)-> Tuple[bool, Cell]:
+    def enemy_in_range(self, cell) -> Tuple[bool, Cell]:
 
         for k in range(self.min_range, self.max_range + 1):
 
@@ -122,7 +122,7 @@ class BSUnit(BSObject):
 
         return (False, None)
 
-    # detecta los enemigos de los que se puede estar en rango, aumentando del costo de moverse a esa celda 
+    # detecta los enemigos de los que se puede estar en rango, aumentando del costo de moverse a esa celda
     def in_range_of_enemy(self, cell, cost) -> int:
 
         for i in range(cell.row - self.vision, cell.row + self.vision + 1):
@@ -138,10 +138,10 @@ class BSUnit(BSObject):
                 if isinstance(self.map[i][j].bs_object, BSUnit) and self.map[i][j].bs_object.side != self.side:
                     enemy = self.map[i][j].bs_object
                     limits_max_range = (
-                        (enemy.cell.row - enemy.max_range,
-                        enemy.cell.col - enemy.max_range),
-                        (enemy.cell.row + enemy.max_range,
-                        enemy.cell.col + enemy.max_range)
+                        (enemy.cell.row - enemy.max_range, 
+                        enemy.cell.col - enemy.max_range), 
+                        (enemy.cell.row + enemy.max_range, 
+                        enemy.cell.col + enemy.max_range) 
                     )
                     limits_min_range = (
                         (enemy.cell.row - enemy.min_range,
@@ -158,7 +158,7 @@ class BSUnit(BSObject):
     def move_cost_calculate(self, cell, type):
         cost = 0
 
-        if cell.passable == 0 or cell.type != type or cell.bs_object is not None or abs(cell.heigth-self.cell.heigth) > 0.05:
+        if cell.passable == 0 or cell.type != type or cell.bs_object is not None or abs(cell.heigth - self.cell.heigth) > 0.05:
             return 1000000
 
         cost = 10-cell.passable/2
@@ -183,15 +183,15 @@ class BSUnit(BSObject):
         return cost
 
     def enemy_cost_calculate(self, enemy):
-        
+
         estimated_life_points = random.uniform(max(0, enemy.life_points - 10 + self.intelligence),
                                                enemy.life_points + 10 - self.intelligence)
-        estimated_defense = random.uniform(max(0, enemy.defense - 10 + self.intelligence), 
+        estimated_defense = random.uniform(max(0, enemy.defense - 10 + self.intelligence),
                                            enemy.defense + 10 - self.intelligence)
 
         return estimated_life_points / (self.attack / estimated_defense)
 
-    # detecta si un amigo pudiera ser afectado por el ataque    
+    # detecta si un amigo pudiera ser afectado por el ataque 
     def friend_in_danger(self, cell):
         for i in range(self.cell.row - 1, self.cell.row + 2):
             if i >= self.map.no_rows:
@@ -276,7 +276,7 @@ class BSUnit(BSObject):
 
         return attacked_enemy
 
-    #tomar danio
+    # tomar danio
     def take_damage(self, damage):
         self.life_points -= damage/(self.defense+self.moral)
 
@@ -416,4 +416,4 @@ class BSAirUnit(BSUnit):
         BSUnit.__init__(self,id,life_points,defense,side,attack,moral,ofensive,min_range,max_range,radio,vision,intelligence,recharge_turns,solidarity,movil)
 
     def put_in_cell(self, map, row, col):
-        BSUnit.put_in_cell(self,map, "air", row, col)
+        BSUnit.put_in_cell(self, map, "air", row, col)

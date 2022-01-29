@@ -2,7 +2,8 @@ from typing import List, Tuple
 from .token import Token, TokenType, TokenDefinition
 from ..regex import Match
 
-TOKENS : List[TokenDefinition]= [
+
+TOKENS: List[TokenDefinition] = [
     TokenDefinition(TokenType.Number, 1),
     TokenDefinition(TokenType.Name, 2),
     TokenDefinition(TokenType.Arrow, 1),
@@ -41,11 +42,12 @@ TOKENS : List[TokenDefinition]= [
     TokenDefinition(TokenType.false, 1),
     TokenDefinition(TokenType.none, 1),
     TokenDefinition(TokenType.void, 1),
-]  
+]
+
 
 class Tokenizer:
     def __call__(self, bs_content_file: str) -> List[Token]:
-        tokens : List[Token] = []
+        tokens: List[Token] = []
 
         matches = {}
         for token_def in TOKENS:
@@ -53,7 +55,7 @@ class Tokenizer:
         
         i = 0
         while i < len(bs_content_file):
-            token_in_i : List[Tuple[TokenDefinition, Match]] = []
+            token_in_i: List[Tuple[TokenDefinition, Match]] = []
 
             # Get all matches
             for k, v in matches.items():
@@ -70,4 +72,3 @@ class Tokenizer:
 
             i += 1
         return tokens           
-             

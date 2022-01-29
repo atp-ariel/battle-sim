@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from typing import  List
 import enum
 
+
 @dataclass
 class Node(ABC):
     @abstractmethod

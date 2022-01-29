@@ -1,7 +1,7 @@
-from dataclasses import dataclass
 from enum import Enum
-from typing import Generator
 from ..regex import Regex
+
+
 
 class TokenType(Enum):
     Number = Regex("(1|2|3|4|5|6|7|8|9)(0|1|2|3|4|5|6|7|8|9)*(\.)*(0|1|2|3|4|5|6|7|8|9)*")
@@ -48,13 +48,15 @@ class TokenType(Enum):
     none = Regex("None")
     void = Regex("void")
 
+
 class TokenDefinition:
     def __init__(self, ttype: TokenType, precendence: int):
-        self.type : TokenType = ttype
-        self.precendece : int = precendence
+        self.type: TokenType = ttype
+        self.precendece: int = precendence
 
     def __hash__(self):
         return self.precendece.__hash__() + self.type.value.nfa.start.name.__hash__()
+
 
 class Token:
     @property
@@ -62,9 +64,9 @@ class Token:
         return self.type.value
 
     def __init__(self, token_type: TokenType, lexeme: str, start: int, end: int):
-        self.type : TokenType = token_type
-        self.lexeme : str = lexeme
-        self.start : int = start
-        self.end : int = end
+        self.type: TokenType = token_type
+        self.lexeme: str = lexeme
+        self.start: int = start
+        self.end: int = end
     
     
