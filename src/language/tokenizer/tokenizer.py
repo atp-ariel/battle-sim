@@ -1,6 +1,7 @@
-from typing import List, Tuple
+from typing import  Iterable, List, Tuple
 from .token import Token, TokenType, TokenDefinition
 from ..regex import Match
+from collections import deque
 
 
 TOKENS: List[TokenDefinition] = [
@@ -46,7 +47,7 @@ TOKENS: List[TokenDefinition] = [
 
 
 class Tokenizer:
-    def __call__(self, bs_content_file: str) -> List[Token]:
+    def __call__(self, bs_content_file: str) -> Iterable[Token]:
         tokens: List[Token] = []
 
         matches = {}
@@ -71,4 +72,4 @@ class Tokenizer:
                 i = token.end
 
             i += 1
-        return tokens           
+        return deque(tokens)          
