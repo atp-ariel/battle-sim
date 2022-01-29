@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from typing import Callable, Dict, List, Set
 from .parser import ParseError
 
@@ -9,6 +10,14 @@ class State:
         self.name : str = name
         self.is_end : bool = False
     
+
+    
+@dataclass
+class Match:
+    start: int 
+    end: int
+    value: str
+
 class NFA:
     def __init__(self, start, end):
         self.start : State = start
@@ -42,6 +51,52 @@ class NFA:
             if s.is_end:
                 return True
         return False
+
+    def find_all(self, string: str) -> List[Match]:
+        matches = []
+
+        states = set()
+        self.addstate(self.start, states)
+
+        match = None
+
+        for i, c in enumerate(string): 
+            nstates = set()
+            matched = False
+            for s in states:
+                if c in s.transitions.keys():
+                    tstate = s.transitions[c]
+                    self.addstate(tstate, nstates)
+                    if not matched:
+                        match = Match(i, i, c) if match is None else Match(match.start, match.end + 1, match.value + c)
+                        matched = True
+                else:
+                    self.addstate(self.start, nstates)
+
+            if not matched:
+                match = None
+
+            states = nstates
+
+            for s in states:
+                if s.is_end:
+                    matches.append(match)
+        
+        m = []
+
+        __max__ = matches[0] if len(matches) else None
+
+        for match in matches:
+            if __max__ is None:
+                __max__ = match
+            elif match.start != __max__.start:
+                m.append(__max__)
+            __max__ = match
+        
+        if __max__ not in m and __max__ is not None:
+            m.append(__max__)
+            
+        return m
 
 class Handler:
     def __init__(self):
