@@ -89,7 +89,6 @@ class NonTerminal(Symbol):
         return self.productions[index]
 
     def add(self, prod: Production):
-        prod.id = len(self.productions)
         self.productions.append(prod)
         prod.__head__ = self
 
@@ -112,7 +111,10 @@ class Grammar:
 
 
     def __init__(self, exp: List[NonTerminal] = None):
-        self.exps = [ ] if exp is None else exp
+        self.exps = [ ] 
+        if exp is not None:
+            for e in exp:
+                self.add(e)
         self.exp_dict: Dict[str, NonTerminal] = {e.name: e for e in self.exps}
 
         self.T: Set[Terminal] = self.get_terminals()
@@ -125,6 +127,9 @@ class Grammar:
         raise AttributeError()
     
     def __iadd__(self, exp: NonTerminal):
+        self.add(exp)
+        return self
+    def add(self, exp: NonTerminal):
         if not isinstance(exp, NonTerminal):
             raise TypeError(f"Expression {exp} must be a non terminal")
 
@@ -137,6 +142,7 @@ class Grammar:
             self.N.add(exp)
         
         for p in exp.productions:
+            p.id = len(self.P)
             self.P.append(p)
             for sym in p.symbols:
                 if not sym.is_terminal:
@@ -146,7 +152,6 @@ class Grammar:
                 else: 
                     continue
 
-        return self
 
     def get_terminals(self) -> Set[Terminal]:
         terminals = set()

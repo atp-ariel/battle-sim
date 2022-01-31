@@ -13,6 +13,7 @@ statements ->   statement NEWLINE statements      build_statements1
 statement ->    func_def
             |   if_def
             |   while_def
+            |   decl
             |   assign
             |   return_stat
             |   'break'                            build_breack                             
@@ -34,15 +35,15 @@ elif_def ->     'elif' expression '->' block elif_def                       buil
 else_def -> 'else' '->' block                                               build_else_def
 
 class_def ->    'class' NAME 'is' NAME '->' '{' constructor NEWLINE functions '}'   build_class_def1
-class_def ->    'class' NAME 'is' NAME '->' '{' constructor '}'                     build_class_def2
+        |       'class' NAME 'is' NAME '->' '{' constructor '}'                     build_class_def2
 
 
 functions -> func_def \n functions                     build_functions1
            | func_def                                  build_functions2
 
 constructor -> 'constructor' '(' params ')' '->' '{' attributes '}'              build_constructor1
-constructor -> 'constructor' '(' ')' '->' '{' attributes '}'                     build_constructor2
-constructor -> 'constructor' '(' ')' '->' '{' '}'                                build_constructor3
+             | 'constructor' '(' ')' '->' '{' attributes '}'                     build_constructor2
+             | 'constructor' '(' ')' '->' '{' '}'                                build_constructor3
 
 
 attributes -> attr_def \n attributes             build_attributes1
@@ -60,7 +61,10 @@ type ->   'number'        build_type
       |   'bool'          build_type
       |   NAME            build_type
 
-assign ->  type NAME '=' expression                                         build_assign
+assign -> NAME '=' expressopm
+
+decl ->  type NAME '=' expression                                         build_assign
+     | type NAME
 
 return_stmt ->  'return' expression                                        build_return1
             |   'return'                                                   build_return2
@@ -118,6 +122,9 @@ primary ->  primary '.' NAME            build_primary1
         |   primary '(' args ')'        build_primary2
         |   primary '(' ')'             build_primary3
         |   atom
+
+args -> expression ',' args
+      | expression
 
 atom -> NAME                            build_Variable
     |   'True'                          build_Bool
