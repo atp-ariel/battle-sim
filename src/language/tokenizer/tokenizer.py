@@ -52,7 +52,7 @@ class Tokenizer:
 
         matches = {}
         for token_def in TOKENS:
-            matches[token_def] = token_def.type.value.find_all(bs_content_file)
+            matches[token_def] = token_def.type.value[0].find_all(bs_content_file)
         
         i = 0
         while i < len(bs_content_file):
