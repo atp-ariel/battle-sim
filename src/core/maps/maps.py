@@ -1,9 +1,9 @@
 from abc import ABC, abstractclassmethod
-
+from typing import List
 
 class Cell:
 
-    def __init__(self, passable, type, row, column, heigth):
+    def __init__(self, passable : float, type : string, row : int, column: int, heigth: float):
         self.passable = passable
         self.type = type
         self.row = row
@@ -15,7 +15,7 @@ class Cell:
 class Map(ABC):
 
     @abstractclassmethod
-    def __init__(self, no_rows, no_columns, sides):
+    def __init__(self, no_rows : int, no_columns:int, sides:List):
         self.no_rows = no_rows
         self.no_columns = no_columns
         self.sides = sides

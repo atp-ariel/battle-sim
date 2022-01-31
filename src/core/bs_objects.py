@@ -12,7 +12,7 @@ class BSObject(ABC):
         self.life_points = life_points
         self.defense = defense
         self.map = None
-        self.cell = None
+        self.cell : Cell = None
 
     # poner en celda el objeto
     def put_in_cell(self, map: Map, type: str, row: int, col: int):
@@ -156,7 +156,6 @@ class BSUnit(BSObject):
 
     # calcular el costo de moverse a la celda
     def move_cost_calculate(self, cell, type):
-        cost = 0
 
         if cell.passable == 0 or cell.type != type or cell.bs_object is not None or abs(cell.heigth - self.cell.heigth) > 0.05:
             return 1000000
@@ -323,7 +322,7 @@ class BSUnit(BSObject):
                     position = positions[randint]
                     positions.pop(randint)
 
-                    if self.map[self.cell.row+ self.eposition[0]][self.cell.col+position[1]].bs_object != None:
+                    if self.map[self.cell.row + position[0]][self.cell.col+position[1]].bs_object != None:
                         bs_object = self.map[self.cell.row +
                                              position[0]][self.cell.col+position[1]]
                         bs_object.take_damage((self.attack+self.moral)*4/5)
@@ -343,10 +342,10 @@ class BSUnit(BSObject):
                     position = positions[randint]
                     positions.pop(randint)
 
-                    if self.map[self.cell.row + self.eposition[0]][self.cell.col+position[1]].bs_object != None:
+                    if self.map[self.cell.row + position[0]][self.cell.col+position[1]].bs_object != None:
                         bs_object = self.map[self.cell.row +
                                              position[0]][self.cell.col+position[1]]
-                        bs_object.take_damage((self.attack+self.moral)*4/5)
+                        bs_object.take_damage((self.attack+self.moral+self.cell.passable)*4/5)
                         cells_to_attack -= 1
 
                         if bs_object is BSUnit and bs_object.life_points <= 0:
@@ -361,15 +360,18 @@ class BSUnit(BSObject):
         cell.bs_object = self
 
     # turno de la unidad
-    def turn(self, type):
+    def turn(self, type_unit):
 
-        enemy = self.enemy_to_attack()
-        if enemy != None and self.turns_recharging == 0:
+        enemy=None
+        if self.turns_recharging == 0:
+            enemy = self.enemy_to_attack()
+        else:
+            self.turns_recharging -= 1
+            
+        if enemy != None:
             self.attack_enemy(enemy)
             self.turns_recharging = self.recharge_turns
         else:
-            if self.turns_recharging != 0:
-                self.turns_recharging -= 1
             cost = 10000
             cell=self.cell
             for i in range(self.cell.row-1, self.cell.row+2):
@@ -382,12 +384,13 @@ class BSUnit(BSObject):
                         break
                     if j < 0 or (i == self.cell.row and j == self.cell.col):
                         continue
-                    new_cost = self.move_cost_calculate(self.map[i][j], type)
+                    new_cost = self.move_cost_calculate(self.map[i][j], type_unit)
                     if new_cost < cost:
                         cost = new_cost
                         cell = self.map[i][j]
             if cost < 10000:
                 self.move_to_cell(cell)
+                self.visited_cells.add(cell)
 
 class BSLandUnit(BSUnit):
     def __init__(self, id, life_points, defense, side, attack, moral, ofensive,min_range, max_range, radio, vision, intelligence, recharge_turns, solidarity, movil):

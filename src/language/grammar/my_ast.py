@@ -5,7 +5,6 @@ from typing import List
 class Context:
     pass
 
-
 @dataclass
 class Node(ABC):
     @abstractmethod
@@ -18,7 +17,39 @@ class Statement(Node):
 class Expression(Node):
     pass
 
+class FuncDef(Statement):
+    name: str
+    return_type: str
+    arg_names: List[str]
+    arg_types: List[str]
+    body : List[Statement]
+    
+    def validate(self, context: Context) -> bool:
+        inner_context = context.create_child_context()
+        
+        for arg in self.args:
+            inner_context.define_var(arg)
+        
+        for st in body:
+            if not st.validate(inner_context):
+                return False    
+        
+        return context.define_fun(self.name, self.args)
+
+class AttrDef(Node):
+    name: str
+    type: str
+    init: Expression
+
+class ClassDef(Node):
+    name: str
+    parent : str
+    attributes: List[AttrDef]
+    methods: List[FuncDef]
+
+
 class BsFile(Node):
+    classes: List[ClassDef]
     staments: List[Statement]
     
     def validate(self, context: Context) -> bool:
@@ -207,7 +238,7 @@ class Type:
 class Params:
     type : str
     name : str
-    params : Params
+    params : 'Params'
 
 @dataclass    
 class Block:
@@ -216,7 +247,7 @@ class Block:
 @dataclass    
 class Statements:
     statement : Statement
-    statements : Staments 
+    statements : 'Statements' 
 
 @dataclass
 class ElseDef:
@@ -232,7 +263,7 @@ class ElifDef:
 @dataclass    
 class Expressions:
     expression : expression
-    expressions : Expressions 
+    expressions : 'Expressions' 
 
 @dataclass    
 class ComparePar:
@@ -242,12 +273,12 @@ class ComparePar:
 @dataclass
 class Functions:
     function : FuncDef
-    functions : Functions
+    functions : 'Functions'
 
 @dataclass
 class Attributes:
     attr_def: AttrDef
-    attributes: Attributes
+    attributes: 'Attributes'
 
 @dataclass    
 class Constructor:
@@ -258,4 +289,4 @@ class Constructor:
 @dataclass
 class Classes:
     class_def : ClassDef
-    classes : Classes
+    classes : 'Classes'
