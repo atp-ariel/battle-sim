@@ -1,0 +1,25 @@
+{
+    "name": "bs-syntax",
+    "displayName": "bs-syntax",
+    "description": "A syntax highlighting extension for the Battle Script language.",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.63.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [{
+            "id": "bs",
+            "aliases": ["Battle Script", "bs"],
+            "extensions": [".bs"],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "bs",
+            "scopeName": "",
+            "path": "./syntaxes/bs.tmLanguage.json"
+        }]
+    }
+}
