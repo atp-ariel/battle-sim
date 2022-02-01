@@ -10,6 +10,14 @@ class Cell:
         self.col = column
         self.heigth = heigth
         self.bs_object = None
+        
+    def __hash__(self):
+        return hash(f'{self.row}{self.col}')
+    
+    def __eq__(self, o):
+        if isinstance(o, Cell):
+            return self.row == o.row and self.col == o.col
+        return False
 
 
 class Map(ABC):

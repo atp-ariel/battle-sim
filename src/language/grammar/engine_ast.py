@@ -183,15 +183,23 @@ def build_while_def(tokens:List[str],nodes:List):
     
     nodes.append(while_def)
     
-def build_assign(tokens:List[str],nodes:List):
+def build_decl(tokens:List[str],nodes:List):
     expression=nodes.pop()
     type=nodes.pop()
     name = tokens[len(tokens)-3]
     
-    assign=Assign(type.type,name,expression)
+    assign=Decl(type.type,name,expression)
     
     nodes.append(assign)
     
+def build_assign(tokens:List[str],nodes:List):
+    expression=nodes.pop()
+    name = tokens[len(tokens)-3]
+    
+    assign=Assign(name,expression)
+    
+    nodes.append(assign)
+        
 def build_return1(tokens:List[str],nodes:List):
     expression=nodes.pop()
     return_stm=Return(expression)

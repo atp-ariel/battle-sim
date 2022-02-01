@@ -44,13 +44,15 @@ class AttrDef(Node):
 class ClassDef(Node):
     name: str
     parent : str
+    arg_names: List[str]
+    arg_types: List[str]
     attributes: List[AttrDef]
     methods: List[FuncDef]
 
 
 class BsFile(Node):
     classes: List[ClassDef]
-    staments: List[Statement]
+    statements: List[Statement]
     
     def validate(self, context: Context) -> bool:
         for st in self.statements:
@@ -139,7 +141,7 @@ class WhileDef(Statement):
         return True
         
     
-class Assign(Statement):
+class Decl(Statement):
     type : str
     name: str
     expression: Expression
@@ -150,6 +152,10 @@ class Assign(Statement):
         if not context.define_var(self.name):
             return False
         return True
+    
+class Assign(Statement):
+    name: str
+    expression: Expression
     
 class Return(Statement):
     expression : Expression

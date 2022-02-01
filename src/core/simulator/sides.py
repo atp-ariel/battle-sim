@@ -24,3 +24,8 @@ class Side:
     def __iter__(self):
         for unit in self.units:
             yield unit
+
+    def __eq__(self, o):
+        if isinstance(o, Side):
+            return self.id==o.id
+        return False

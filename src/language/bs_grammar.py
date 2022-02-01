@@ -90,10 +90,10 @@ decl = NonTerminal("decl")
 bs_file += Production([classes, NEWLINE, statements, eof], build_program)
 bs_file += Production([eof])
 
-classes += Production([class_def, NEWLINE, classes]m build_classes1)
+classes += Production([class_def, NEWLINE, classes], build_classes1)
 classes += Production([class_def], build_classes2)
 
-statements += Production([statement, NEWLINE, statements] build_statements1)
+statements += Production([statement, NEWLINE, statements], build_statements1)
 statements += Production([statement], build_statements2)
 
 statement += Production([func_def])
