@@ -143,10 +143,9 @@ _type += Production([tnumber], build_type)
 _type += Production([_bool], build_type)
 _type += Production([name], build_type)
 
-decl += Production([_type, name, oeq, expression])
-decl += Production([_type, name])
+decl += Production([_type, name, oeq, expression], build_decl)
 
-assign += Production(name, oeq, expression)
+assign += Production([name, oeq, expression], build_assign)
 
 return_stat += Production([_return, expression], build_return1)
 return_stat += Production([_return], build_return2)
