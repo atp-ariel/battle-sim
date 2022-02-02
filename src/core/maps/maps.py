@@ -12,7 +12,7 @@ class Cell:
         self.bs_object = None
         
     def __hash__(self):
-        return hash(f'{self.row}{self.col}')
+        return hash(f'{self.row} {self.col}')
     
     def __eq__(self, o):
         if isinstance(o, Cell):

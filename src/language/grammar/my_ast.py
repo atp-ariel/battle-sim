@@ -60,26 +60,6 @@ class BsFile(Node):
                 return False
         return True
 
-#region Statements    
-class FuncDef(Statement):
-    name: str
-    return_type: str
-    arg_names: List[str]
-    arg_types: List[str]
-    body : List[Statement]
-    
-    def validate(self, context: Context) -> bool:
-        inner_context = context.create_child_context()
-        
-        for arg in self.args:
-            inner_context.define_var(arg)
-        
-        for st in body:
-            if not st.validate(inner_context):
-                return False    
-        
-        return context.define_fun(self.name, self.args)
-
 class If(Statement):
     condition : Expression
     body : List[Statement]
@@ -112,17 +92,6 @@ class Branch(Statement):
                 return False
             
         return True
-    
-class AttrDef(Node):
-    name: str
-    type: str
-    init: Expression
-
-class ClassDef(Node):
-    name: str
-    parent : str
-    attributes: List[AttrDef]
-    methods: List[MethodDef]
 
 class WhileDef(Statement):
     condition : Expression
@@ -225,7 +194,8 @@ class Bool(Expression):
         return True
     
 class MyNone(Expression):
-    value: str = 'None'    
+    def validate(self, context: Context) -> bool:
+        return True
     
 class MyList(Expression):
     inner_list : List[Expression]

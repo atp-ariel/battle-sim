@@ -384,7 +384,7 @@ def build_class_def1(tokens:List[str],nodes:List):
     name=tokens[len(tokens)-8]
     parent_name=tokens[len(tokens)-6]
     
-    class_def=ClassDef(parent,name,constructor.attributes,obtain_functions([],functions))
+    class_def=ClassDef(name,parent,constructor.arg_names,constructor.arg_types,constructor.attributes,obtain_functions([],functions))
     
     nodes.append(class_def)
     

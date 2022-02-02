@@ -20,8 +20,7 @@ class BSObject(ABC):
             raise Exception("Cell is not type of: " + type)
         else:
             if map[row][col].bs_object != None:
-                map[row][col].bs_object.map = None
-                map[row][col].bs_object.cell = None
+                raise Exception("Casilla ocupada")
             map[row][col].bs_object = self
             self.map = map
             self.cell = map[row][col]
@@ -33,7 +32,7 @@ class BSObject(ABC):
             self.cell.bs_object = None
 
 
-class BSStaticObject(BSObject):
+class StaticObject(BSObject):
 
     def __init__(self, id: int, life_points: float, defense: float):
         BSObject.__init__(self,id, life_points, defense)
@@ -45,13 +44,13 @@ class BSStaticObject(BSObject):
 class BSUnit(BSObject):
 
     @abstractmethod
-    def __init__(self, id: int, side, life_points: float, defense: float, attack: float, moral: float, ofensive: float, min_range: int, max_range: int, radio: int, vision: int, intelligence: float, recharge_turns: int, solidarity: bool, movil: bool):
+    def __init__(self, id: int, life_points: float, defense: float, attack: float, moral: float, ofensive: float, min_range: int, max_range: int, radio: int, vision: int, intelligence: float, recharge_turns: int, solidarity: bool, movil: bool):
         BSObject.__init__(self, id, life_points, defense)
         if not (radio >= 1 and radio <= 9):
             raise Exception('radio invalido')
         if vision < max_range:
             raise Exception('La vision no puede ser mayor que el rango maximo')
-        self.side = side
+        self.side=None
         self.moral = moral
         self.attack = attack
         self.solidarity = solidarity
@@ -284,6 +283,8 @@ class BSUnit(BSObject):
 
     # atacar enemigo
     def attack_enemy(self, enemy):
+        
+        damage=self.attack+(self.moral+self.cell.passable)
 
         enemy_distance = self.calculate_distance(self.cell, enemy.cell)
         block_objects = []
@@ -315,7 +316,7 @@ class BSUnit(BSObject):
         if precision < len(block_objects)/10:
 
             bs_object = block_objects[int(precision)]
-            bs_object.take_damage(self.attack+self.moral)
+            bs_object.take_damage(damage)
 
             if self.radio > 1:
                 cells_to_attack = self.radio-1
@@ -328,7 +329,7 @@ class BSUnit(BSObject):
                     if self.map[self.cell.row + position[0]][self.cell.col+position[1]].bs_object != None:
                         bs_object = self.map[self.cell.row +
                                              position[0]][self.cell.col+position[1]]
-                        bs_object.take_damage((self.attack+self.moral)*4/5)
+                        bs_object.take_damage(damage*4/5)
 
                         if bs_object is BSUnit and bs_object.life_points <= 0:
                             self.no_defeated_units += 1
@@ -336,7 +337,7 @@ class BSUnit(BSObject):
                     cells_to_attack -= 1
 
         elif precision > len(block_objects)/10 + miss_distance:
-            enemy.take_damage(self.attack+self.moral)
+            enemy.take_damage(damage)
 
             if self.radio > 1:
                 cells_to_attack = self.radio
@@ -349,7 +350,7 @@ class BSUnit(BSObject):
                     if self.map[self.cell.row + position[0]][self.cell.col+position[1]].bs_object != None:
                         bs_object = self.map[self.cell.row +
                                              position[0]][self.cell.col+position[1]]
-                        bs_object.take_damage((self.attack+self.moral+self.cell.passable)*4/5)
+                        bs_object.take_damage(damage*4/5)
 
                         if bs_object is BSUnit and bs_object.life_points <= 0:
                             self.no_defeated_units += 1
@@ -398,8 +399,8 @@ class BSUnit(BSObject):
                 self.move_to_cell(cell)
                 self.visited_cells.add(cell)
 
-class BSLandUnit(BSUnit):
-    def __init__(self, id, life_points, defense, side, attack, moral, ofensive,min_range, max_range, radio, vision, intelligence, recharge_turns, solidarity, movil):
+class LandUnit(BSUnit):
+    def __init__(self, id, life_points, defense, attack, moral, ofensive,min_range, max_range, radio, vision, intelligence, recharge_turns, solidarity, movil):
         BSUnit.__init__(self,id,life_points,defense,side,attack,moral,ofensive,min_range,max_range,radio,vision,intelligence,recharge_turns,solidarity,movil)
 
     def put_in_cell(self, map, row, col):
@@ -409,20 +410,20 @@ class BSLandUnit(BSUnit):
         BSUnit.turn(self,'earth')
 
 
-class BSNavalUnit(BSUnit):
-    def __init__(self, id, life_points, defense, side, attack, moral, ofensive,min_range, max_range, radio, vision, intelligence, recharge_turns, solidarity, movil):
-        BSUnit.__init__(self,id,life_points,defense,side,attack,moral,ofensive,min_range,max_range,radio,vision,intelligence,recharge_turns,solidarity,movil)
+class NavalUnit(BSUnit):
+    def __init__(self, id, life_points, defense, attack, moral, ofensive,min_range, max_range, radio, vision, intelligence, recharge_turns, solidarity, movil):
+        BSUnit.__init__(self,id,life_points,defense,attack,moral,ofensive,min_range,max_range,radio,vision,intelligence,recharge_turns,solidarity,movil)
 
     def put_in_cell(self, map, row, col):
         BSUnit.put_in_cell(self,map, "water", row, col)
 
     def turn(self):
-        BSUnit.turn(self,'earth')
+        BSUnit.turn(self,'water')
 
 
-class BSAirUnit(BSUnit):
-    def __init__(self, id, life_points, defense, side, attack, moral, ofensive,min_range, max_range, radio, vision, intelligence, recharge_turns, solidarity, movil):
-        BSUnit.__init__(self,id,life_points,defense,side,attack,moral,ofensive,min_range,max_range,radio,vision,intelligence,recharge_turns,solidarity,movil)
+class AirUnit(BSUnit):
+    def __init__(self, id, life_points, defense, attack, moral, ofensive,min_range, max_range, radio, vision, intelligence, recharge_turns, solidarity, movil):
+        BSUnit.__init__(self,id,life_points,defense,attack,moral,ofensive,min_range,max_range,radio,vision,intelligence,recharge_turns,solidarity,movil)
 
     def put_in_cell(self, map, row, col):
         BSUnit.put_in_cell(self, map, "air", row, col)

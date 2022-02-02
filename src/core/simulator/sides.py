@@ -3,12 +3,15 @@ class Side:
     def no_units(self) -> int:
         return len(self.units)
 
-    def __init__(self, id, name):
+    def __init__(self, id, units):
         self.id = id
-        self.name = name
-        self.units = []
+        self.name = f'Bando {self.id}'
+        self.units = units
         self.no_own_units_defeated = 0
         self.no_enemy_units_defeated = 0
+        
+        for unit in self.units:
+            unit.side=self
 
     def add_unit(self, unit):
         unit.side = self
