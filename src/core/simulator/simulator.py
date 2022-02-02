@@ -4,14 +4,14 @@ import random as rd
 
 
 class Simulator:
-    def __init__(self,earth_map, sides: List, turns: int, interval: int, time_end, time_beg=0):
+    def __init__(self,earth_map, sides: List, turns: int, interval: int,time_beg=0):
         self.earth_map=earth_map
         self.sides=sides
         self.units=[]
         self.time_beg=time_beg
-        self.time_end=time_end
         self.interval=interval
         self.turns=turns
+        self.no_enemies=False
 
         for side in sides:
             units=side.get_units()
@@ -66,13 +66,11 @@ class Simulator:
     def simulating_k_turns(self):
         beg=self.time_beg
         k=self.turns
-        for end in range(int(self.time_beg+self.interval),int(self.time_end+self.interval),int(self.interval)):
+        while(k>0):
+            end=int(beg+self.interval)
             if self.no_enemies:
                 print("Simulación Finalizada")
                 return
-
-            if k==0:
-                break
 
             k-=1
             
