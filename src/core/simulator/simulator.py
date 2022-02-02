@@ -2,9 +2,8 @@ from scipy import stats
 
 
 class Simulator:
-    def __init__(self,earth_map,air_map,sides,turns,interval,time_end,time_beg=0):
+    def __init__(self,earth_map,sides,turns,interval,time_end,time_beg=0):
         self.earth_map=earth_map
-        self.air_map=air_map
         self.sides=sides
         self.units=[]
         self.time_beg=time_beg
