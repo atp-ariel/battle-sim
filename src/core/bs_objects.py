@@ -225,7 +225,7 @@ class BSUnit(BSObject):
     # buscar enemigo para atacar
     def enemy_to_attack(self):
 
-        cost = -1
+        cost = float('inf')
         attacked_enemy = None
 
         for k in range(self.min_range, self.max_range + 1):
@@ -240,7 +240,7 @@ class BSUnit(BSObject):
                         if self.radio > 1 and self.friend_in_danger(self.map[i][j]):
                             continue
                         new_cost = self.enemy_cost_calculate(self.map[i][j].bs_object)
-                        if cost == -1 or cost > new_cost:
+                        if  cost > new_cost:
                             cost = new_cost
                             attacked_enemy = self.map[i][j].bs_object
 
@@ -255,7 +255,7 @@ class BSUnit(BSObject):
                         if self.radio > 1 and self.friend_in_danger(self.map[i][j]):
                             continue
                         new_cost = self.enemy_cost_calculate(self.map[i][j].bs_object)
-                        if cost == -1 or cost > new_cost:
+                        if  cost > new_cost:
                             cost = new_cost
                             attacked_enemy = self.map[i][j].bs_object
 
@@ -270,7 +270,7 @@ class BSUnit(BSObject):
                         if self.radio > 1 and self.friend_in_danger(self.map[i][j]):
                             continue
                         new_cost = self.enemy_cost_calculate(self.map[i][j].bs_object)
-                        if cost == -1 or cost > new_cost:
+                        if cost > new_cost:
                             cost = new_cost
                             attacked_enemy = self.map[i][j].bs_object
 
@@ -285,7 +285,7 @@ class BSUnit(BSObject):
                         if self.radio > 1 and self.friend_in_danger(self.map[i][j]):
                             continue
                         new_cost = self.enemy_cost_calculate(self.map[i][j].bs_object)
-                        if cost == -1 or cost > new_cost:
+                        if  cost > new_cost:
                             cost = new_cost
                             attacked_enemy = self.map[i][j].bs_object
 
