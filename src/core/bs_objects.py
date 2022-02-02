@@ -98,24 +98,40 @@ class BSUnit(BSObject):
             i = cell.row - k
             if i >= 0:
                 for j in range(cell.col - k, cell.col + k + 1):
+                    if j >= self.map.no_columns:
+                        break
+                    if j < 0:
+                        continue 
                     if isinstance(self.map[i][j].bs_object, BSUnit) and self.map[i][j].bs_object.side != self.side:
                         return (True, self.map[i][j])
 
             i = cell.row + k
             if i < self.map.no_rows:
                 for j in range(cell.col - k, cell.col + k + 1):
+                    if j >= self.map.no_columns:
+                        break
+                    if j < 0:
+                        continue 
                     if isinstance(self.map[i][j].bs_object, BSUnit) and self.map[i][j].bs_object.side != self.side:
                         return (True, self.map[i][j])
 
             j = cell.col - k
             if j >= 0:
                 for i in range(cell.row - k + 1, cell.row + k):
+                    if i >= self.map.no_rows:
+                        break
+                    if i < 0:
+                        continue 
                     if isinstance(self.map[i][j].bs_object, BSUnit) and self.map[i][j].bs_object.side != self.side:
                         return (True, self.map[i][j])
 
             j = cell.col + k
             if j < self.map.no_columns:
                 for i in range(cell.row - k + 1, cell.row + k):
+                    if i >= self.map.no_rows:
+                        break
+                    if i < 0:
+                        continue 
                     if isinstance(self.map[i][j].bs_object, BSUnit) and self.map[i][j].bs_object.side != self.side:
                         return (True, self.map[i][j])
 
