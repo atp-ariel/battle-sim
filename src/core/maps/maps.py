@@ -3,7 +3,7 @@ from typing import List
 
 class Cell:
 
-    def __init__(self, passable : float, type : string, row : int, column: int, heigth: float):
+    def __init__(self, passable : float, type : str, row : int, column: int, heigth: float):
         self.passable = passable
         self.type = type
         self.row = row

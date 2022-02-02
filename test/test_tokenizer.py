@@ -1,6 +1,6 @@
 import pytest
 
-from src.language.tokenizer import Tokenizer, Token
+from src.language.tokenizer import Tokenizer
 
 
 def test_1():

@@ -45,7 +45,7 @@ class TokenType(Enum):
     RightBracket = (Regex("]"), "]")
     true = (Regex("True"), "True")
     false = (Regex("False"), "False")
-    none = (Regex("None")
+    none = (Regex("None"), "None")
     void = (Regex("void"), "void")
     Bool = (Regex("bool"), "bool")
     This = (Regex("this"), "this")

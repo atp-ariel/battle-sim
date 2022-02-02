@@ -401,7 +401,7 @@ class BSUnit(BSObject):
 
 class LandUnit(BSUnit):
     def __init__(self, id, life_points, defense, attack, moral, ofensive,min_range, max_range, radio, vision, intelligence, recharge_turns, solidarity, movil):
-        BSUnit.__init__(self,id,life_points,defense,side,attack,moral,ofensive,min_range,max_range,radio,vision,intelligence,recharge_turns,solidarity,movil)
+        BSUnit.__init__(self,id,life_points,defense,attack,moral,ofensive,min_range,max_range,radio,vision,intelligence,recharge_turns,solidarity,movil)
 
     def put_in_cell(self, map, row, col):
         BSUnit.put_in_cell(self,map, "earth", row, col)
@@ -419,11 +419,3 @@ class NavalUnit(BSUnit):
 
     def turn(self):
         BSUnit.turn(self,'water')
-
-
-class AirUnit(BSUnit):
-    def __init__(self, id, life_points, defense, attack, moral, ofensive,min_range, max_range, radio, vision, intelligence, recharge_turns, solidarity, movil):
-        BSUnit.__init__(self,id,life_points,defense,attack,moral,ofensive,min_range,max_range,radio,vision,intelligence,recharge_turns,solidarity,movil)
-
-    def put_in_cell(self, map, row, col):
-        BSUnit.put_in_cell(self, map, "air", row, col)
