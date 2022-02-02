@@ -5,9 +5,8 @@ import random as rd
 
 
 class Simulator:
-    def __init__(self,earth_map,air_map,sides,time_end,time_beg=0):
+    def __init__(self,earth_map,sides,time_end,time_beg=0):
         self.earth_map=earth_map
-        self.air_map=air_map
         self.sides=sides
         self.units=[]
         self.time_beg=time_beg
@@ -20,7 +19,7 @@ class Simulator:
                 self.units.append(unit)
 
     def event_is_pos(self,unit):
-        if unit.life_points == 0: #Saber si la unidad se destruyó según las condiciones del usuario
+        if unit.life_points <= 0: #Saber si la unidad se destruyó según las condiciones del usuario
             return False
 
         return True
