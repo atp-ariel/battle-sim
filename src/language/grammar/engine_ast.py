@@ -183,15 +183,23 @@ def build_while_def(tokens:List[str],nodes:List):
     
     nodes.append(while_def)
     
-def build_assign(tokens:List[str],nodes:List):
+def build_decl(tokens:List[str],nodes:List):
     expression=nodes.pop()
     type=nodes.pop()
     name = tokens[len(tokens)-3]
     
-    assign=Assign(type.type,name,expression)
+    assign=Decl(type.type,name,expression)
     
     nodes.append(assign)
     
+def build_assign(tokens:List[str],nodes:List):
+    expression=nodes.pop()
+    name = tokens[len(tokens)-3]
+    
+    assign=Assign(name,expression)
+    
+    nodes.append(assign)
+        
 def build_return1(tokens:List[str],nodes:List):
     expression=nodes.pop()
     return_stm=Return(expression)
@@ -376,7 +384,7 @@ def build_class_def1(tokens:List[str],nodes:List):
     name=tokens[len(tokens)-8]
     parent_name=tokens[len(tokens)-6]
     
-    class_def=ClassDef(parent,name,constructor.attributes,obtain_functions([],functions))
+    class_def=ClassDef(name,parent,constructor.arg_names,constructor.arg_types,constructor.attributes,obtain_functions([],functions))
     
     nodes.append(class_def)
     

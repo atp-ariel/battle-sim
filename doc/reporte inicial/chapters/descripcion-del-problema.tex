@@ -1,11 +1,11 @@
 \chapter{Descripción del problema}
 
-Como planteamos en el cap\'itulo anterior, se quiere desarrollar un programa que permita la simulaci\'on de enfrentamientos b\'elicos entre dos bandos.
+Como planteamos en el cap\'itulo anterior, se quiere desarrollar un programa que permita la simulaci\'on de enfrentamientos b\'elicos entre dos o m\'as bandos.
 
 Para esto se tienen pensado los siguientes aspectos que van a ser fijos en cada una de las simulaciones:
 
 \begin{enumerate}
-	\item La existencia de un mapa o terreno donde se producir\'a el enfrentamiento. Este tendr\'a propiedades que se ser\'an modificables como las dimensiones, el clima, la hidrograf\'ia, etc. La idea es que este se represente por una matriz bidimensional.
+	\item La existencia de un mapa o terreno donde se producir\'a el enfrentamiento. Este tendr\'a propiedades que se ser\'an modificables como las dimensiones, el relieve, la hidrograf\'ia, etc. La idea es que este se represente por una matriz bidimensional.
 	
 	\item Las acciones ser\'an por turnos. Como tenemos dos bandos les llamaremos: bando A y bando B. En el turno del bando A cada una de las unidades de A realizar\'a una y solo una acci\'on (ya sea moverse hacia otra posici\'on, atacar o mantener la posici\'on). Luego de esto se pasar\'a al turno del bando B, que al igual que A, podr\'a hacer una y solo una acci\'on con cada una de sus unidades. Esta forma de implementaci\'on permite un comportamiento de acci\'on-reacci\'on entre los dos bandos, asemej\'andose a lo que ocurre en la vida real.
 	
@@ -13,9 +13,9 @@ Para esto se tienen pensado los siguientes aspectos que van a ser fijos en cada 
 
 \section{Unidades}
 
-Las unidades son los objetos que utilizar\'an los bandos para enfrentarse. Estas ser\'an definidas por el usuario encargado de hacer la simulaci\'on, as\'i como cuales y cuantas unidades tendr\'a cada bando en el mapa y la posici\'on inicial que tendr\'an las mismas. Estas adem\'as contar\'an con estad\'isticas como puntos de vida, velocidad, ataque, defensa, alcance de ataque, \'area de impacto, daño ocasionado seg\'un el \'area de impacto, etc.
+Las unidades son los objetos que utilizar\'an los bandos para enfrentarse. Estas ser\'an definidas por el usuario encargado de hacer la simulaci\'on, as\'i como cuales y cuantas unidades tendr\'a cada bando en el mapa y la posici\'on inicial que tendr\'an las mismas. Cada unidad ocupar\'a una y solo una casilla del mapa, adem\'as dichas unidades contar\'an con estad\'isticas como puntos de vida, ataque, defensa, alcance de ataque, \'area de impacto, daño ocasionado seg\'un el \'area de impacto, etc.
 
-Adem\'as se tiene la idea de poder crear estructuras y elementos del terreno que influyan en la simulaci\'on. Estas tambi\'en contar\'ian con estad\'isticas propias.
+Adem\'as el usuario puede definir y a\~{n}adir elementos propios del terreno, lo cuales no forman parte de ning\'un bando. Ejemplos de estos ser\'ian \'arboles, rocas, estructuras, etc.
 
 \section{Reglas de la simulaci\'on}
 

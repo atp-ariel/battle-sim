@@ -5,7 +5,6 @@ from typing import List
 class Context:
     pass
 
-
 @dataclass
 class Node(ABC):
     @abstractmethod
@@ -18,16 +17,6 @@ class Statement(Node):
 class Expression(Node):
     pass
 
-class BsFile(Node):
-    staments: List[Statement]
-    
-    def validate(self, context: Context) -> bool:
-        for st in self.statements:
-            if not st.validate(context):
-                return False
-        return True
-
-#region Statements    
 class FuncDef(Statement):
     name: str
     return_type: str
@@ -46,6 +35,30 @@ class FuncDef(Statement):
                 return False    
         
         return context.define_fun(self.name, self.args)
+
+class AttrDef(Node):
+    name: str
+    type: str
+    init: Expression
+
+class ClassDef(Node):
+    name: str
+    parent : str
+    arg_names: List[str]
+    arg_types: List[str]
+    attributes: List[AttrDef]
+    methods: List[FuncDef]
+
+
+class BsFile(Node):
+    classes: List[ClassDef]
+    statements: List[Statement]
+    
+    def validate(self, context: Context) -> bool:
+        for st in self.statements:
+            if not st.validate(context):
+                return False
+        return True
 
 class If(Statement):
     condition : Expression
@@ -79,17 +92,6 @@ class Branch(Statement):
                 return False
             
         return True
-    
-class AttrDef(Node):
-    name: str
-    type: str
-    init: Expression
-
-class ClassDef(Node):
-    name: str
-    parent : str
-    attributes: List[AttrDef]
-    methods: List[MethodDef]
 
 class WhileDef(Statement):
     condition : Expression
@@ -108,7 +110,7 @@ class WhileDef(Statement):
         return True
         
     
-class Assign(Statement):
+class Decl(Statement):
     type : str
     name: str
     expression: Expression
@@ -119,6 +121,10 @@ class Assign(Statement):
         if not context.define_var(self.name):
             return False
         return True
+    
+class Assign(Statement):
+    name: str
+    expression: Expression
     
 class Return(Statement):
     expression : Expression
@@ -188,7 +194,8 @@ class Bool(Expression):
         return True
     
 class MyNone(Expression):
-    value: str = 'None'    
+    def validate(self, context: Context) -> bool:
+        return True
     
 class MyList(Expression):
     inner_list : List[Expression]
@@ -207,7 +214,7 @@ class Type:
 class Params:
     type : str
     name : str
-    params : Params
+    params : 'Params'
 
 @dataclass    
 class Block:
@@ -216,7 +223,7 @@ class Block:
 @dataclass    
 class Statements:
     statement : Statement
-    statements : Staments 
+    statements : 'Statements' 
 
 @dataclass
 class ElseDef:
@@ -232,7 +239,7 @@ class ElifDef:
 @dataclass    
 class Expressions:
     expression : expression
-    expressions : Expressions 
+    expressions : 'Expressions' 
 
 @dataclass    
 class ComparePar:
@@ -242,12 +249,12 @@ class ComparePar:
 @dataclass
 class Functions:
     function : FuncDef
-    functions : Functions
+    functions : 'Functions'
 
 @dataclass
 class Attributes:
     attr_def: AttrDef
-    attributes: Attributes
+    attributes: 'Attributes'
 
 @dataclass    
 class Constructor:
@@ -258,4 +265,4 @@ class Constructor:
 @dataclass
 class Classes:
     class_def : ClassDef
-    classes : Classes
+    classes : 'Classes'

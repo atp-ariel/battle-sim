@@ -61,10 +61,9 @@ type ->   'number'        build_type
       |   'bool'          build_type
       |   NAME            build_type
 
-assign -> NAME '=' expressopm
+assign -> NAME '=' expression                                             build_assign
 
-decl ->  type NAME '=' expression                                         build_assign
-     | type NAME
+decl ->  type NAME '=' expression                                         build_decl
 
 return_stmt ->  'return' expression                                        build_return1
             |   'return'                                                   build_return2

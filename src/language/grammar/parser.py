@@ -2,6 +2,7 @@ from grammar import *
 from queue import deque
 import json
 from typing import Deque
+from tokenizer.token import Token
 
 class Item:
     def __init__(self,production:Production,index):
@@ -200,7 +201,7 @@ class Parser:
         self.action=action
         self.go_to=go_to
         
-    def parse(self,secuence:Deque[Terminal]):
+    def parse(self,secuence:Deque[Token]):
         
         tokens_stack=[]
         states_stack=[0]
@@ -223,7 +224,7 @@ class Parser:
 
             if do[0]=='S':
                 states_stack.append(do[1])
-                tokens_stack.append(token.name)
+                tokens_stack.append(token.lexeme)
                 secuence.popleft()
             else:
                 prod=self.grammar.P[do[1]]
