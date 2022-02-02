@@ -11,6 +11,7 @@ class Side:
         self.no_own_units_defeated=0
         self.no_enemy_units_defeated=0
         self.units=[]
+        self.no_enemies=False
 
     def add_unit(self,unit):
         unit.side=self
@@ -44,7 +45,7 @@ class Simulator:
                 self.units.append(unit)
 
     def event_is_pos(self,unit):
-        if unit.life_points == 0: #Saber si la unidad se destruyó según las condiciones del usuario
+        if unit.life_points<=0: #Saber si la unidad se destruyó según las condiciones del usuario
             return False
 
         return True
@@ -55,7 +56,8 @@ class Simulator:
         for side in self.sides:
             units=side.get_units()
             for unit in units:
-                events[unit]=0
+                if self.event_is_pos(unit):
+                    events[unit]=0
 
 
         for event in events:
@@ -72,6 +74,15 @@ class Simulator:
 
         for i in range(time_beg,time_end):
             events=self.get_events(i)
+
+            alive_sides=set()
+            for event in events:
+                alive_sides.add(event.side)
+
+            if len(alive_sides)<=1:
+                self.no_enemies=True
+                return
+
             for event in events:
                 if event[1]>self.time_beg and event[1]<self.time_end:
                     if self.event_is_pos(event[0]):
@@ -81,6 +92,10 @@ class Simulator:
         beg=self.time_beg
         k=self.turns
         for end in range(int(self.time_beg+self.interval),int(self.time_end+self.interval),int(self.interval)):
+            if self.no_enemies:
+                print("Simulación Finalizada")
+                return
+
             if k==0:
                 break
 
