@@ -296,7 +296,7 @@ class BSUnit(BSObject):
                     break
                 if j < 0 or (i == self.cell.row and j == self.cell.col):
                     continue
-                if self.map[i][j].bs_object != None and self.calculate_distance(self.cell, self.map[i][j] <= enemy_distance):
+                if self.map[i][j].bs_object != None and self.calculate_distance(self.cell, self.map[i][j]) <= enemy_distance:
                     block_objects.append(self.map[i][j].bs_object)
 
         precision = random.uniform(0, 1)
@@ -305,7 +305,7 @@ class BSUnit(BSObject):
                           abs(enemy.cell.col-self.cell.col))
 
         miss_distance = (range_enemy-self.min_range) / \
-            (self.max_range-self.min_range)/10
+            (self.max_range-self.min_range+0.1)/10
 
         positions = [(-1, 1), (-1, 0), (-1, 1), (0, -1),
                      (0, 1), (1, -1), (1, 0), (1, 1)]
