@@ -68,15 +68,15 @@ def test_small_simulator():
 
     # Side 1
 
-    s1.units.append(LandUnit(1, 10, 9, 10, 9, 9, 1, 2, 1, 5, 6, 0, True, True))
+    s1.units.append(LandUnit(1, life_points=10, defense=9, attack=3, moral=9, ofensive=9, min_range=1, max_range=3, radio=1, vision=5, intelligence=6, recharge_turns=0, solidarity=True, movil=True))
     s1.units[-1].put_in_cell(maps, 0,1)
-    s1.units.append(LandUnit(2, 6, 5, 7, 9, 3, 1, 1, 1, 2, 10, 0, True, True ))
+    s1.units.append(LandUnit(2, life_points=10, defense=9, attack=2, moral=7, ofensive=8, min_range=1, max_range=3, radio=1, vision=5, intelligence=6, recharge_turns=0, solidarity=True, movil=True))
     s1.units[-1].put_in_cell(maps, 0, 2)
 
     # Side 2
-    s2.units.append(LandUnit(3, 2, 3,  10, 3, 5, 1, 1,1, 1, 5, 0, True, True))
+    s2.units.append(LandUnit(3, life_points=10, defense=9, attack=2, moral=7, ofensive=8, min_range=1, max_range=3, radio=1, vision=5, intelligence=6, recharge_turns=0, solidarity=True, movil=True))
     s2.units[-1].put_in_cell(maps, 2, 3)
-    s2.units.append(LandUnit(4, 7, 8,  8, 4, 6, 1, 2, 1, 10, 4, 0, True, True))
+    s2.units.append(LandUnit(4, life_points=10, defense=9, attack=2, moral=7, ofensive=8, min_range=1, max_range=3, radio=1, vision=5, intelligence=6, recharge_turns=0, solidarity=True, movil=True))
     s2.units[-1].put_in_cell(maps, 3, 3)
 
     S = Simulator(maps, [s1, s2], 10)

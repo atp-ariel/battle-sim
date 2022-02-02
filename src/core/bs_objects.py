@@ -190,7 +190,7 @@ class BSUnit(BSObject):
 
         if near_enemy:
             cost -= self.ofensive*1 / \
-                math.sqrt(self.calculate_distance(self.cell, enemy_cell)-self.min_range)
+                math.sqrt(self.calculate_distance(self.cell, enemy_cell))
 
         cost = self.in_range_of_enemy(cell, cost)
 
@@ -344,7 +344,7 @@ class BSUnit(BSObject):
 
                     if self.map[self.cell.row + position[0]][self.cell.col+position[1]].bs_object != None:
                         bs_object = self.map[self.cell.row +
-                                             position[0]][self.cell.col+position[1]]
+                                             position[0]][self.cell.col+position[1]].bs_object
                         bs_object.take_damage(damage*4/5)
 
                         if bs_object is BSUnit and bs_object.life_points <= 0:
@@ -359,13 +359,13 @@ class BSUnit(BSObject):
                 cells_to_attack = self.radio
                 while cells_to_attack:
 
-                    randint = random.randint(0, len(positions))
+                    randint = random.randint(0, len(positions)-1)
                     position = positions[randint]
                     positions.pop(randint)
 
                     if self.map[self.cell.row + position[0]][self.cell.col+position[1]].bs_object != None:
                         bs_object = self.map[self.cell.row +
-                                             position[0]][self.cell.col+position[1]]
+                                             position[0]][self.cell.col+position[1]].bs_object
                         bs_object.take_damage(damage*4/5)
 
                         if bs_object is BSUnit and bs_object.life_points <= 0:

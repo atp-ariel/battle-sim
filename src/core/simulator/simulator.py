@@ -54,5 +54,4 @@ class Simulator:
                 if event[1] > self.time_beg and event[1] < self.time_end:
                     if self.event_is_pos(event[0]):
                         event[0].turn()
-
-    
+            print(list(map(lambda x: x.life_points, self.units)))                
