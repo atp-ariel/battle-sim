@@ -45,21 +45,20 @@ class Simulator:
             
     def simulator_by_turns(self,time_beg,time_end):
 
-        for i in range(time_beg,time_end):
-            events=self.get_events(i)
+        events=self.get_events(rd.randint(time_beg,time_end))
 
-            alive_sides=set()
-            for event in events:
-                alive_sides.add(event.side)
+        alive_sides=set()
+        for event in events:
+            alive_sides.add(event.side)
 
-            if len(alive_sides)<=1:
-                self.no_enemies=True
-                return
+        if len(alive_sides)<=1:
+            self.no_enemies=True
+            return
 
-            for event in events:
-                if event[1]>self.time_beg and event[1]<self.time_end:
-                    if self.event_is_pos(event[0]):
-                        event[0].turn()
+        for event in events:
+            if event[1]>self.time_beg and event[1]<self.time_end:
+                if self.event_is_pos(event[0]):
+                    event[0].turn()
 						                       
     def simulating_k_turns(self):
         beg=self.time_beg
