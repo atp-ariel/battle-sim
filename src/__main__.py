@@ -46,6 +46,6 @@ s2.units[-1].put_in_cell(maps, 1, 1)
 s2.add_unit(LandUnit(4, life_points=10, defense=9, attack=1, moral=7, ofensive=8, min_range=1, max_range=2, radio=1, vision=5, intelligence=6, recharge_turns=0, solidarity=True, movil=True))
 s2.units[-1].put_in_cell(maps, 7, 7)
 
-S = Simulator(maps, [s1, s2], 20)
+S = Simulator(maps, [s1, s2], 5, 4, 20)
 
-S.simulator_by_turns()
+S.simulating_k_turns()

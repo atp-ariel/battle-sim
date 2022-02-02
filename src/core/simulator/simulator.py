@@ -1,8 +1,10 @@
+from typing import List
 from scipy import stats
+import random as rd
 
 
 class Simulator:
-    def __init__(self,earth_map,sides,turns,interval,time_end,time_beg=0):
+    def __init__(self,earth_map, sides: List, turns: int, interval: int, time_end, time_beg=0):
         self.earth_map=earth_map
         self.sides=sides
         self.units=[]
@@ -30,6 +32,7 @@ class Simulator:
             units=side.get_units()
             for unit in units:
                 if self.event_is_pos(unit):
+                    print(f"Unidad {unit.id}: {unit.life_points} puntos")
                     events[unit]=0
 
 
@@ -73,6 +76,7 @@ class Simulator:
 
             k-=1
             
+            print(f"Turno {self.turns - k}")
             self.simulator_by_turns(beg,end)
             beg=end
 
