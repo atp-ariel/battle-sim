@@ -17,7 +17,7 @@ class BSObject(ABC):
     # poner en celda el objeto
     def put_in_cell(self, map: Map, type: str, row: int, col: int):
         if map[row][col].type != type:
-            raise Exception("Cell is not type of: " + type)
+            self.life_points=0
         else:
             if map[row][col].bs_object != None:
                 raise Exception("Casilla ocupada")
