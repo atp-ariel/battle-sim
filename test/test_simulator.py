@@ -1,3 +1,4 @@
+from doctest import TestResults
 from src.core.simulator.sides import Side
 from src.core.simulator.simulator import Simulator
 from src.core.maps.genetic import GAT_Generator
@@ -10,7 +11,7 @@ import pytest
 from collections import namedtuple
 
 skip_if = namedtuple("SkipIf", "condition reason")
-SKIP_BIGGER = skip_if(True, "large case delay")
+SKIP_BIGGER = skip_if(TestResults, "large case delay")
 
 
 @pytest.mark.skipif(SKIP_BIGGER.condition, reason=SKIP_BIGGER.reason)
@@ -45,13 +46,18 @@ def test_small_simulator():
     n = 4
     sea = 0.45
 
+    # maps = HeightMap.build_from_map(array([
+    #     [.43, .458, .489, .53],
+    #     [.47, .49, .54, .58],
+    #     [.495, .51, .581, .62],
+    #     [.49, .55, .61, .67]
+    # ]))
     maps = HeightMap.build_from_map(array([
-        [.43, .458, .489, .53],
-        [.47, .49, .54, .58],
-        [.495, .51, .581, .62],
-        [.49, .55, .61, .67]
+        [.458, .458, .458, .458],
+        [.458, .458, .458, .458],
+        [.458, .458, .458, .458],
+        [.458, .458, .458, .458]
     ]))
-
     maps = LandMap(n, n, maps, sea, [])
 
     maps.sides.append(Side(1, []))

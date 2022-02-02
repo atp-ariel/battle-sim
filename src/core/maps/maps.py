@@ -19,6 +19,11 @@ class Cell:
             return self.row == o.row and self.col == o.col
         return False
 
+    def __str__(self):
+        return f"({self.row}, {self.col})"
+    
+    def __repr__(self) -> str:
+        return self.__str__()
 
 class Map(ABC):
 

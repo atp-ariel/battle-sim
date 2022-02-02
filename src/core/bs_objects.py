@@ -173,7 +173,7 @@ class BSUnit(BSObject):
     def move_cost_calculate(self, cell, type):
 
         if cell.passable == 0 or cell.type != type or cell.bs_object is not None or abs(cell.heigth - self.cell.heigth) > 0.05:
-            return 1000000
+            return float("inf")
 
         cost = 10-cell.passable/2
 
@@ -391,11 +391,12 @@ class BSUnit(BSObject):
         else:
             self.turns_recharging -= 1
             
-        if enemy != None:
+        if enemy is not None:
             self.attack_enemy(enemy)
             self.turns_recharging = self.recharge_turns
+            print(f"Unidad {self.id} ataca a la Unidad {enemy.id} de la celda {enemy.cell}")
         else:
-            cost = 10000
+            cost = float("inf")
             cell=self.cell
             for i in range(self.cell.row-1, self.cell.row+2):
                 if i >= self.map.no_rows:
@@ -411,9 +412,10 @@ class BSUnit(BSObject):
                     if new_cost < cost:
                         cost = new_cost
                         cell = self.map[i][j]
-            if cost < 10000:
+            if cost < float("inf"):
                 self.move_to_cell(cell)
                 self.visited_cells.add(cell)
+                print(f"Unidad {self.id} moviendose para la celda {cell}")
 
 class LandUnit(BSUnit):
     def __init__(self, id, life_points, defense, attack, moral, ofensive,min_range, max_range, radio, vision, intelligence, recharge_turns, solidarity, movil):
