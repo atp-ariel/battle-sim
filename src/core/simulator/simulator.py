@@ -1,7 +1,6 @@
 from typing import List
 from scipy import stats
-import random as rd
-
+from sides import Side
 
 class Simulator:
     def __init__(self,earth_map, sides: List, turns: int, interval: int, time_beg=0):
@@ -48,7 +47,7 @@ class Simulator:
             
     def simulator_by_turns(self,time_beg,time_end):
 
-        events=self.get_events(rd.randint(time_beg,time_end))
+        events=self.get_events((time_beg+time_end)//2)
 
         alive_sides=set()
         for event in events:
@@ -78,5 +77,3 @@ class Simulator:
             self.simulator_by_turns(beg,end)
             beg=end
 
-			
-    
