@@ -11,13 +11,35 @@ Para esto se tienen pensado los siguientes aspectos que van a ser fijos en cada 
 	
 \end{enumerate}
 
+\section{El mapa}
+
+El mapa consiste en una matriz bidimensional de $m$ filas y $n$ columnas. Cada objeto de la matriz es un objeto \verb|Cell|. Un objeto \verb|Cell| representa cada una de las casillas que conforman el mapa y tiene los siguientes atributos:
+
+\begin{itemize}
+	\item \verb|passable|: Valor entre 0 y 10 que indica cuan accesible es una celda. Las unidades tienden a buscar las celdas que tengan este par\'ametro lo m\'as alto posible, pues mientras mayor sea este valor, pueden hacer ataques m\'as poderosos.
+	\item \verb|row|: Este par\'ametro es un n\'umero entero que indica la fila en la que se encuentra la celda.
+	\item \verb|col|: Este par\'ametro es un n\'umero entero que indica la columna en que se encuentra la celda
+	\item \verb|height|: Este par\'ametro es un n\'umero entre 0 y 1 que indica la altura de la casilla. En dependencia de este par\'ametro la casilla ser\'a terrestre o marina.
+	\item \verb|bs_object|: Este par\'ametro hace referencia al objeto que se encuentra en la casilla. Si en la casilla no se encuentra ning\'un objeto entonces este par\'ametro es \verb|None|.
+\end{itemize}
+
+El mapa para una simulaci\'on se crea instanciando una clase \verb|LandMap| con los siguientes argumentos:
+
+\begin{itemize}
+	\item N\'umero de filas $m$
+	\item N\'umero de columnas $n$
+	\item Un array bidimensional de $m$ filas por $n$ columnas tal que cada posici\'on $i,j$ del array es un n\'umero entre 0 y 10 que indica cuan accesible es la celda $i,j$
+	\item Un array bidimensional de $m$ filas por $n$ columnas tal que cada posici\'on $i,j$ del array es un n\'umero entre 0 y 1 que indica la altura de celda $i,j$
+	\item Un n\'umero entre 0 y 1 que indica el nivel del mar. Todas las celdas cuya altura sea menor a este n\'umero ser\'an consideradas como celdas marinas y todas las celdas superior a este n\'umero ser\'an consideradas terrestres.
+\end{itemize}
+
 \section{Los objetos}
 
-Un objeto es todo lo que se puede poner el mapa y cada objeto ocupa una y solo una casilla del mapa. Estos tienen propiedades como el id que s \'unico para cada objeto, los puntos de vida que determinan el estado de un objeto y la defensa un par\'ametro que indica cuan resistente es un objeto a los da\~{n}os que puede sufrir durante la simulaci\'on. Todos estos par\'ametros son n\'umeros de 1 a 10. Cuando la vida de un objeto llegue a 0, este se destruye desapareciendo del mapa. Los objetos se clasifican en dos tipos: unidades y objetos est\'aticos. Los objetos adem\'as tienen definidas dos funciones \verb|put_in_cell| cuya funci\'on es colocar al objeto en alguna posici\'on de un mapa. La otra funci\'on \verb|take_damage|, a partir de un ataque sufrido indica como se reducen los puntos de vida del objeto.
+Un objeto es todo lo que se puede poner el mapa y cada objeto ocupa una y solo una casilla del mapa. Estos tienen propiedades como el id que s \'unico para cada objeto, los puntos de vida que determinan el estado de un objeto y la defensa un par\'ametro que indica cuan resistente es un objeto a los da\~{n}os que puede sufrir durante la simulaci\'on. Todos estos par\'ametros son n\'umeros de 1 a 10. Cuando la vida de un objeto llegue a 0, este se destruye desapareciendo del mapa. Los objetos se clasifican en dos tipos: unidades y objetos est\'aticos. Los objetos adem\'as tienen definidas dos funciones \verb|put_in_cell| cuya funci\'on es colocar al objeto en alguna posici\'on de un mapa. Si se intenta poner un objeto en una posici\'on diferente a su tipo este autom\'aticamente se destruye. La otra funci\'on \verb|take_damage|, a partir de un ataque sufrido indica como se reducen los puntos de vida del objeto.
 
 \subsection{Objetos est\'aticos}
 
-Los objetos est\'aticos los podemos definir como objetos propios del ambiente. Estos no pertenecen a ning\'un bando y no pueden realizar acciones pero si pueden ser afectados por las acciones que realicen las unidades. Estos solo pueden ser puestos en celdas terrestres. Ejemplos de estos objetos pueden ser \'arboles, rocas, muros, etc.   
+Los objetos est\'aticos los podemos definir como objetos propios del ambiente. Estos no pertenecen a ning\'un bando y no pueden realizar acciones pero si pueden ser afectados por las acciones que realicen las unidades. Estos solo pueden ser puestos en celdas terrestres. Ejemplos de estos objetos pueden ser \'arboles, rocas, muros, etc. Todos estos objetos son terrestres. 
 
 \subsection{Unidades}
 
@@ -53,58 +75,27 @@ Las unidades adem\'as de las descritas anteriormente que tienen todos los objeto
 
 \subsubsection{Sistema experto}
 
-A continuaci\'on se explicar\'a el sistema experto implementado que act\'ua como funci\'on del agente la cual describe el comportamiento del agente durante un turno: 
+A continuaci\'on se explicar\'a el sistema experto implementado que act\'ua como funci\'on del agente la cual describe el comportamiento del agente durante un turno.
 
-	\lstset{language=Python,breaklines=true,basicstyle=\footnotesize,numbers=left}
 
-\begin{lstlisting}	
-def turn(self, type_unit):
+Lo primero que la funci\'on hace es buscar si se existe un enemigo al que se pueda atacar. Para eso primero se comprueba si la unidad no est\'a recargando, si lo est\'a se reduce en uno los turnos que debe esperar para atacar, si no lo est\'a se busca el mejor enemigo para atacar. 
+ 
+El mejor enemigo para atacar se determina de la siguiente forma:
+ 
+Por cada casilla atacable (casilla que se encuentra a una distancia de la unidad entre su rango m\'inimo y su rango m\'aximo), se chequea si en la casilla hay un enemigo. Si el radio de ataque es mayor que 1 y hay una unidad amiga cerca del enemigo que pudiera verse afectada por el ataque, se ignora este enemigo. Esto se defini\'o as\'i para evitar el da\~{n}o ocasionado por fuego amigo.
+ 
+Entonces si el enemigo no es ignorado debido a lo anterior, se calcula el costo de atacar al enemigo. Para dicho c\'alculo la unidad estima la vida y la defensa del enemigo y con estas estimaciones calcula cuantos turnos podr\'ia tomarle destruir a dicho enemigo. Mientras mayor sea la inteligencia de la unidad m\'as precisas ser\'an las estimaciones.
 
-    enemy=None
-    if self.turns_recharging == 0:
-        enemy = self.enemy_to_attack()
-    else:
-        self.turns_recharging -= 1
-
-    if enemy != None:
-        self.attack_enemy(enemy)
-        self.turns_recharging = self.recharge_turns
-    else:
-        cost = 10000
-        cell=self.cell
-        for i in range(self.cell.row-1, self.cell.row+2):
-            if i >= self.map.no_rows:
-                break
-            if i < 0:
-                continue
-            for j in range(cell.col-1, cell.col+2):
-                if j >= self.map.no_columns:
-                    break
-                if j < 0 or (i == self.cell.row and j == self.cell.col):
-                    continue
-                new_cost = self.move_cost_calculate(self.map[i][j], type_unit)
-                if new_cost < cost:
-                    cost = new_cost
-                    cell = self.map[i][j]
-        if cost < 10000:
-            self.move_to_cell(cell)
-\end{lstlisting}
-
- Lo primero que la funci\'on hace es buscar si se existe un enemigo al que se pueda atacar. Para eso primero se comprueba si la unidad no est\'a recargando, si lo est\'a se reduce en uno los turnos que debe esperar para atacar, si no lo est\'a se busca el mejor enemigo para atacar. 
+Luego de haber analizado todos los enemigos, el seleccionado por la unidad para atacarlo es aquel cuyo costo es menor. Si no se detecta ning\'un posible enemigo a atacar entonces la unidad no realiza un ataque en el turno.
  
- El mejor enemigo para atacar se determina de la siguiente forma:
+Si la unidad no realiza un ataque, entonces chequea si se puede mover a alguna casilla adyacente a la que se encuentra. Esto se hace de la siguiente forma:
  
- Por cada casilla atacable (casilla que se encuentra a una distancia de la unidad entre su rango m\'inimo y su rango m\'aximo), se chequea si en la casilla hay un enemigo. Si el radio de ataque es mayor que 1 y hay una unidad amiga cerca del enemigo que pudiera verse afectada por el ataque, se ignora este enemigo. Esto se defini\'o as\'i para evitar el da\~{n}o ocasionado por fuego amigo.
+Se fija un costo en infinito. Luego por cada una de las celdas que la rodean en todos los puntos cardinales posibles (NW, N, NE, W, E, SW, S y SE)ase calcula el costo de moverse a dicha celda, y nos quedammados con la celda cuyo to es el menor. Luego si el menor costo detectado es menor a infinito10000 la unidad se mueve a dicha c En caso contrario la unidad mantiene su posici\'on. 
  
- Entonces si el enemigo no es ignorado debido a lo anterior, se calcula el costo de atacar al enemigo. Para dicho c\'alculo la unidad estima la vida y la defensa del enemigo y con estas estimaciones calcula cuantos turnos podr\'ia tomarle destruir a dicho enemigo. Mientras mayor sea la inteligencia de la unidad m\'as precisas ser\'an las estimaciones.
+Ahora veamos como calcular el costo de que una unidad se mueva de una celda a otra.
  
- Luego de haber analizado todos los enemigos, el seleccionado por la unidad para atacarlo es aquel cuyo costo es menor. Si no se detecta ning\'un posible enemigo a atacar entonces la unidad no realiza un ataque en el turno.
+Si la celda nueva es intransitable (tiene el par\'ametro \verb|passable| en 0), el tipo de la celda es diferente al tipo de la unidad o si en la celda hay alg\'un objeto se devuelve infinito. Estos son todos los casos en los que la unidad no puede moverse a dicha celda. Para las unidades terrestres siola diferencia de alturas entre doslaeltas es muy grande (mayor a 0.3), tampoco pueden avanzar a dicha celda, retorn\'andose infinito. 
  
- Si la unidad no realiza un ataque, entonces chequea si se puede mover a alguna casilla adyacente a la que se encuentra. Esto se hace de la siguiente forma:
- 
- Se fija un costo en 10000 (un valor grande). Luego por cada una de las celdas adyacentes se calcula el costo de moverse a dicha celda, y nos quemados con la celda cuyo costo es el menor. Luego si el menor costo detectado es menor a 10000 la unidad se mueve a dicha celda. En caso contrario la unidad mantiene su posici\'on. 
- 
- Ahora veamos como calcular el costo de que una unidad se mueva de una celda a otra.
- 
- Si la celda nueva es intransitable (tiene el par\'ametro \verb|passable| en 0), el tipo de la celda es diferente al tipo de la unidad, si en la celda hay alg\'un objeto o la diferencia de alturas entre la celda actual en la que est\'a la unidad y la nueva celda es muy grande se retorna 10000. Estos son todos los casos en los que la unidad no puede moverse a dicha celda. 
- 
+Entonces en un primer momento se fija el costo en 10 - \verb|passable|/2, de esta manera se premia ir a celdas m\'as transitables. A continuaci\'on se comprueba si esa celda est\'a entre las que la unidad recuerda como ya visitadas. Si as\'i es, el coste se incrementar\'a en \verb|passable|/3. As\'i logramos incentivar que las unidades visiten celdas no visitadas con anterioridad  
+  
+Ahora se comprueba si la celda se encuentra en zona ``amiga'', es decir, si esa celda es adyacente   
