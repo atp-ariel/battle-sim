@@ -41,5 +41,5 @@ class LandMap(Map):
 
     def __init__(self, no_rows, no_columns, passable_map, height_map, sea_height):
         Map.__init__(no_rows, no_columns)
-        self.matrix = [[Cell(passable_map[i][j], "earth" if height_map[i][j] > sea_heigth else "water",
+        self.matrix = [[Cell(passable_map[i][j], "earth" if height_map[i][j] > sea_height else "water",
                              i, j, height_map[i][j]) for j in range(no_columns)] for i in range(no_rows)]
