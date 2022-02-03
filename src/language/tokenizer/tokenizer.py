@@ -5,6 +5,7 @@ from queue import deque
 
 
 TOKENS: List[TokenDefinition] = [
+    TokenDefinition(TokenType.EOF, 1),
     TokenDefinition(TokenType.Number, 1),
     TokenDefinition(TokenType.Name, 2),
     TokenDefinition(TokenType.Arrow, 1),

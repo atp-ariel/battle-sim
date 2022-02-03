@@ -49,7 +49,8 @@ class TokenType(Enum):
     void = (Regex("void"), "void")
     Bool = (Regex("bool"), "bool")
     This = (Regex("this"), "this")
-    Constructor = (Regex("constructor"), "constructor")
+    Constructor = (Regex("constructor"), "constructor"),
+    EOF = (Regex("EOF"), "EOF")
 
 class TokenDefinition:
     def __init__(self, ttype: TokenType, precendence: int):
