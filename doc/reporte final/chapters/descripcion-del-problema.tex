@@ -75,65 +75,29 @@ Las unidades adem\'as de las descritas anteriormente que tienen todos los objeto
 
 \subsubsection{Sistema experto}
 
-A continuaci\'on se explicar\'a el sistema experto implementado que act\'ua como funci\'on del agente la cual describe el comportamiento del agente durante un turno: 
+A continuaci\'on se explicar\'a el sistema experto implementado que act\'ua como funci\'on del agente la cual describe el comportamiento del agente durante un turno.
 
-	\lstset{language=Python,breaklines=true,basicstyle=\footnotesize,numbers=left}
 
-\begin{lstlisting}	
-def turn(self, type_unit):
+Lo primero que la funci\'on hace es buscar si se existe un enemigo al que se pueda atacar. Para eso primero se comprueba si la unidad no est\'a recargando, si lo est\'a se reduce en uno los turnos que debe esperar para atacar, si no lo est\'a se busca el mejor enemigo para atacar. 
+ 
+El mejor enemigo para atacar se determina de la siguiente forma:
+ 
+Por cada casilla atacable (casilla que se encuentra a una distancia de la unidad entre su rango m\'inimo y su rango m\'aximo), se chequea si en la casilla hay un enemigo. Si el radio de ataque es mayor que 1 y hay una unidad amiga cerca del enemigo que pudiera verse afectada por el ataque, se ignora este enemigo. Esto se defini\'o as\'i para evitar el da\~{n}o ocasionado por fuego amigo.
+ 
+Entonces si el enemigo no es ignorado debido a lo anterior, se calcula el costo de atacar al enemigo. Para dicho c\'alculo la unidad estima la vida y la defensa del enemigo y con estas estimaciones calcula cuantos turnos podr\'ia tomarle destruir a dicho enemigo. Mientras mayor sea la inteligencia de la unidad m\'as precisas ser\'an las estimaciones.
 
-    enemy=None
-    if self.turns_recharging == 0:
-        enemy = self.enemy_to_attack()
-    else:
-        self.turns_recharging -= 1
-
-    if enemy != None:
-        self.attack_enemy(enemy)
-        self.turns_recharging = self.recharge_turns
-    else:
-        cost = 10000
-        cell=self.cell
-        for i in range(self.cell.row-1, self.cell.row+2):
-            if i >= self.map.no_rows:
-                break
-            if i < 0:
-                continue
-            for j in range(cell.col-1, cell.col+2):
-                if j >= self.map.no_columns:
-                    break
-                if j < 0 or (i == self.cell.row and j == self.cell.col):
-                    continue
-                new_cost = self.move_cost_calculate(self.map[i][j], type_unit)
-                if new_cost < cost:
-                    cost = new_cost
-                    cell = self.map[i][j]
-        if cost < 10000:
-            self.move_to_cell(cell)
-\end{lstlisting}
-
- Lo primero que la funci\'on hace es buscar si se existe un enemigo al que se pueda atacar. Para eso primero se comprueba si la unidad no est\'a recargando, si lo est\'a se reduce en uno los turnos que debe esperar para atacar, si no lo est\'a se busca el mejor enemigo para atacar. 
+Luego de haber analizado todos los enemigos, el seleccionado por la unidad para atacarlo es aquel cuyo costo es menor. Si no se detecta ning\'un posible enemigo a atacar entonces la unidad no realiza un ataque en el turno.
  
- El mejor enemigo para atacar se determina de la siguiente forma:
+Si la unidad no realiza un ataque, entonces, en caso de que se m\'ovil, chequea si se puede mover a alguna casilla adyacente a la que se encuentra. Esto se hace de la siguiente forma:
  
- Por cada casilla atacable (casilla que se encuentra a una distancia de la unidad entre su rango m\'inimo y su rango m\'aximo), se chequea si en la casilla hay un enemigo. Si el radio de ataque es mayor que 1 y hay una unidad amiga cerca del enemigo que pudiera verse afectada por el ataque, se ignora este enemigo. Esto se defini\'o as\'i para evitar el da\~{n}o ocasionado por fuego amigo.
+Se fija un costo en infinito. Luego por cada una de las celdas que la rodean en todos los puntos cardinales posibles (NW, N, NE, W, E, SW, S y SE)ase calcula el costo de moverse a dicha celda, y nos quedamos con la celda cuyo co es el menor. Luego si el menor costo detectado es menor a infinito la unidad se mueve a dicha celda en caso contrario la unidad mantiene su posici\'on. 
  
- Entonces si el enemigo no es ignorado debido a lo anterior, se calcula el costo de atacar al enemigo. Para dicho c\'alculo la unidad estima la vida y la defensa del enemigo y con estas estimaciones calcula cuantos turnos podr\'ia tomarle destruir a dicho enemigo. Mientras mayor sea la inteligencia de la unidad m\'as precisas ser\'an las estimaciones.
+Ahora veamos como calcular el costo de que una unidad se mueva de una celda a otra.
  
- Luego de haber analizado todos los enemigos, el seleccionado por la unidad para atacarlo es aquel cuyo costo es menor. Si no se detecta ning\'un posible enemigo a atacar entonces la unidad no realiza un ataque en el turno.
+Si la celda nueva es intransitable (tiene el par\'ametro \verb|passable| en 0), el tipo de la celda es diferente al tipo de la unidad o si en la celda hay alg\'un objeto se devuelve infinito. Estos son todos los casos en los que la unidad no puede moverse a dicha celda. Para las unidades terrestres siola diferencia de alturas entre dosla ltas es muy grande (mayor a 0.3), tampoco pueden avanzar a dicha celda, retorn\'andose infinito. 
  
- Si la unidad no realiza un ataque, entonces chequea si se puede mover a alguna casilla adyacente a la que se encuentra. Esto se hace de la siguiente forma:
- 
- Se fija un costo en infinito. Luego por cada una de las celdas que la rodean en todos los puntos cardinales posibles (NW, N, NE, W, E, SW, S y SE) se calcula el costo de moverse a dicha celda, y nos quedamos con la celda cuyo costo es el menor. Luego si el menor costo detectado es menor a infinito la unidad se mueve a dicha celda. En caso contrario la unidad mantiene su posici\'on. 
- 
- Ahora veamos como calcular el costo de que una unidad se mueva de una celda a otra.
- 
- Si la celda nueva es intransitable (tiene el par\'ametro \verb|passable| en 0), el tipo de la celda es diferente al tipo de la unidad o si en la celda hay alg\'un objeto se devuelve infinito. Estos son todos los casos en los que la unidad no puede moverse a dicha celda. Para las unidades terrestres si la diferencia de alturas entre dos celtas es muy grande (mayor a 0.3), tampoco pueden avanzar a dicha celda, retorn\'andose infinito. 
- 
- 
- 
- \begin{itemize}
- 	\item 
- \end{itemize} 
+Entonces en un primer momento se fija el costo en 10 - \verb|passable|/2, de esta manera se premia ir a celdas m\'as transitables. A continuaci\'on se comprueba si esa celda est\'a entre las que la unidad recuerda como ya visitadas. Si as\'i es, el coste se incrementar\'a en \verb|passable|/3. As\'i logramos incentivar que las unidades visiten celdas no visitadas con anterioridad  
   
- 
+Ahora se comprueba si la celda se encuentra en zona ``amiga'', es decir, si esa celda es adyacente a alguna celda en la que se encuentre alg\'un compa\~{n}ero de su bando. Si as\'i es y nuestra unidad protagonista es solidaria, el coste se reducir\'a a la mitad. Si es una zona amiga pero la unidad no es solidaria, el coste solo se reducir\'a dividi\'endose por la ra\'iz cuadrada de 2. De esta manera se incentiva que las unidades tiendan a permanecer en grupo y m\'as cuanto m\'as solidarias son.
+
+Si la celda que se est\'a estudiando es una celda en la que nuestra unidad tendr\'a al alcance un enemigo, su coste se reducir\'a en el valor del par\'ametro \verb|ofensive|  multiplicado por la inversa de la ra\'iz cuadrada de la distancia m\'inima hasta el enemigo. Adem\'as la unidad observa las celdas cercanas a la celda que se est\'a estudiando que est\'en dentro de su rango de visi\'on. Si detecta que al moverse a dicha celda se encontrar\'a en rango de alg\'un enemigo el costo se aumenta en 1.1 por cada enemigo que pudiera atacar a la unidad. De esta manera se est\'a diciendo que, cuanto m\'as ofensiva sea nuestra unidad, m\'as se aproximar\'a al enemigo, aunque con cierta precauci\'on.  

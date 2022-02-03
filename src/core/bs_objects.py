@@ -408,7 +408,7 @@ class BSUnit(BSObject):
             self.attack_enemy(enemy)
             self.turns_recharging = self.recharge_turns
             print(f"Unidad {self.id} ataca a la Unidad {enemy.id} de la celda {enemy.cell}")
-        else:
+        elif self.movil:
             cost = float("inf")
             cell=self.cell
             for i in range(self.cell.row-1, self.cell.row+2):
