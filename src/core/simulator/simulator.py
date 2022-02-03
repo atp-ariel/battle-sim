@@ -1,6 +1,6 @@
 from typing import List
 from scipy import stats
-from sides import Side
+from .sides import Side
 
 class Simulator:
     def __init__(self,earth_map, sides: List, turns: int, interval: int, time_beg=0):
@@ -31,8 +31,11 @@ class Simulator:
             units=side.get_units()
             for unit in units:
                 if self.event_is_pos(unit):
-                    print(f"Unidad {unit.id}: {unit.life_points} puntos")
                     events[unit]=0
+
+        print("Puntos de vida")
+        print(list(map(lambda x: x.life_points, self.units)))
+
 
 
         for event in events:
