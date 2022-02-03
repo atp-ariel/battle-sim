@@ -4,13 +4,12 @@ from ..tokenizer import Token
 
 
 class Parser:
-    def __init__(self,grammar:Grammar,action,go_to):
+    def __init__(self, grammar:Grammar, action, go_to):
         self.grammar=grammar
         self.action=action
         self.go_to=go_to
         
     def parse(self, secuence:Deque[Token]):
-        
         tokens_stack=[]
         states_stack=[0]
         nodes=[]
@@ -22,7 +21,7 @@ class Parser:
             state_action = self.action[states_stack[len(states_stack)-1]]
             
             if token.name not in state_action:
-                raise Exception('Cadena invalida')
+                raise Exception(f'Unexpected token {token.name} with value {token.lexeme}')
             
             do=state_action[token.name]
             
@@ -47,7 +46,9 @@ class Parser:
                 
                 state_go_to = self.go_to[states_stack[len(states_stack)-1]]
                 if prod.head.name not in state_go_to:
-                    raise Exception('Cadena invalida')
+                    raise Exception(f"Cadena invalida {prod.head.name}")
                 tokens_stack.append(prod.head.name)
                 states_stack.append(state_go_to[prod.head.name])
+
+        return nodes[0]
 

@@ -1,7 +1,7 @@
 from typing import  Iterable, List, Tuple
 from .token import Token, TokenType, TokenDefinition
 from ..regex import Match
-from collections import deque
+from queue import deque
 
 
 TOKENS: List[TokenDefinition] = [
@@ -43,6 +43,8 @@ TOKENS: List[TokenDefinition] = [
     TokenDefinition(TokenType.false, 1),
     TokenDefinition(TokenType.none, 1),
     TokenDefinition(TokenType.void, 1),
+    TokenDefinition(TokenType.Constructor, 1),
+    TokenDefinition(TokenType.This, 1)
 ]
 
 
@@ -67,9 +69,11 @@ class Tokenizer:
             # Get match with highest precedence
             if len(token_in_i):
                 token_in_i = sorted(token_in_i, key=lambda tup: tup[0].precendece)
-                token = Token(token_in_i[0][0], token_in_i[0][1].value, token_in_i[0][1].start, token_in_i[0][1].end)
+                token = Token(token_in_i[0][0].type, token_in_i[0][1].value, token_in_i[0][1].start, token_in_i[0][1].end)
                 tokens.append(token)    
                 i = token.end
 
             i += 1
+
+        print(list(map(lambda x: (x.type.value[1], x.lexeme), tokens)))
         return deque(tokens)          

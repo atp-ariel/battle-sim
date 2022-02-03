@@ -1,4 +1,3 @@
-from pathlib import Path
 from ..grammar import Production, Terminal, Symbol, Grammar, NonTerminal
 from typing import List
 from queue import deque
@@ -155,8 +154,7 @@ class TableActionGoTo:
     def __init__(self,grammar:Grammar):
         self.grammar=grammar
         
-    def build(self, path: Path):
-        
+    def build(self, path: str):
         states=Automaton(self.grammar).build()
         
         action=[]
@@ -195,6 +193,6 @@ class TableActionGoTo:
         with open(path + 'go_to.json','w') as fout:
             json.dump(go_to, fout)
             
-def build_parser(grammar: Grammar, path: Path):
+def build_parser(grammar: Grammar, path: str):
     table = TableActionGoTo(grammar)
-    table.build()
+    table.build(path)

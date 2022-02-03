@@ -57,7 +57,7 @@ class TokenDefinition:
         self.precendece: int = precendence
 
     def __hash__(self):
-        return self.precendece.__hash__() + self.type.value.nfa.start.name.__hash__()
+        return self.precendece.__hash__() + self.type.value[0].nfa.start.name.__hash__()
 
 
 class Token:
