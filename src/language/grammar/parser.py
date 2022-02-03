@@ -1,8 +1,9 @@
-from grammar import *
+from .grammar import *
 from queue import deque
 import json
 from typing import Deque
-from tokenizer.token import Token
+from ..tokenizer.token import Token
+from ..bs_grammar import GRAMMAR
 
 class Item:
     def __init__(self,production:Production,index):
@@ -243,35 +244,8 @@ class Parser:
                 tokens_stack.append(prod.head.name)
                 states_stack.append(state_go_to[prod.head.name])
                     
-                        
-                    
-i=Terminal("int") 
-plus=Terminal("+")
-pi=Terminal("(")
-pd=Terminal(")")
-mult=Terminal("*")
 
-E=NonTerminal("E")
-
-T=NonTerminal("T") 
-
-F=NonTerminal("F") 
-
-E+=Production([E,plus,T])
-
-E+=Production([T])
-
-T+=Production([T,mult,F])  
-
-T+=Production([F])
-
-F+=Production([pi,E,pd])
-
-F+=Production([i])
-
-g=Grammar([E,T,F])
-
-table=TableActionGoTo(g)
+table=TableActionGoTo(GRAMMAR)
 
 table.build()
 
@@ -283,8 +257,8 @@ file=open("go_to.json")
 go_to=json.load(file)
 file.close()
 
-parser=Parser(g,action, go_to)
+parser=Parser(GRAMMAR,action, go_to)
 
-secuence=deque([Terminal('int'),Terminal('+'),Terminal('int'),Terminal('*'),Terminal('int'),Terminal('$')])
+secuence=deque([Terminal('number'),Terminal('a'),Terminal('='),Terminal('3')])
 
 parser.parse(secuence)

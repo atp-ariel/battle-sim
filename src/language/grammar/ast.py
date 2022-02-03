@@ -30,7 +30,7 @@ class FuncDef(Statement):
         for arg in self.args:
             inner_context.define_var(arg)
         
-        for st in body:
+        for st in self.body:
             if not st.validate(inner_context):
                 return False    
         
@@ -130,7 +130,7 @@ class Return(Statement):
     expression : Expression
     
     def validate(self, context : Context) -> bool:
-        return expression.validate(context)
+        return self.expression.validate(context)
         
 class Break(Statement):
     def validate(self, context: Context) -> bool:
@@ -233,13 +233,13 @@ class ElseDef:
 class ElifDef:
     expression : Expression
     body : Block
-    elif_def : ElifDef
+    elif_def : 'ElifDef'
     else_def : ElseDef
 
 @dataclass    
 class Expressions:
-    expression : expression
-    expressions : 'Expressions' 
+    expression : Expression
+    expressions : 'Expressions'
 
 @dataclass    
 class ComparePar:

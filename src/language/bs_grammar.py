@@ -1,4 +1,3 @@
-from copyreg import constructor
 from .grammar import *
 from .grammar.engine_ast import *
 

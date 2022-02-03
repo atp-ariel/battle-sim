@@ -1,5 +1,5 @@
 from visitor import *
-from my_ast import *
+from .ast import *
 from io import StringIO
 
 file=StringIO('')

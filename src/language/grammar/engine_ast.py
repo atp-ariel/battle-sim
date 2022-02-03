@@ -1,4 +1,4 @@
-from my_ast import *
+from .ast import *
 
 def obtain_statements(list_statements:List,statements:Statements):
     list_statements.append(statements.statement)

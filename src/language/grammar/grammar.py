@@ -101,62 +101,43 @@ class NonTerminal(Symbol):
     def __repr__(self):
         return f"NT({self.__str__()})"
 
+    def walk(self, walked : Set = None) -> Set['NonTerminal']:
+        walked = walked if walked is not None else set()
+        walked.add(self)
+        for p in self.productions:
+            for sym in p.symbols:
+                if isinstance(sym, NonTerminal):
+                    if not sym in walked:
+                        walked.add(sym)
+                        sym.walk(walked)
+        
+        return walked
 
 class Grammar:
     @property
     def start(self) -> NonTerminal:
-        if self.exps:
-            return self.exps[0]
+        if self._s_:
+            return self._s_
         raise ValueError("Grammar has no start expression.")
 
 
-    def __init__(self, exp: List[NonTerminal] = None):
-        self.exps = [ ] 
-        if exp is not None:
-            for e in exp:
-                self.add(e)
-        self.exp_dict: Dict[str, NonTerminal] = {e.name: e for e in self.exps}
+    def __init__(self, start: NonTerminal = None):
+        self._s_ = start
+        self.exp_dict: Dict[str, NonTerminal] = {}
+        self.T: Set[Terminal] = set()
+        self.N: Set[NonTerminal] = set()
+        self.P: List[Production] = []
 
-        self.T: Set[Terminal] = self.get_terminals()
-        self.N: Set[NonTerminal] = self.get_non_terminals()
-        self.P: List[Production] = self.get_productions()
+        if self._s_  is not None:
+            self.T = self.get_terminals()
+            self.N = self.get_non_terminals()
+            self.P = self.get_productions()
 
-    def __getattr__(self, item):
-        if item in self.exp_dict:
-            return self.exp_dict[item]
-        raise AttributeError()
     
-    def __iadd__(self, exp: NonTerminal):
-        self.add(exp)
-        return self
-    def add(self, exp: NonTerminal):
-        if not isinstance(exp, NonTerminal):
-            raise TypeError(f"Expression {exp} must be a non terminal")
-
-        if exp.name in self.exp_dict:
-            raise ValueError(f"Grammar expression {exp} already exists.")
-        self.exps.append(exp)
-        self.exp_dict[exp.name] = exp
-
-        if exp not in self.N:
-            self.N.add(exp)
-        
-        for p in exp.productions:
-            p.id = len(self.P)
-            self.P.append(p)
-            for sym in p.symbols:
-                if not sym.is_terminal:
-                    self.N.add(sym)
-                elif sym.name != "EPS":
-                    self.T.add(sym)
-                else: 
-                    continue
-
-
     def get_terminals(self) -> Set[Terminal]:
         terminals = set()
 
-        for e in self.exp_dict.values():
+        for e in self.start.walk():
             for p in e.productions:
                 for sym in p.symbols:
                     if sym.is_terminal and sym.name != "EPS":
@@ -165,21 +146,12 @@ class Grammar:
     
     def get_productions(self) -> List[Production]:
         prods = []
-        for e in self.exps:
+        for e in self.start.walk():
             for p in e.productions:
                 prods.append(p)
         return prods
 
     def get_non_terminals(self) -> Set[NonTerminal]:
-        non_terminals = set()
-        
-        for e in self.exp_dict.values():
-            non_terminals.add(e)
-            for p in e.productions:
-                for sym in p.symbols:
-                    if not sym.is_terminal:
-                        non_terminals.add(sym)
-        return non_terminals
-
+        return self.start.walk()
     
 
