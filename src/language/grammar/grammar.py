@@ -50,10 +50,10 @@ class Production:
     def is_eps(self) -> bool:
         return len(self.symbols) == 1 and self.symbols[0] == "EPS"
 
-    def __init__(self, symbols: List[Symbol], func_ast: Callable = None):
+    def __init__(self, symbols: List[Symbol], id: int, func_ast: Callable = None):
         self.symbols: List[Symbol] = symbols
         self.__head__: NonTerminal = None
-        self.id: int = -1
+        self.id: int = id
         self.func_ast = func_ast
 
 
@@ -149,7 +149,6 @@ class Grammar:
         for e in self.start.walk():
             for p in e.productions:
                 prods.append(p)
-                p.id = len(prods)
         return prods
 
     def get_non_terminals(self) -> Set[NonTerminal]:
