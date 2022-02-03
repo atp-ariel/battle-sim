@@ -149,6 +149,7 @@ class Grammar:
         for e in self.start.walk():
             for p in e.productions:
                 prods.append(p)
+                p.id = len(prods)
         return prods
 
     def get_non_terminals(self) -> Set[NonTerminal]:
