@@ -128,7 +128,7 @@ class Automaton:
         s=NonTerminal('S')
         s+=Production([self.grammar.start])
         
-        initial_items={s:[ItemLR1(s[0],0,Terminal('$'))]}
+        initial_items={s:[ItemLR1(s[0],0,Terminal('EOF'))]}
         
         for nt in self.grammar.N:
             initial_items[nt]=[]
@@ -181,7 +181,7 @@ class TableActionGoTo:
                 if l in state_action:
                     raise Exception('Conflicto Shift-Reduce')
                 state_action[l.name]=('R',lookahead_item[l].production.id)
-                if l.name=='$' and lookahead_item[l].production.head.name=='S':
+                if l.name=='EOF' and lookahead_item[l].production.head.name=='S':
                     state_action[l.name]=('OK',)
                     
             action.append(state_action)
