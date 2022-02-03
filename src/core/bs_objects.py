@@ -38,7 +38,7 @@ class StaticObject(BSObject):
         BSObject.__init__(self,id, life_points, defense)
 
     def put_in_cell(self, map: Map, row: int, col: int):
-        BSObject.put_in_cell(map, "earth", row, col)
+        BSObject.put_in_cell(self, map, "earth", row, col)
 
 
 class BSUnit(BSObject):
@@ -49,7 +49,7 @@ class BSUnit(BSObject):
         if not (radio >= 1 and radio <= 9):
             raise Exception('radio invalido')
         if vision < max_range:
-            raise Exception('La vision no puede ser mayor que el rango maximo')
+            raise Exception('La vision no puede ser menor que el rango maximo')
         self.side=None
         self.moral = moral
         self.attack = attack
@@ -175,7 +175,7 @@ class BSUnit(BSObject):
         if cell.passable == 0 or cell.type != type or cell.bs_object is not None:
             return float("inf")
 
-        if type=='earth' and abs(cell.heigth - self.cell.heigth) > 0.3:
+        if type=='earth' and abs(cell.height - self.cell.height) > 0.3:
             return float("inf")
         
         cost = 10-cell.passable/2
@@ -200,7 +200,7 @@ class BSUnit(BSObject):
         return cost
 
     def enemy_cost_calculate(self, enemy):
-        damage=self.attack + (self.moral + self.cell.passage)/2
+        damage=self.attack + (self.moral + self.cell.passable)/2
 
         estimated_life_points = random.uniform(max(0, enemy.life_points - 10 + self.intelligence),
                                                min(10,enemy.life_points + 10 - self.intelligence))
@@ -341,11 +341,14 @@ class BSUnit(BSObject):
             if self.radio > 1:
                 cells_to_attack = self.radio-1
                 while cells_to_attack:
+                    cells_to_attack -= 1
 
-                    randint = random.randint(0, len(positions))
+                    randint = random.randint(0, len(positions) - 1)
                     position = positions[randint]
                     positions.pop(randint)
 
+                    if self.cell.row + position[0] < 0 or self.cell.row + position[0] >= self.map.no_rows or self.cell.col+position[1] < 0 or self.cell.col+position[1] >= self.map.no_columns:
+                        continue
                     if self.map[self.cell.row + position[0]][self.cell.col+position[1]].bs_object != None:
                         bs_object = self.map[self.cell.row +
                                              position[0]][self.cell.col+position[1]].bs_object
@@ -353,8 +356,8 @@ class BSUnit(BSObject):
 
                         if bs_object is BSUnit and bs_object.life_points <= 0:
                             self.no_defeated_units += 1
-                    
-                    cells_to_attack -= 1
+                            self.side.no_enemy_units_defeated += 1
+                            bs_object.side.no_own_units_defeated += 1
 
         elif precision > len(block_objects)/10 + miss_distance:
             enemy.take_damage(damage)
@@ -362,10 +365,13 @@ class BSUnit(BSObject):
             if self.radio > 1:
                 cells_to_attack = self.radio
                 while cells_to_attack:
+                    cells_to_attack -= 1
 
                     randint = random.randint(0, len(positions)-1)
                     position = positions[randint]
                     positions.pop(randint)
+                    if self.cell.row + position[0] < 0 or self.cell.row + position[0] >= self.map.no_rows or self.cell.col+position[1] < 0 or self.cell.col+position[1] >= self.map.no_columns:
+                        continue
 
                     if self.map[self.cell.row + position[0]][self.cell.col+position[1]].bs_object != None:
                         bs_object = self.map[self.cell.row +
@@ -374,11 +380,14 @@ class BSUnit(BSObject):
 
                         if bs_object is BSUnit and bs_object.life_points <= 0:
                             self.no_defeated_units += 1
+                            self.side.no_enemy_units_defeated += 1
+                            bs_object.side.no_own_units_defeated += 1
                     
-                    cells_to_attack -= 1
                 
         if enemy.life_points <= 0:
             self.no_defeated_units += 1
+            self.side.no_enemy_units_defeated += 1
+            enemy.side.no_own_units_defeated += 1
 
     # moverse a una celda
     def move_to_cell(self, cell):

@@ -36,8 +36,6 @@ class Simulator:
         print("Puntos de vida")
         print(list(map(lambda x: x.life_points, self.units)))
 
-
-
         for event in events:
             var_time=stats.beta.rvs(1, 3, loc=moment, scale=1, size=1, random_state=None)
                 
@@ -63,6 +61,7 @@ class Simulator:
         for event in events:
             if event[1]>time_beg and event[1]<time_end:
                 if self.event_is_pos(event[0]):
+                    print(f"{event[1]}", end=" ")
                     event[0].turn()
 						                       
     def simulating_k_turns(self):
