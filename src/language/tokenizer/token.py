@@ -40,7 +40,7 @@ class TokenType(Enum):
     Or = (Regex("or"), "or")
     And = (Regex("and"), "and")
     Dot = (Regex("\."), ".")
-    Newline = (Regex("\n"), "\n")
+    Semicolon = (Regex(";"), ";")
     LeftBracket = (Regex("["), "[")
     RightBracket = (Regex("]"), "]")
     true = (Regex("True"), "True")

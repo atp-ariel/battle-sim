@@ -8,7 +8,7 @@ TOKENS: List[TokenDefinition] = [
     TokenDefinition(TokenType.Number, 1),
     TokenDefinition(TokenType.Name, 2),
     TokenDefinition(TokenType.Arrow, 1),
-    TokenDefinition(TokenType.Newline, 1),
+    TokenDefinition(TokenType.Semicolon, 1),
     TokenDefinition(TokenType.Break, 1),
     TokenDefinition(TokenType.Continue, 1),
     TokenDefinition(TokenType.Def_Func, 1),

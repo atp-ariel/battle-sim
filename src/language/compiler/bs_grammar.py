@@ -7,7 +7,7 @@ bs_file = NonTerminal("bs_file")
 classes = NonTerminal("classes")
 statements = NonTerminal("statements")
 statement = NonTerminal("statement")
-NEWLINE = Terminal("NEWLINE", "\n")
+Semicolon = Terminal(";", ";")
 func_def = NonTerminal("func_def")
 if_def = NonTerminal("if_def")
 class_def = NonTerminal("class_def")
@@ -86,14 +86,14 @@ _bool = Terminal("bool", "bool")
 return_type = NonTerminal("return_type")
 decl = NonTerminal("decl")
 
-bs_file += Production([classes, NEWLINE, statements, eof], build_program)
+bs_file += Production([classes, statements, eof], build_program)
 bs_file += Production([eof])
 
-classes += Production([class_def, NEWLINE, classes], build_classes1)
-classes += Production([class_def], build_classes2)
+classes += Production([class_def, Semicolon, classes], build_classes1)
+classes += Production([class_def, Semicolon], build_classes2)
 
-statements += Production([statement, NEWLINE, statements], build_statements1)
-statements += Production([statement], build_statements2)
+statements += Production([statement, Semicolon, statements], build_statements1)
+statements += Production([statement, Semicolon], build_statements2)
 
 statement += Production([func_def])
 statement += Production([if_def])
@@ -118,18 +118,18 @@ elif_def += Production([_elif, expression, arrow, block], build_elif_def3)
 
 else_def += Production([_else, arrow, block], build_else_def)
 
-class_def += Production([_class, name, _is, name, arrow, lcurly, NEWLINE, constructor, NEWLINE, functions, NEWLINE, rcurly], build_class_def1)
-class_def += Production([_class, name, _is, name, arrow, lcurly, NEWLINE, constructor, NEWLINE, rcurly], build_class_def2)
+class_def += Production([_class, name, _is, name, arrow, lcurly, constructor, Semicolon, functions, Semicolon, rcurly], build_class_def1)
+class_def += Production([_class, name, _is, name, arrow, lcurly, constructor, Semicolon, rcurly], build_class_def2)
 
-functions += Production([func_def, NEWLINE, functions], build_functions1)
-functions += Production([func_def], build_functions2)
+functions += Production([func_def, Semicolon, functions], build_functions1)
+functions += Production([func_def, Semicolon], build_functions2)
 
-constructor += Production([tconstructor, lparent, params, rparent, arrow, lcurly, NEWLINE, attr, rcurly], build_constructor1)
-constructor += Production([tconstructor, lparent, rparent, arrow, lcurly, NEWLINE, attr, rcurly], build_constructor2)
-constructor += Production([tconstructor, lparent, rparent, lcurly, rcurly], build_constructor3)
+constructor += Production([tconstructor, lparent, params, rparent, arrow, lcurly, attr, rcurly, Semicolon], build_constructor1)
+constructor += Production([tconstructor, lparent, rparent, arrow, lcurly, attr, rcurly, Semicolon], build_constructor2)
+constructor += Production([tconstructor, lparent, rparent, lcurly, rcurly, Semicolon], build_constructor3)
 
-attr += Production([attr_def, NEWLINE, attr], build_attributes1)
-attr += Production([attr_def], build_attributes2)
+attr += Production([attr_def, Semicolon, attr], build_attributes1)
+attr += Production([attr_def, Semicolon], build_attributes2)
 
 attr_def += Production([_type, this, dot, name, oeq, expression], build_attr_def)
 
@@ -149,7 +149,7 @@ assign += Production([name, oeq, expression], build_assign)
 return_stat += Production([_return, expression], build_return1)
 return_stat += Production([_return], build_return2)
 
-block += Production([ lcurly, NEWLINE, statements, NEWLINE, rcurly], build_block)
+block += Production([ lcurly, statements, rcurly, Semicolon], build_block)
 
 params += Production([_type, name, comma, params], build_params1)
 params += Production([_type, name], build_params2)
