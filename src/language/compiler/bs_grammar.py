@@ -118,14 +118,14 @@ elif_def += Production([_elif, expression, arrow, block], build_elif_def3)
 
 else_def += Production([_else, arrow, block], build_else_def)
 
-class_def += Production([_class, name, _is, name, arrow, lcurly, constructor, NEWLINE, functions, rcurly], build_class_def1)
-class_def += Production([_class, name, _is, name, arrow, lcurly, constructor, rcurly], build_class_def2)
+class_def += Production([_class, name, _is, name, arrow, lcurly, NEWLINE, constructor, NEWLINE, functions, NEWLINE, rcurly], build_class_def1)
+class_def += Production([_class, name, _is, name, arrow, lcurly, NEWLINE, constructor, NEWLINE, rcurly], build_class_def2)
 
 functions += Production([func_def, NEWLINE, functions], build_functions1)
 functions += Production([func_def], build_functions2)
 
-constructor += Production([tconstructor, lparent, params, rparent, arrow, lcurly, attr, rcurly], build_constructor1)
-constructor += Production([tconstructor, lparent, rparent, arrow, lcurly, attr, rcurly], build_constructor2)
+constructor += Production([tconstructor, lparent, params, rparent, arrow, lcurly, NEWLINE, attr, rcurly], build_constructor1)
+constructor += Production([tconstructor, lparent, rparent, arrow, lcurly, NEWLINE, attr, rcurly], build_constructor2)
 constructor += Production([tconstructor, lparent, rparent, lcurly, rcurly], build_constructor3)
 
 attr += Production([attr_def, NEWLINE, attr], build_attributes1)
@@ -149,7 +149,7 @@ assign += Production([name, oeq, expression], build_assign)
 return_stat += Production([_return, expression], build_return1)
 return_stat += Production([_return], build_return2)
 
-block += Production([NEWLINE, lcurly, statements, rcurly], build_block)
+block += Production([ lcurly, NEWLINE, statements, NEWLINE, rcurly], build_block)
 
 params += Production([_type, name, comma, params], build_params1)
 params += Production([_type, name], build_params2)
