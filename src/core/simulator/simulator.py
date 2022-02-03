@@ -4,7 +4,7 @@ import random as rd
 
 
 class Simulator:
-    def __init__(self,earth_map, sides: List, turns: int, interval: int,time_beg=0):
+    def __init__(self,earth_map, sides: List, turns: int, interval: int, time_beg=0):
         self.earth_map=earth_map
         self.sides=sides
         self.units=[]
@@ -52,14 +52,14 @@ class Simulator:
 
         alive_sides=set()
         for event in events:
-            alive_sides.add(event.side)
+            alive_sides.add(event[0].side)
 
         if len(alive_sides)<=1:
             self.no_enemies=True
             return
 
         for event in events:
-            if event[1]>self.time_beg and event[1]<self.time_end:
+            if event[1]>time_beg and event[1]<time_end:
                 if self.event_is_pos(event[0]):
                     event[0].turn()
 						                       
