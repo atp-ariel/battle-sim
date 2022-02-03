@@ -1,9 +1,9 @@
-from .grammar import *
+from pathlib import Path
+from ..grammar import Production, Terminal, Symbol, Grammar, NonTerminal
+from typing import List
 from queue import deque
 import json
-from typing import Deque
-from ..tokenizer.token import Token
-from ..bs_grammar import GRAMMAR
+
 
 class Item:
     def __init__(self,production:Production,index):
@@ -155,7 +155,7 @@ class TableActionGoTo:
     def __init__(self,grammar:Grammar):
         self.grammar=grammar
         
-    def build(self):
+    def build(self, path: Path):
         
         states=Automaton(self.grammar).build()
         
@@ -186,79 +186,15 @@ class TableActionGoTo:
                 if l.name=='$' and lookahead_item[l].production.head.name=='S':
                     state_action[l.name]=('OK',)
                     
-                
             action.append(state_action)
             go_to.append(state_go_to)
         
-        with open('action.json','w') as fout:
+        with open(path + 'action.json','w') as fout:
             json.dump(action, fout)
             
-        with open('go_to.json','w') as fout:
+        with open(path + 'go_to.json','w') as fout:
             json.dump(go_to, fout)
             
-class Parser:
-    def __init__(self,grammar:Grammar,action,go_to):
-        self.grammar=grammar
-        self.action=action
-        self.go_to=go_to
-        
-    def parse(self,secuence:Deque[Token]):
-        
-        tokens_stack=[]
-        states_stack=[0]
-        nodes=[]
-        
-        while len(secuence)>0 or len(tokens_stack)>0:
-            
-            token=secuence[0]
-            
-            state_action=action[states_stack[len(states_stack)-1]]
-            
-            if token.name not in state_action:
-                raise Exception('cadena invalida')
-            
-            do=state_action[token.name]
-            
-            if do[0]=='OK':
-                print('Cadena valida')
-                return
-
-            if do[0]=='S':
-                states_stack.append(do[1])
-                tokens_stack.append(token.lexeme)
-                secuence.popleft()
-            else:
-                prod=self.grammar.P[do[1]]
-                if prod.func_ast is not None:
-                    prod.func_ast(tokens_stack,nodes)
-                out=len(prod)                
-                while out!=0:
-                    tokens_stack.pop()
-                    states_stack.pop()
-                    out-=1
-                
-                
-                state_go_to=go_to[states_stack[len(states_stack)-1]]
-                if prod.head.name not in state_go_to:
-                    raise Exception('Cadena invalida')
-                tokens_stack.append(prod.head.name)
-                states_stack.append(state_go_to[prod.head.name])
-                    
-
-table=TableActionGoTo(GRAMMAR)
-
-table.build()
-
-file=open("action.json")
-action=json.load(file)
-file.close()
-
-file=open("go_to.json")
-go_to=json.load(file)
-file.close()
-
-parser=Parser(GRAMMAR,action, go_to)
-
-secuence=deque([Terminal('number'),Terminal('a'),Terminal('='),Terminal('3')])
-
-parser.parse(secuence)
+def build_parser(grammar: Grammar, path: Path):
+    table = TableActionGoTo(grammar)
+    table.build()
