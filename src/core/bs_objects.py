@@ -172,9 +172,12 @@ class BSUnit(BSObject):
     # calcular el costo de moverse a la celda
     def move_cost_calculate(self, cell, type):
 
-        if cell.passable == 0 or cell.type != type or cell.bs_object is not None or abs(cell.heigth - self.cell.heigth) > 0.05:
+        if cell.passable == 0 or cell.type != type or cell.bs_object is not None:
             return float("inf")
 
+        if type=='earth' and abs(cell.heigth - self.cell.heigth) > 0.3:
+            return float("inf")
+        
         cost = 10-cell.passable/2
 
         if cell in self.visited_cells:
@@ -197,6 +200,7 @@ class BSUnit(BSObject):
         return cost
 
     def enemy_cost_calculate(self, enemy):
+        damage=self.attack + (self.moral + self.cell.passage)/2
 
         estimated_life_points = random.uniform(max(0, enemy.life_points - 10 + self.intelligence),
                                                min(10,enemy.life_points + 10 - self.intelligence))
@@ -204,7 +208,7 @@ class BSUnit(BSObject):
         estimated_defense = random.uniform(max(0, enemy.defense - 10 + self.intelligence),
                                            min(10,enemy.defense + 10 - self.intelligence))
 
-        return estimated_life_points / (self.attack / estimated_defense)
+        return estimated_life_points / (damage / estimated_defense)
 
     # detecta si un amigo pudiera ser afectado por el ataque 
     def friend_in_danger(self, cell):
