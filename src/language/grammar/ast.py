@@ -7,40 +7,31 @@ class Context:
 
 @dataclass
 class Node(ABC):
-    @abstractmethod
-    def validate(self, context: Context) -> bool:
-        pass
-    
+   pass
+
+@dataclass    
 class Statement(Node):
     pass
 
+@dataclass
 class Expression(Node):
     pass
 
+@dataclass
 class FuncDef(Statement):
     name: str
     return_type: str
     arg_names: List[str]
     arg_types: List[str]
     body : List[Statement]
-    
-    def validate(self, context: Context) -> bool:
-        inner_context = context.create_child_context()
-        
-        for arg in self.args:
-            inner_context.define_var(arg)
-        
-        for st in self.body:
-            if not st.validate(inner_context):
-                return False    
-        
-        return context.define_fun(self.name, self.args)
 
+@dataclass
 class AttrDef(Node):
     name: str
     type: str
     init: Expression
 
+@dataclass
 class ClassDef(Node):
     name: str
     parent : str
@@ -49,154 +40,99 @@ class ClassDef(Node):
     attributes: List[AttrDef]
     methods: List[FuncDef]
 
-
+@dataclass
 class BsFile(Node):
     classes: List[ClassDef]
     statements: List[Statement]
-    
-    def validate(self, context: Context) -> bool:
-        for st in self.statements:
-            if not st.validate(context):
-                return False
-        return True
 
+@dataclass
 class If(Statement):
     condition : Expression
     body : List[Statement]
-    
-    def validate(self, context: Context) -> bool:
-        inner_context = context.create_child_context()
-        
-        if not self.condition.validate(context):
-            return False
-        
-        for st in self.body:
-            if not st.validate(inner_context):
-                return False
-        
-        return True      
 
+@dataclass
 class Branch(Statement):
     ifs : List[If]
     else_body : List[Statement]
-    
-    def validate(self, context)->bool:
-        
-        for i in self.ifs:
-            if not i.validate(context):
-                return False
-        
-        inner_context = context.create_child_context()    
-        for st in self.else_body:
-            if not st.validate(inner_context):
-                return False
-            
-        return True
 
+@dataclass
 class WhileDef(Statement):
     condition : Expression
     body : List[Statement]
-    
-    def validate(self, context) -> bool:
-        if not self.condition.validate(context):
-            return False
         
-        inner_context = context.create_child_context()
-        
-        for st in self.body:
-            if st.validate(inner_context):
-                return False
-            
-        return True
-        
-    
+@dataclass
 class Decl(Statement):
     type : str
     name: str
     expression: Expression
-    
-    def validate(self, context: Context) -> bool:
-        if not self.expression.validate(context):
-            return False
-        if not context.define_var(self.name):
-            return False
-        return True
-    
+
+@dataclass    
 class Assign(Statement):
     name: str
     expression: Expression
-    
+
+@dataclass    
 class Return(Statement):
     expression : Expression
-    
-    def validate(self, context : Context) -> bool:
-        return self.expression.validate(context)
-        
-class Break(Statement):
-    def validate(self, context: Context) -> bool:
-        return True
 
+@dataclass        
+class Break(Statement):
+    pass
+
+@dataclass
 class Continue(Statement):
-    def validate(self, context: Context) -> bool:
-        return True
+    pass
 
 #endregion
 
 #region BinaryExpressions
 
+@dataclass
 class BinaryExpression(Expression):
     op: str
     left : Expression
     right : Expression
-    
-    def validate(self, context: Context) -> bool:
-        return self.left.validate(context) and self.right.validate(context)
-    
+
+@dataclass    
 class AritmeticBinaryExpression(BinaryExpression):
     pass
         
-    
+@dataclass   
 class TernaryExpression(Expression):
     left : Expression
     condition : Expression
     right : Expression
     
-    def validate(self, context:Context)->bool:
-        return self.condition.validate(context) and self.left.validate(context) and self.right.validate(context)
-
 #endregion
 
 #region AtomicExpressions
+@dataclass
 class Inversion(Expression):
     expression : Expression
 
+@dataclass
 class Primary(Expression):
     expression : Expression
     name : str
     args : List[Expression]
-    
+
+@dataclass
 class Variable(Expression):
     name : str
     
-    def validate(self, context: Context) -> bool:
-        return context.check_var(self.name)
-        
+@dataclass
 class Number(Expression):
     value: str
 
-    def validate(self, context: Context) -> bool:
-        return True
-    
+@dataclass    
 class Bool(Expression):
     value: str
 
-    def validate(self, context: Context) -> bool:
-        return True
-    
+@dataclass    
 class MyNone(Expression):
-    def validate(self, context: Context) -> bool:
-        return True
-    
+    pass
+
+@dataclass    
 class MyList(Expression):
     inner_list : List[Expression]
 
