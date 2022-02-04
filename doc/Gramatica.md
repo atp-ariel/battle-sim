@@ -18,7 +18,7 @@ statement ->    func_def
             |   return_stat
             |   'break'    ;                        build_breack                             
             |   'continue'  ;                       build_continue             
-            |   expressions
+            |   expressions ;
 
 
 func_def ->     'function' return_type NAME '(' params ')' '->' block       build_func_def1
@@ -77,8 +77,8 @@ params ->   type NAME ',' params      build_params1
 expressions ->  expression ','  expressions               build_expressions1
             |   expression                                build_expressions2
 
-expression ->   disjunction 'if' disjunction 'else' expression ;             build_ternary_expression
-            |   disjunction   ;                                              
+expression ->   disjunction 'if' disjunction 'else' expression            build_ternary_expression
+            |   disjunction                                                
 
 disjunction ->  conjunction 'or' disjunction                                build_disjunction
             | conjunction                                                   
