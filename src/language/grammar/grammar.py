@@ -101,17 +101,21 @@ class NonTerminal(Symbol):
     def __repr__(self):
         return f"NT({self.__str__()})"
 
-    def walk(self, walked : Set = None) -> Set['NonTerminal']:
-        walked = walked if walked is not None else set()
-        walked.add(self)
+    def walk(self, walked_set : Set = None, walked_list : List = None ) -> Set['NonTerminal']:
+        walked_set = walked_set if walked_set is not None else set()
+        walked_list = walked_list if walked_list is not None else []
+        if self not in walked_set:
+            walked_set.add(self)
+            walked_list.append(self)
         for p in self.productions:
             for sym in p.symbols:
                 if isinstance(sym, NonTerminal):
-                    if not sym in walked:
-                        walked.add(sym)
-                        sym.walk(walked)
+                    if not sym in walked_set:
+                        walked_set.add(sym)
+                        walked_list.append(sym)
+                        sym.walk(walked_set,walked_list)
         
-        return walked
+        return walked_list
 
 class Grammar:
     @property
