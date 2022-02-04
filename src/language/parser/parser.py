@@ -2,14 +2,21 @@ from ..grammar import Grammar
 from typing import Deque
 from ..tokenizer import Token
 
+class FinalToken:
+    def __init__(self):
+        self.name='$'
+        self.lexeme='$'
 
 class Parser:
     def __init__(self, grammar:Grammar, action, go_to):
         self.grammar=grammar
         self.action=action
         self.go_to=go_to
+        self.final = FinalToken()
         
     def parse(self, secuence:Deque[Token]):
+        secuence.append(self.final)
+        
         tokens_stack=[]
         states_stack=[0]
         nodes=[]
