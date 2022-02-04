@@ -1,24 +1,24 @@
 # Battle Script grammar
 
 ```
-bs_file ->  classes statements EOF     build_program
+bs_file ->  classes ; statements EOF     build_program
         |   EOF                       
 
-classes -> class_def  classes         build_classes1
-        |  class_def                       build_classes2                                         
+classes -> class_def ; classes         build_classes1
+        |  class_def ;                       build_classes2                                         
 
-statements ->   statement  statements      build_statements1
-            |   statement                       build_statements2
+statements ->   statement ; statements      build_statements1
+            |   statement ;                      build_statements2
 
 statement ->    func_def
             |   if_def
             |   while_def
-            |   decl ;
-            |   assign ;
-            |   return_stat ;
-            |   'break'    ;                        build_breack                             
-            |   'continue'  ;                       build_continue             
-            |   expressions ;
+            |   decl 
+            |   assign 
+            |   return_stat 
+            |   'break'                            build_breack                             
+            |   'continue'                         build_continue             
+            |   expressions 
 
 
 func_def ->     'function' return_type NAME '(' params ')' '->' block       build_func_def1
@@ -34,22 +34,22 @@ elif_def ->     'elif' expression '->' block elif_def                       buil
 
 else_def -> 'else' '->' block                                               build_else_def
 
-class_def ->    'class' NAME 'is' NAME '->' '{'  constructor functions '}'   build_class_def1
-        |       'class' NAME 'is' NAME '->' '{'  constructor '}'                     build_class_def2
+class_def ->    'class' NAME 'is' NAME '->' '{'  constructor ; functions '}'   build_class_def1
+        |       'class' NAME 'is' NAME '->' '{'  constructor; '}'                     build_class_def2
 
 
-functions -> func_def  functions                     build_functions1
-           | func_def                                build_functions2
+functions -> func_def ; functions                     build_functions1
+           | func_def ;                               build_functions2
 
 constructor -> 'constructor' '(' params ')' '->' '{' attributes '}'              build_constructor1
              | 'constructor' '(' ')' '->' '{'  attributes '}'                 build_constructor2
              | 'constructor' '(' ')' '->' '{' '}                        build_constructor3
 
 
-attributes -> attr_def  attributes             build_attributes1
-            | attr_def                         build_attributes2
+attributes -> attr_def ;  attributes             build_attributes1
+            | attr_def ;                        build_attributes2
 
-attr_def ->  type 'this' '.' NAME '=' expression ;          build_attr_def
+attr_def ->  type 'this' '.' NAME '=' expression           build_attr_def
 
 
 while_def ->    'while' expression '->' block              build_while_def

@@ -361,8 +361,8 @@ def build_attributes2(tokens:List[str],nodes:List):
 def build_constructor1(tokens:List[str],nodes:List):
     attributes=nodes.pop()
     params=obtain_params([], nodes.pop())
-    args_names=[t[0] for t in params]
-    args_types=[t[1] for t in params]
+    arg_names=[t[0] for t in params]
+    arg_types=[t[1] for t in params]
     
     constructor=Constructor(arg_names, arg_types, obtain_attributes([], attributes))
     
@@ -393,7 +393,7 @@ def build_class_def2(tokens:List[str],nodes:List):
     name=tokens[len(tokens)-8]
     parent_name=tokens[len(tokens)-6]
     
-    class_def=ClassDef(parent,name,constructor.attributes,[])
+    class_def=ClassDef(name,parent_name,constructor.arg_names,constructor.arg_types,constructor.attributes,[])
     
     nodes.append(class_def)
     
