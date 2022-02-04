@@ -4,11 +4,11 @@
 bs_file ->  classes statements EOF     build_program
         |   EOF                       
 
-classes -> class_def ';' classes         build_classes1
-        |  class_def  ';'                      build_classes2                                         
+classes -> class_def  classes         build_classes1
+        |  class_def                       build_classes2                                         
 
-statements ->   statement ';' statements      build_statements1
-            |   statement  ';'                     build_statements2
+statements ->   statement  statements      build_statements1
+            |   statement                       build_statements2
 
 statement ->    func_def
             |   if_def
@@ -16,8 +16,8 @@ statement ->    func_def
             |   decl
             |   assign
             |   return_stat
-            |   'break'                            build_breack                             
-            |   'continue'                         build_continue             
+            |   'break'    ;                        build_breack                             
+            |   'continue'  ;                       build_continue             
             |   expressions
 
 
@@ -34,22 +34,22 @@ elif_def ->     'elif' expression '->' block elif_def                       buil
 
 else_def -> 'else' '->' block                                               build_else_def
 
-class_def ->    'class' NAME 'is' NAME '->' '{'  constructor ; functions '}'   build_class_def1
-        |       'class' NAME 'is' NAME '->' '{'  constructor ; '}'                     build_class_def2
+class_def ->    'class' NAME 'is' NAME '->' '{'  constructor functions '}'   build_class_def1
+        |       'class' NAME 'is' NAME '->' '{'  constructor '}'                     build_class_def2
 
 
-functions -> func_def ';' functions                     build_functions1
-           | func_def   ';'                               build_functions2
+functions -> func_def  functions                     build_functions1
+           | func_def                                build_functions2
 
-constructor -> 'constructor' '(' params ')' '->' '{' attributes '}'';'              build_constructor1
-             | 'constructor' '(' ')' '->' '{'  attributes '}' ';'                    build_constructor2
-             | 'constructor' '(' ')' '->' '{' '} ';'                                build_constructor3
+constructor -> 'constructor' '(' params ')' '->' '{' attributes '}'              build_constructor1
+             | 'constructor' '(' ')' '->' '{'  attributes '}'                 build_constructor2
+             | 'constructor' '(' ')' '->' '{' '}                        build_constructor3
 
 
-attributes -> attr_def ';' attributes             build_attributes1
-            | attr_def ';'                        build_attributes2
+attributes -> attr_def  attributes             build_attributes1
+            | attr_def                         build_attributes2
 
-attr_def ->  type 'this' '.' NAME '=' expression           build_attr_def
+attr_def ->  type 'this' '.' NAME '=' expression ;          build_attr_def
 
 
 while_def ->    'while' expression '->' block              build_while_def
@@ -61,12 +61,12 @@ type ->   'number'        build_type
       |   'bool'          build_type
       |   NAME            build_type
 
-assign -> NAME '=' expression                                             build_assign
+assign -> NAME '=' expression   ;                         build_assign
 
-decl ->  type NAME '=' expression                                         build_decl
+decl ->  type NAME '=' expression   ;                                         build_decl
 
-return_stmt ->  'return' expression                                        build_return1
-            |   'return'                                                   build_return2
+return_stmt ->  'return' expression  ;                                      build_return1
+            |   'return' ;                                                  build_return2
 
 block ->     "{" statements "}"   build_block
 
@@ -77,8 +77,8 @@ params ->   type NAME ',' params      build_params1
 expressions ->  expression ','  expressions               build_expressions1
             |   expression                                build_expressions2
 
-expression ->   disjunction 'if' disjunction 'else' expression              build_ternary_expression
-            |   disjunction                                                 
+expression ->   disjunction 'if' disjunction 'else' expression ;             build_ternary_expression
+            |   disjunction   ;                                              
 
 disjunction ->  conjunction 'or' disjunction                                build_disjunction
             | conjunction                                                   
