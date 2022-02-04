@@ -8,7 +8,7 @@ def obtain_statements(list_statements:List,statements:Statements):
 
 def obtain_classes(list_classes:List, classes:Classes):
     list_classes.append(classes.class_def)
-    if classes.class_def is not None:
+    if classes.classes is not None:
         obtain_classes(list_classes, classes.classes)
     return list_classes
 
@@ -406,4 +406,4 @@ def build_classes1(tokens:List[str],nodes:List):
 def build_classes2(tokens:List[str],nodes:List):
     class_def=nodes.pop()
     classes=Classes(class_def, None)
-    nodes.append(class_def) 
+    nodes.append(classes) 
