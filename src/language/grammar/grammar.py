@@ -104,9 +104,11 @@ class NonTerminal(Symbol):
     def walk(self, walked_set : Set = None, walked_list : List = None ) -> Set['NonTerminal']:
         walked_set = walked_set if walked_set is not None else set()
         walked_list = walked_list if walked_list is not None else []
+
         if self not in walked_set:
             walked_set.add(self)
             walked_list.append(self)
+        
         for p in self.productions:
             for sym in p.symbols:
                 if isinstance(sym, NonTerminal):
@@ -128,8 +130,8 @@ class Grammar:
     def __init__(self, start: NonTerminal = None):
         self._s_ = start
         self.exp_dict: Dict[str, NonTerminal] = {}
-        self.T: Set[Terminal] = set()
-        self.N: Set[NonTerminal] = set()
+        self.T: List[Terminal] = []
+        self.N: List[NonTerminal] = []
         self.P: List[Production] = []
 
         if self._s_  is not None:
@@ -138,14 +140,14 @@ class Grammar:
             self.P = self.get_productions()
 
     
-    def get_terminals(self) -> Set[Terminal]:
-        terminals = set()
+    def get_terminals(self) -> List[Terminal]:
+        terminals = []
 
         for e in self.start.walk():
             for p in e.productions:
                 for sym in p.symbols:
                     if sym.is_terminal and sym.name != "EPS":
-                        terminals.add(sym)
+                        terminals.append(sym)
         return terminals
     
     def get_productions(self) -> List[Production]:
@@ -156,7 +158,7 @@ class Grammar:
                 prods.append(p)
         return prods
 
-    def get_non_terminals(self) -> Set[NonTerminal]:
+    def get_non_terminals(self) -> List[NonTerminal]:
         return self.start.walk()
     
 
