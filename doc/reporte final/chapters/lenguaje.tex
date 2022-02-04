@@ -174,5 +174,29 @@ Se implementó un sistema de expresiones regulares que admite los siguientes ope
     \item $.$ que busca la coincidencia de cualquier caracter.
 \end{itemize}
 
+La gramática para el lenguaje de las expresiones regulares que se implementó es la siguiente:
+
+\begin{verbatim}
+    regex = exp 
+
+    exp      = term '|' exp    
+            | term
+
+    term     = factor term       
+            | factor
+
+    factor   = primary '*'      
+            | primary '+'       
+            | primary '?'       
+            | primary
+
+    primary  = '(' exp ')'
+            | CHAR              
+            | '.'
+\end{verbatim}
+
+
+
+
 
 
