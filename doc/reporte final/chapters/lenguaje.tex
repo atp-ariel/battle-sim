@@ -1,0 +1,178 @@
+\section{Battle Script, el lenguaje de dominio específico para ejecutar el proyecto}
+
+El usuario final del proyecto necesita un medio para específicar las condiciones del enfrentamiento a simular, entiéndase cómo son las unidades, los soldados, el mapa, el movimiento de las unidades, etcétera. Para ello se implementó un lenguaje de dominio específico (DSL, por sus siglas en inglés \textit{Domain Specific Language}) con el nombre de Battle Script, que permite la creación de nuevas unidades, la creación de obstáculos, la creación de mapas, la inserción de unidades y obstáculos en el mapa, la creación de bandos, y la ejecucción de la simulación.
+
+\subsection{Gramática}
+
+Se diseñó la siguiente gramática para el lenguaje:
+
+\begin{verbatim}
+bs_file ->  classes statements EOF     
+    |   EOF                       
+
+classes -> class_def  classes         
+    |  class_def                       
+
+statements ->   statement  statements      
+        |   statement                       
+
+statement ->    func_def
+        |   if_def
+        |   while_def
+        |   decl  ';' 
+        |   assign  ';' 
+        |   return_stat  ';' 
+        |   'break'    ';'                        
+        |   'continue'  ';'                       
+        |   expressions ;
+
+
+func_def ->     'function' return_type NAME '(' params ')' '->' block       
+        |   'function' return_type NAME '(' ')' '->' block              
+
+if_def ->   'if' expression '->' block elif_def                             
+    |   'if' expression '->' block else_def                             
+    |   'if' expression '->' block                                      
+
+elif_def ->     'elif' expression '->' block elif_def                       
+        |   'elif' expression '->' block else_def                       
+        |   'elif' expression '->' block                                
+
+else_def -> 'else' '->' block                                               
+
+class_def ->    'class' NAME 'is' NAME '->' '{'  constructor functions '}'   
+    |       'class' NAME 'is' NAME '->' '{'  constructor '}'                     
+
+
+functions -> func_def  functions                     
+       | func_def                                
+
+constructor -> 'constructor' '(' params ')' '->' '{' attributes '}'              
+         | 'constructor' '(' ')' '->' '{'  attributes '}'                 
+         | 'constructor' '(' ')' '->' '{' '}'                   
+
+
+attributes -> attr_def  attributes             
+        | attr_def                         
+
+attr_def ->  type 'this' '.' NAME '=' expression ';'          
+
+
+while_def ->    'while' expression '->' block              
+
+return_type ->  'void'                        
+        |   type                          
+
+type ->   'number'        
+  |   'bool'          
+  |   NAME            
+
+assign -> NAME '=' expression                         
+
+decl ->  type NAME '=' expression                              
+
+return_stmt ->  'return' expression                                      
+        |   'return'                                        
+
+block ->     '{' statements '}'   
+
+params ->   type NAME ',' params      
+    |  type NAME                  
+
+
+expressions ->  expression ','  expressions               
+        |   expression                                
+
+expression ->   disjunction 'if' disjunction 'else' expression            
+        |   disjunction                                                
+
+disjunction ->  conjunction 'or' disjunction                                
+        | conjunction                                                   
+
+conjunction ->  inversion 'and' conjunction                                 
+        |   inversion                                                   
+
+inversion ->    'not' inversion                                             
+        |    comparision                                                
+
+
+comparision ->  sum compare_par                                            
+        |   sum
+
+compare_par ->  'eq' sum                        
+        |   'neq' sum                       
+        |   'lte' sum                       
+        |   'lt' sum                        
+        |   'gte' sum                       
+        |   'gt' sum                        
+
+
+sum ->  sum '+' term                            
+    |   sum '-' term                            
+    |   term 
+
+term -> term '*' factor                         
+    |   term '/' factor                         
+    |   term '%' factor                         
+    |   factor
+
+factor ->   '+' factor
+    |   '-' factor
+    |   pow
+
+pow ->  primary '^' factor              
+    |   primary
+
+primary ->  primary '.' NAME            
+    |   primary '(' args ')'        
+    |   primary '(' ')'             
+    |   atom
+
+args -> expression ',' args
+    | expression
+
+atom -> NAME                            
+    |   'True'                          
+    |   'False'                         
+    |   'None'                          
+    |   NUMBER                          
+    |   list
+
+list -> '[' expressions ']'             
+    |   '[' ']'                         
+\end{verbatim}
+
+\subsection{Compilador}
+
+% TODO: ESCRIBIR MUELA BISCA DEL COMPILADOR
+AQUI VA UNA MUELA BISCA DE CóMO ES EL COMPILADOR A GRANDES RASGOS
+
+\subsection{Tokenizador}
+
+Un Tokenizador, comúnmente llamado Lexer, es un ente encargado de dividir la cadena de texto de entrada del compilador en tokens del alfabeto del lenguaje Battle Script, identificando el tipo del token y envíandolo a la siguiente etapa del proceso de compilación.
+
+Para la implementación del tokenizador fue necesario un sistema de expresiones regulares, una clase para representar un token, así como su tipo y la definición de los tokens del lenguaje, además de la clase propia del tokenizador. 
+
+\subsubsection{Sistema de expresiones regulares}
+
+Una expresión regulares es una definición recursiva de un lenguaje donde $a$ es la expresión regular para $L(a) = \{a\}$ y $\epsilon$ es la expresión regular para $L(\epsilon) = \{\epsilon\}$. Si $s$ y $r$ son expresiones regulares entonces:
+
+\begin{itemize}
+    \item $(s)|(r)$ es la expresión regular para la unión de lenguajes $L(s) \cup L(r)$
+    \item $(s)(r)$ es la expresión regular para la concatenación de lenguajes $L(s)L(r)$
+    \item $(s)*$ es la expresión regular para la clausura del lenguaje $L(s)* = \bigcup\limits_{k=0}^{\infty} L(s)^k$
+\end{itemize}
+
+Se implementó un sistema de expresiones regulares que admite los siguientes operadores:
+
+\begin{itemize}
+    \item $|$ que hace la unión de dos expresiones regulares.
+    \item La concatenación de expresiones regulares de la siguiente forma, si $a$ y $b$ son expresiones regulares entonces $ab$ es la expresión de la concatenación.
+    \item $*$ que hace la clausura del lenguaje que representa la expresión regular.
+    \item $?$ que busca la coincidencia de la expresión regular una vez o ninguna.
+    \item $+$ que busca la coincidencia de la expresión regular una o más veces.
+    \item $.$ que busca la coincidencia de cualquier caracter.
+\end{itemize}
+
+
+
