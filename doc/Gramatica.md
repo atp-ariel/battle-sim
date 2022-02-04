@@ -13,9 +13,9 @@ statements ->   statement  statements      build_statements1
 statement ->    func_def
             |   if_def
             |   while_def
-            |   decl
-            |   assign
-            |   return_stat
+            |   decl ;
+            |   assign ;
+            |   return_stat ;
             |   'break'    ;                        build_breack                             
             |   'continue'  ;                       build_continue             
             |   expressions ;
@@ -61,12 +61,12 @@ type ->   'number'        build_type
       |   'bool'          build_type
       |   NAME            build_type
 
-assign -> NAME '=' expression   ;                         build_assign
+assign -> NAME '=' expression                         build_assign
 
-decl ->  type NAME '=' expression   ;                                         build_decl
+decl ->  type NAME '=' expression                              build_decl
 
-return_stmt ->  'return' expression  ;                                      build_return1
-            |   'return' ;                                                  build_return2
+return_stmt ->  'return' expression                                      build_return1
+            |   'return'                                        build_return2
 
 block ->     "{" statements "}"   build_block
 
