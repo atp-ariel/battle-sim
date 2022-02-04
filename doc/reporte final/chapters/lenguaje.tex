@@ -172,6 +172,7 @@ Se implementó un sistema de expresiones regulares que admite los siguientes ope
     \item $?$ que busca la coincidencia de la expresión regular una vez o ninguna.
     \item $+$ que busca la coincidencia de la expresión regular una o más veces.
     \item $.$ que busca la coincidencia de cualquier caracter.
+    \item $\setminus$  que permite la inclusión de los operadores anteriores en un expresión regular como un caracter.
 \end{itemize}
 
 La gramática para el lenguaje de las expresiones regulares que se implementó es la siguiente:
@@ -191,12 +192,55 @@ La gramática para el lenguaje de las expresiones regulares que se implementó e
             | primary
 
     primary  = '(' exp ')'
-            | CHAR              
+            | '\' CHAR              
+            | CHAR
             | '.'
 \end{verbatim}
 
+Una expresión regular en el sistema se implementó utilizando la clase \verb|Regex| de Python. Una expresión regular se construye con la cadena de texto que representa el patrón de la expresión regular. Este patrón se compila y se devuelve un Autómata Finito No Determinista que se utiliza para los procesos de saber si una cadena pertenece al lenguaje representado por la expresión, o encontrar todas las coincidencias de la expresión en una cadena de texto. 
 
+\begin{verbatim}
+class Regex:
+        def __init__(self, pattern: str):
+            self.pattern : str = pattern
+            self.nfa : NFA = self.compile()
+    
+        def compile(self) -> NFA:
+            lex: Lexer = Lexer(self.pattern)
+            parser : Parser = Parser(lex)
+            tokens : List[Token] = parser()
+            handler: Handler = Handler()
+            
+            nfa_stack : List[NFA]= []
+            
+            for t in tokens:
+                handler.handlers[t.name](t, nfa_stack)
+            
+            if len(nfa_stack) == 1:
+                return nfa_stack.pop() 
+            raise Exception("Bad regex!")
+    
+        def match(self, string: str) -> bool:
+            return self.nfa.match(string)
+    
+        def find_all(self, string: str) -> List[Match]:
+            return self.nfa.find_all(string)
+\end{verbatim}
 
+El proceso de compilación de una expresión regular es bastante sencillo, se tiene un tokenizador que recorre la cadena y cada vez que encuentra un operador o un caracter devuelve el token correspondiente, si encuentra el operador de escape ($\setminus$) devuelve un token de tipo \verb|CHAR| con el caracter siguiente. El proceso de Parsing consiste en recibir el conjunto de tokens provenientes del tokenizador y llamar al método \verb|exp| que este parsea el no terminal del mismo nombre de la gramática y va parseando el resto de no terminales según corresponda, o sea, se implementó un Parsing Recursivo Descendente.
 
+Luego del proceso de parsing y verificar que la secuencia de tokens es correcta, se recorre la secuencia de tokens y haciendo uso de la clase \verb|Handler| se construye el autómata de la expresión regular. 
+
+La clase \verb|Handler| es la encargada de dado un conjunto de tokens construir el autómata correspondiente, para ello implementa un método para cada operador de la gramática, estos métodos saben construir el autómata que resulta de aplicar la operación a uno, dos o más autómatas según el operador.
+
+\begin{itemize}
+        \item Reconcimiento de un caracter:
+        \item Operación de Unión:
+        \item Operación de Concatenación:
+        \item Operación \verb|*|:
+        \item Operación \verb|+|:
+        \item Operación \verb|.|:
+        \item Operación \verb|?|:
+\end{itemize}
 
 
