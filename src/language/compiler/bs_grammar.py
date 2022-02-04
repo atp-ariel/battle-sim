@@ -118,7 +118,7 @@ elif_def += Production([_elif, expression, arrow, block], build_elif_def3)
 
 else_def += Production([_else, arrow, block], build_else_def)
 
-class_def += Production([_class, name, _is, name, arrow, lcurly, constructor, Semicolon, functions, Semicolon, rcurly], build_class_def1)
+class_def += Production([_class, name, _is, name, arrow, lcurly, constructor, Semicolon, functions, rcurly], build_class_def1)
 class_def += Production([_class, name, _is, name, arrow, lcurly, constructor, Semicolon, rcurly], build_class_def2)
 
 functions += Production([func_def, Semicolon, functions], build_functions1)
@@ -149,7 +149,7 @@ assign += Production([name, oeq, expression], build_assign)
 return_stat += Production([_return, expression], build_return1)
 return_stat += Production([_return], build_return2)
 
-block += Production([ lcurly, statements, rcurly, Semicolon], build_block)
+block += Production([ lcurly, statements, rcurly], build_block)
 
 params += Production([_type, name, comma, params],  build_params1)
 params += Production([_type, name], build_params2)

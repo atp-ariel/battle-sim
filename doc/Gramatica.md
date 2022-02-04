@@ -34,8 +34,8 @@ elif_def ->     'elif' expression '->' block elif_def                       buil
 
 else_def -> 'else' '->' block                                               build_else_def
 
-class_def ->    'class' NAME 'is' NAME '->' '{'  constructor  functions '}'   build_class_def1
-        |       'class' NAME 'is' NAME '->' '{'  constructor  '}'                     build_class_def2
+class_def ->    'class' NAME 'is' NAME '->' '{'  constructor ; functions '}'   build_class_def1
+        |       'class' NAME 'is' NAME '->' '{'  constructor ; '}'                     build_class_def2
 
 
 functions -> func_def ';' functions                     build_functions1
@@ -68,7 +68,7 @@ decl ->  type NAME '=' expression                                         build_
 return_stmt ->  'return' expression                                        build_return1
             |   'return'                                                   build_return2
 
-block ->     "{" statements "}" ';'  build_block
+block ->     "{" statements "}"   build_block
 
 params ->   type NAME ',' params      build_params1
         |  type NAME                  build_params2                                 
