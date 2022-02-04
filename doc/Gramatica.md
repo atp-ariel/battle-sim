@@ -1,7 +1,7 @@
 # Battle Script grammar
 
 ```
-bs_file ->  classes statements EOF     build_program
+bs_file ->  classes '&' statements EOF     build_program
         |   EOF                       
 
 classes -> class_def  classes         build_classes1

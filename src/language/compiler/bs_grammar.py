@@ -85,8 +85,9 @@ void = Terminal("void", "void")
 _bool = Terminal("bool", "bool")
 return_type = NonTerminal("return_type")
 decl = NonTerminal("decl")
+oand = Terminal("&", "&")
 
-bs_file += Production([classes, statements, eof], build_program)
+bs_file += Production([classes, oand, statements, eof], build_program)
 bs_file += Production([eof])
 
 classes += Production([class_def,  classes],build_classes1)

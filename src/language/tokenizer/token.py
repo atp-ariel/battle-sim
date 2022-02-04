@@ -50,6 +50,7 @@ class TokenType(Enum):
     Bool = (Regex("bool"), "bool")
     This = (Regex("this"), "this")
     Constructor = (Regex("constructor"), "constructor")
+    OAnd = (Regex("&"), "&")
     EOF = (Regex("EOF"), "EOF")
 
 class TokenDefinition:
