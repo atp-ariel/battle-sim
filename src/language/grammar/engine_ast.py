@@ -40,7 +40,7 @@ def obtain_functions(list_func:List,functions:Functions):
 def obtain_attributes(list_attr:List,attributes:Attributes):
     list_attr.append(attributes.attr_def)
     if attributes.attributes is not None:
-        obtain_functions(list_attr, attributes.attributes)
+        obtain_attributes(list_attr, attributes.attributes)
     return list_attr
 
 def build_program(tokens:List[str],nodes:List):
@@ -71,9 +71,12 @@ def build_type(tokens:List[str],nodes:List):
     nodes.append(type)
     
 def build_return_type(tokens:List[str],nodes:List):
-    type=nodes.pop()
-    return_type=ReturnType(type.type)
-    nodes.append(return_type)
+    top = tokens[len(tokens)-1]
+    if top == 'void':
+        nodes.append(ReturnType(top))
+    else:
+        type=nodes.pop()
+        nodes.append(ReturnType(type.type))
     
 def build_params1(tokens:List[str],nodes:List):
     params=nodes.pop()
@@ -95,10 +98,10 @@ def build_func_def1(tokens:List[str],nodes:List):
     name=tokens[len(tokens)-6]
     block=nodes.pop()
     params=obtain_params([], nodes.pop())
-    args_name=[t[0] for t in params]
-    args_type=[t[1] for t in params]
+    arg_names=[t[0] for t in params]
+    arg_types=[t[1] for t in params]
     return_type=nodes.pop()
-    func_def=FuncDef(name,return_type.type,args_name,arg_type,block.statements)
+    func_def=FuncDef(name,return_type.type,arg_names,arg_types,block.statements)
     nodes.append(func_def)
     
 def build_func_def2(tokens:List[str],nodes:List):
@@ -251,20 +254,12 @@ def build_inversion(tokens:List[str],nodes:List):
     nodes.append(inversion)
     
 def build_comparision(tokens:List[str],nodes:List):
-    com_par=nodes.pop()
-    sum=nodes.pop()
+    right=nodes.pop()
+    left=nodes.pop()
     
-    aritexp=AritmeticBinaryExpression(com_par.op,sum,com_par.expression)
+    aritexp=AritmeticBinaryExpression(tokens[len(tokens)-2],left,right)
     
     nodes.append(aritexp)
-
-def build_compare_par(tokens:List[str],nodes:List):
-    sum=nodes.pop()
-    op=tokens[len(tokens)-2]
-    
-    com_par=ComparePar(op, sum)
-    
-    nodes.append(com_par)
     
 def build_aritmetic_expression(tokens:List[str],nodes:List):
     right=nodes.pop()
@@ -273,7 +268,7 @@ def build_aritmetic_expression(tokens:List[str],nodes:List):
     
     aritexp=AritmeticBinaryExpression(op,left,right)
     
-    nodes.append(binexp)
+    nodes.append(aritexp)
     
 def build_primary1(tokens:List[str],nodes:List):
     exp=nodes.pop()
@@ -332,7 +327,7 @@ def build_functions2(tokens:List[str],nodes:List):
     
     functions=Functions(func, None)
     
-    nodes.append(function)
+    nodes.append(functions)
 
 def build_attr_def(tokens:List[str],nodes:List):
     exp=nodes.pop()
@@ -384,7 +379,7 @@ def build_class_def1(tokens:List[str],nodes:List):
     name=tokens[len(tokens)-8]
     parent_name=tokens[len(tokens)-6]
     
-    class_def=ClassDef(name,parent,constructor.arg_names,constructor.arg_types,constructor.attributes,obtain_functions([],functions))
+    class_def=ClassDef(name,parent_name,constructor.arg_names,constructor.arg_types,constructor.attributes,obtain_functions([],functions))
     
     nodes.append(class_def)
     

@@ -177,11 +177,6 @@ class Expressions:
     expression : Expression
     expressions : 'Expressions'
 
-@dataclass    
-class ComparePar:
-    op : str
-    expression : Expression
-
 @dataclass
 class Functions:
     function : FuncDef
