@@ -75,6 +75,5 @@ class Tokenizer:
                 i = token.end
 
             i += 1
-
-        print(list(map(lambda x: (x.type.value[1], x.lexeme), tokens)))
+        tokens.append(Token(TokenType.EOF, "EOF", tokens[-1].end + 1, tokens[-1].end + 4))
         return deque(tokens)          
