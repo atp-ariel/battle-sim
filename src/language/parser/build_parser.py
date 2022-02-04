@@ -19,7 +19,7 @@ class ItemLR1(Item):
         for i in range(index):
             self.string+=f"{production[i]} "
             
-        self.string+='.'
+        self.string+='~'
         
         total=len(production)
         for i in range(index,total):
