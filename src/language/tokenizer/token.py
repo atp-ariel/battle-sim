@@ -2,10 +2,10 @@ from enum import Enum
 from ..regex import Regex
 
 
-
 class TokenType(Enum):
-    Number = (Regex("(1|2|3|4|5|6|7|8|9)(0|1|2|3|4|5|6|7|8|9)*(\.)*(0|1|2|3|4|5|6|7|8|9)*"), "NUMBER")
-    Name = (Regex("(a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z)+"), "NAME")
+    Number = (Regex(
+        "-?(0|1|2|3|4|5|6|7|8|9)(0|1|2|3|4|5|6|7|8|9)*(\.)*(0|1|2|3|4|5|6|7|8|9)*"), "NUMBER")
+    Name = (Regex("(a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z|_)+"), "NAME")
     Arrow = (Regex("->"), "->")
     Comma = (Regex(","), ",")
     LeftParent = (Regex("\("), "(")
@@ -40,7 +40,7 @@ class TokenType(Enum):
     Or = (Regex("or"), "or")
     And = (Regex("and"), "and")
     Dot = (Regex("\."), ".")
-    Newline = (Regex("\n"), "\n")
+    Semicolon = (Regex(";"), ";")
     LeftBracket = (Regex("["), "[")
     RightBracket = (Regex("]"), "]")
     true = (Regex("True"), "True")
@@ -50,6 +50,10 @@ class TokenType(Enum):
     Bool = (Regex("bool"), "bool")
     This = (Regex("this"), "this")
     Constructor = (Regex("constructor"), "constructor")
+    OAnd = (Regex("&"), "&")
+    EOF = (Regex("EOF"), "EOF")
+    List = (Regex("List"), "List")
+
 
 class TokenDefinition:
     def __init__(self, ttype: TokenType, precendence: int):
@@ -68,11 +72,9 @@ class Token:
     @property
     def name(self) -> str:
         return self.type.value[1]
-        
+
     def __init__(self, token_type: TokenType, lexeme: str, start: int, end: int):
         self.type: TokenType = token_type
         self.lexeme: str = lexeme
         self.start: int = start
         self.end: int = end
-    
-    

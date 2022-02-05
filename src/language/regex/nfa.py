@@ -5,10 +5,10 @@ from .parser import ParseError
 
 class State:
     def __init__(self, name: str):
-        self.epsilon : List[State] = [] # epsilon-closure
-        self.transitions : Dict[str, State]= {} 
-        self.name : str = name
-        self.is_end : bool = False
+        self.epsilon: List[State] = []  # epsilon-closure
+        self.transitions: Dict[str, State] = {}
+        self.name: str = name
+        self.is_end: bool = False
 
 
 @dataclass
@@ -17,33 +17,34 @@ class Match:
     end: int
     value: str
 
+
 class NFA:
     def __init__(self, start, end):
-        self.start : State = start
-        self.end : State= end # start and end states
+        self.start: State = start
+        self.end: State = end  # start and end states
         end.is_end = True
-    
-    def addstate(self, state: State, state_set: Set[State]) -> None: 
+
+    def addstate(self, state: State, state_set: Set[State]) -> None:
         # add state + recursively add epsilon transitions
         if state in state_set:
             return
 
         state_set.add(state)
-        
+
         for eps in state.epsilon:
             self.addstate(eps, state_set)
-    
+
     def match(self, string: str) -> bool:
         current_states = set()
         self.addstate(self.start, current_states)
-        
+
         for c in string:
             next_states = set()
             for state in current_states:
                 if c in state.transitions.keys():
                     trans_state = state.transitions[c]
                     self.addstate(trans_state, next_states)
-           
+
             current_states = next_states
 
         for s in current_states:
@@ -67,7 +68,8 @@ class NFA:
                     tstate = s.transitions[c]
                     self.addstate(tstate, nstates)
                     if not matched:
-                        match = Match(i, i, c) if match is None else Match(match.start, match.end + 1, match.value + c)
+                        match = Match(i, i, c) if match is None else Match(
+                            match.start, match.end + 1, match.value + c)
                         matched = True
                 else:
                     self.addstate(self.start, nstates)
@@ -97,18 +99,20 @@ class NFA:
 
         return m
 
+
 class Handler:
     def __init__(self):
-        self.handlers : Dict[str, Callable] = {'CHAR':self.handle_char, 'CONCAT':self.handle_concat,
-                         'ALT':self.handle_alt, 'STAR':self.handle_rep,
-                         'PLUS':self.handle_rep, 'QMARK':self.handle_qmark, "DOT": self.handle_dot}
-        self.state_count : int = 0
-        self.vocabulary: Set[str] = set([chr(i) for i in range(int("21", 16), int("7e", 16))])
+        self.handlers: Dict[str, Callable] = {'CHAR': self.handle_char, 'CONCAT': self.handle_concat,
+                                              'ALT': self.handle_alt, 'STAR': self.handle_rep,
+                                              'PLUS': self.handle_rep, 'QMARK': self.handle_qmark, "DOT": self.handle_dot}
+        self.state_count: int = 0
+        self.vocabulary: Set[str] = set(
+            [chr(i) for i in range(int("21", 16), int("7e", 16))])
 
     def create_state(self) -> State:
         self.state_count += 1
         return State('S_' + str(self.state_count))
-    
+
     def handle_char(self, t, nfa_stack) -> None:
         """
         Build a nfa for a char token
@@ -147,8 +151,8 @@ class Handler:
 
         """
 
-        n1 : NFA = None
-        n2 : NFA = None
+        n1: NFA = None
+        n2: NFA = None
         try:
             n2 = nfa_stack.pop()
             n1 = nfa_stack.pop()
@@ -159,7 +163,7 @@ class Handler:
         n1.end.epsilon.append(n2.start)
         nfa = NFA(n1.start, n2.end)
         nfa_stack.append(nfa)
-    
+
     def handle_alt(self, t, nfa_stack) -> None:
         """
         Build a NFA for alt.
@@ -168,8 +172,8 @@ class Handler:
             |                /
             |e-> (nfa_2) -e-/
 
-        """ 
-        
+        """
+
         n1: NFA = None
         n2: NFA = None
         try:
@@ -189,7 +193,7 @@ class Handler:
 
         nfa = NFA(s0, s3)
         nfa_stack.append(nfa)
-    
+
     def handle_rep(self, t, nfa_stack) -> None:
         """
         Build a NFA for repetition token.
@@ -209,12 +213,12 @@ class Handler:
             |-------------|
         """
 
-        n1 : NFA = None
+        n1: NFA = None
 
         try:
             n1 = nfa_stack.pop()
         except Exception:
-            raise ParseError("Unexpected repetition") 
+            raise ParseError("Unexpected repetition")
 
         s0 = self.create_state()
         s1 = self.create_state()
@@ -234,10 +238,10 @@ class Handler:
          |----e----|
          |         |
          |- nfa1 <-|
-         
+
         """
-        n1 : NFA = None
-        try: 
+        n1: NFA = None
+        try:
             n1 = nfa_stack.pop()
         except Exception:
             raise ParseError("Unexpected '?")
