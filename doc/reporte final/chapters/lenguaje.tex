@@ -234,43 +234,43 @@ Luego del proceso de parsing y verificar que la secuencia de tokens es correcta,
 La clase \verb|Handler| es la encargada de dado un conjunto de tokens construir el autómata correspondiente, para ello implementa un método para cada operador de la gramática, estos métodos saben construir el autómata que resulta de aplicar la operación a uno, dos o más autómatas según el operador. La clase implementa el algoritmo Thompson's construction para la construcción del 
 
 \begin{itemize}
-        \item Reconcimiento de un caracter: el método de la clase \verb|Handler| encargado de construir dicho autómata construye el estado inicial \verb|s0| y el final \verb|s1| y añade la transición con el caracter en cuestión, como se muestra en la figura siguiente:
+        \item \textbf{Reconcimiento de un caracter:} el método de la clase \verb|Handler| encargado de construir dicho autómata construye el estado inicial \verb|s0| y el final \verb|s1| y añade la transición con el caracter en cuestión, como se muestra en la figura siguiente:
                 \begin{figure}
                         \centering
                         \includegraphics[width=6cm]{./chapters/img/char.jpeg}
                         \caption{Autómata finito no determinista para el reconocimiento de un caracter}
                 \end{figure}
-        \item Operación de Unión: el método encargado de construir el autómata solo debe los estados iniciales y finales, además añadir $\epsilon$-transiciones desde el estado incial hacia los autómatas y desde los autómatas hacia el estado final.
+        \item \textbf{Operación de Unión:} el método encargado de construir el autómata solo debe los estados iniciales y finales, además añadir $\epsilon$-transiciones desde el estado incial hacia los autómatas y desde los autómatas hacia el estado final.
                 \begin{figure}
                         \centering
                         \includegraphics[width=6cm]{./chapters/img/alt.jpeg}
                         \caption{Autómata finito no determinista para el operador unión}
                 \end{figure}
-        \item Operación de Concatenación: el método encargado de construir el autómata solo debe  añadir una $\epsilon$-transición desde el estado final del primer autómata hacia el estado incial del segundo autómata.
+        \item \textbf{Operación de Concatenación:} el método encargado de construir el autómata solo debe  añadir una $\epsilon$-transición desde el estado final del primer autómata hacia el estado incial del segundo autómata.
                 \begin{figure}
                         \centering
                         \includegraphics[width=6cm]{./chapters/img/concat.jpeg}
                         \caption{Autómata finito no determinista para el operador concatenación}
                 \end{figure}
-        \item Operación \verb|*|: el método encargado de construir el autómata solo debe los estados iniciales y finales, además añadir $\epsilon$-transiciones desde el estado incial hacia el autómata y desde el autómata hacia el estado final, así como una desde \verb|s0| hacia \verb|s1| para reconocer la no aparición del patrón, y una transición $\epsilon$ desde el estado final del autómata hacia el inicial para reconocer las repeticiones.
+        \item \textbf{Operación} \verb|*|: el método encargado de construir el autómata solo debe los estados iniciales y finales, además añadir $\epsilon$-transiciones desde el estado incial hacia el autómata y desde el autómata hacia el estado final, así como una desde \verb|s0| hacia \verb|s1| para reconocer la no aparición del patrón, y una transición $\epsilon$ desde el estado final del autómata hacia el inicial para reconocer las repeticiones.
                 \begin{figure}
                         \centering
                         \includegraphics[width=6cm]{./chapters/img/star.jpeg}
                         \caption{Autómata finito no determinista para el operador *}
                 \end{figure}
-        \item Operación \verb|+|: el método encargado de construir el autómata solo debe los estados iniciales y finales, además añadir $\epsilon$-transiciones desde el estado incial hacia el autómata y desde el autómata hacia el estado final, y una transición $\epsilon$ desde el estado final del autómata hacia el inicial para reconocer las repeticiones.
+        \item \textbf{Operación} \verb|+|: el método encargado de construir el autómata solo debe los estados iniciales y finales, además añadir $\epsilon$-transiciones desde el estado incial hacia el autómata y desde el autómata hacia el estado final, y una transición $\epsilon$ desde el estado final del autómata hacia el inicial para reconocer las repeticiones.
                 \begin{figure}
                         \centering
                         \includegraphics[width=6cm]{./chapters/img/plus.jpeg}
                         \caption{Autómata finito no determinista para el operador +}
                 \end{figure}
-        \item Operación \verb|.|: el método encargado de construir dicho autómata construye los estados inciales y finales ya añade un transición para cada caracter y añade un $\epsilon$-transición para reconocer la ocurrencia de ningún caracter. El autómata quedaría como el siguiente:
+        \item \textbf{Operación} \verb|.|: el método encargado de construir dicho autómata construye los estados inciales y finales ya añade un transición para cada caracter y añade un $\epsilon$-transición para reconocer la ocurrencia de ningún caracter. El autómata quedaría como el siguiente:
                 \begin{figure}
                         \centering
                         \includegraphics[width=6cm]{./chapters/img/dot.jpeg}
                         \caption{Autómata finito no determinista para el operador .}
                 \end{figure}
-        \item Operación \verb|?|: el método encargado de construir dicho autómata debe añadir una $\epsilon$-transición desde el estado incial del autómata hacia el estado final del autómata para reconocer la no aparición del patrón.
+        \item \textbf{Operación} \verb|?|: el método encargado de construir dicho autómata debe añadir una $\epsilon$-transición desde el estado incial del autómata hacia el estado final del autómata para reconocer la no aparición del patrón.
                 \begin{figure}
                         \centering
                         \includegraphics[width=6cm]{./chapters/img/qmark.jpeg}
@@ -294,4 +294,75 @@ Luego de implementado el sistema de expresiones regulares se implementó la clas
 
 \subsubsection{Token y TokenType}
 
-La clase
+Un token en el proyecto se representa con la clase \verb|Token| que tiene la siguiente implementación. La propiedad \verb|regex| almacena la expresión regular que coincide con el token, la propiedad \verb|name| representa el nombre del tipo de token, la propiedad \verb|lexeme| almacena la cadena de texto que se extrajo de la cadena de entrada como token, es decir, si se tiene un token \verb|t| entonces \verb|t.regex.match(t.lexeme)| es verdadero. Además, un token almacena donde comienza y termina \verb|lexeme| en la cadena de entrada.
+
+\begin{verbatim}
+class Token:
+        @propertyclass Token:
+        @property
+        def regex(self) -> Regex:
+            return self.type.value[0]
+    
+        @property
+        def name(self) -> str:
+            return self.type.value[1]
+            
+        def __init__(self, token_type: TokenType, lexeme: str, start: int, end: int):
+            self.type: TokenType = token_type
+            self.lexeme: str = lexeme
+            self.start: int = start
+            self.end: int = end
+        
+    
+        @property
+        def name(self) -> str:
+            return self.type.value[1]
+            
+        def __init__(self, token_type: TokenType, lexeme: str, start: int, end: int):
+            self.type: TokenType = token_type
+            self.lexeme: str = lexeme
+            self.start: int = start
+            self.end: int = end
+        
+\end{verbatim}
+
+El tipo de los tokens se definió utilizando el enum \verb|TokenType| que representa la expresión regular que lo representa y el nombre del token, por ejemplo: para el token que representa la palabra reservada \verb|eq| el \verb|TokenType| correspondiente es \verb|Eq = (Regex("eq"), "eq")|
+
+\subsubsection{Algoritmo del tokenizador}
+
+El algoritmo del tokenizador sigue la siguiente idea general, se le asocia a cada token de la gramática un nivel de precedencia que representa cuán relevante es un token sobre otro. Por ejemplo si se tienen los siguientes: \verb|Token((Regex("eq"), "eq"), "eq", 1, 2)| y \texttt{Token((Regex("(a|b|....|Z)+"), "NAME"), 'eq', 1, 2)} donde el primer token tiene precedencia 1 y el segundo tiene 2, entonces el token más relevante es el primero. Entonces, se tiene una lista \verb|tokens| y se recorre la lista de tokens de la gramática y a cada uno se le piden todas coincidencias en la cadena de entrada. Luego se recorren las posiciones \verb|i| de la cadena de entrada, y se añade a \verb|tokens| aquel token que comience en \verb|i| y tenga menor precedencia.
+
+\begin{verbatim}
+class Tokenizer:
+    def __call__(self, bs_content_file: str) -> Iterable[Token]:
+        tokens: List[Token] = []
+
+        matches = {}
+        for token_def in TOKENS:
+            matches[token_def] = token_def.type.value[0].find_all(bs_content_file)
+        
+        i = 0
+        while i < len(bs_content_file):
+            token_in_i: List[Tuple[TokenDefinition, Match]] = []
+
+            # Get all matches
+            for k, v in matches.items():
+                for t in v:
+                    if t.start == i:
+                        token_in_i.append((k, t))
+                    
+            # Get match with highest precedence
+            if len(token_in_i):
+                token_in_i = sorted(token_in_i, key=lambda tup: tup[0].precendece)
+                token = Token(token_in_i[0][0], \
+                                token_in_i[0][1].value,\
+                                token_in_i[0][1].start,\
+                                token_in_i[0][1].end)
+                tokens.append(token)    
+                i = token.end
+
+            i += 1
+        return deque(tokens)
+\end{verbatim}
+
+Este algoritmo tiene complejidad temporal $O(n*m)$ donde $m$ es la cantidad de tokens, y $n$ el tamaño de la cadena de entrada.

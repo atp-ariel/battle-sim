@@ -33,6 +33,29 @@ El mapa para una simulaci\'on se crea instanciando una clase \verb|LandMap| con 
 	\item Un n\'umero entre 0 y 1 que indica el nivel del mar. Todas las celdas cuya altura sea menor a este n\'umero ser\'an consideradas como celdas marinas y todas las celdas superior a este n\'umero ser\'an consideradas terrestres.
 \end{itemize}
 
+\subsubsection{Generación aleatoria de mapas}
+
+La representación abstracta de un mapa es una matriz de alturas, o sea, una matriz de valores en el intervalo $[0,1]$, donde la noción de nivel del mar es 0.45, o sea, todo valor $x > 0.45$ es una elevación y todo valor $x < 0.45$ es una depresión cubierta por agua. Es importante poder generar un mapa de alturas con un porcentaje de relieve determinado por el usuario que sea lo más realista posible pero esto de forma aleatoria. Por tal razón queda totalmente descartado el enfoque que va por generar una matriz $M$ donde $M[i,j]$ es un número totalmente al azar, pues se obtendrían matrices de ruido similares a la estática en las señales de televisión, además se violaría la restricción del porciento de elevaciones.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=8cm]{chapters/img/estatica.jpg}
+	\caption{Estática en la señal de TV}
+\end{figure}
+
+Luego de una consulta bibliográfica, se encontraron algunos procedimientos para la generación de mapas de alturas muy interesantes:
+
+\begin{itemize}
+	\item \textbf{Algoritmo de Perlin Noise:} debe su nombre a su creador, Ken Perlin, que durante el rodaje de la película Tron creó el algoritmo con el fin de crear texturas procedimentales para los efectos generados por el ordenador. La idea tras el algoritmo es generar una nueva matriz de dimensión menor a la requerida y superponerla a la requerida escalando de forma que encajen perfectamente. A cada esquina de cada celda de la nueva matriz se le asigna un vector gradiente pseudoaleatorio. Además se determinan los valores offset que representan la posición de cada punto de la matriz original dentro de la celda de la nueva matriz. Luego, para cada esquina de la celda que encierra un punto se determina el vector que va desde ella hasta el punto y se hace el producto escalar de ese vector con el vector gradiente. Se realiza una interpolación lineal entre todos los resultados de los productos escalares y este es el valor del punto. El comportamiento de este algoritmo no puede ser modificado pero aún así fue de gran significación en la época y hoy día.
+	\item \textbf{Algoritmo Voronoi:} consiste en dividir el espacio en diagramas de Voronoi, que son, simplemente, particiones de un plano en regiones basadas en la 	distancia a ciertos puntos específicos del plano. Ese conjunto específico de puntos 	se denomina ``semillas, sitios o generadores''. Se suelen especificar de antemano y 	para cada uno de estos sitios se genera una región del plano que consiste en todos 	los puntos que están más cerca de este sitio que de ningún otro. 
+	\item \textbf{Algoritmo de cortes:} tiene un comportamiento poco intuito pero interesante, se selecciona un corte en la matriz, se define como corte una linea recta que divida el plano o terreno en dos mitades, luego se decide elevar  una de las mitades y bajar o no modificar las otras. Este mismo proceso se repite miles de veces y se obtienen resultados aceptables. El algoritmo es ineficiente, por la cantidad de iteraciones necesarias para obtener buenos resultados.
+	\item \textbf{Algoritmos de erosión térmica e hídrica:} algoritmos que simulan los procesos naturales de erosión térmica e hídrica. En el caso de la térmica se fija un valor $T$ que representa el valor a partir del cual se va a erosionar, y se recorre la matriz buscando los puntos que cumplen que la diferencia de altura con sus vecinos es superior a $T$. En dichos puntos el algoritmo resta valor de altura a sus vecinos cuya distancia sea mayor que $T$ de forma que todas las distancias queden menor que $T$. En el caso de la erosión hídrica se define una matriz de agua y una matriz de sedimentos la cual representa un porciento de material que puede ser movido por la erosión. Y se realiza un procedimiento parecido a la erosión térmica.
+\end{itemize}
+
+Ahora estos algoritmo generan mapas de alturas con apariencia realista, pero no son suficientes para cumplir las restricciones de relieve. Por tanto, nuestra propuesta es un algoritmo evolutivo para cumplir con la restricción anteriormente mencionada.
+
+Los algoritmos evolutivos son estrategias de optimización y búsqueda de soluciones que toman como inspiración la evolución en distintos sistemas biológicos. La idea fundamental de estos algoritmos es mantener un conjunto de individuos que representan una posible solución del problema. Estos individuos se mezclan y compiten entre sí, siguiendo el principio de selección natural por el cual sólo los mejor adaptados sobreviven al paso del tiempo. Esto redunda en una evolución hacia soluciones cada vez más aptas. 
+
 \subsection{Los objetos}
 
 Un objeto es todo lo que se puede poner el mapa y cada objeto ocupa una y solo una casilla del mapa. Estos tienen propiedades como el id que s \'unico para cada objeto, los puntos de vida que determinan el estado de un objeto y la defensa un par\'ametro que indica cuan resistente es un objeto a los da\~{n}os que puede sufrir durante la simulaci\'on. Todos estos par\'ametros son n\'umeros de 1 a 10. Cuando la vida de un objeto llegue a 0, este se destruye desapareciendo del mapa. Los objetos se clasifican en dos tipos: unidades y objetos est\'aticos. Los objetos adem\'as tienen definidas dos funciones \verb|put_in_cell| cuya funci\'on es colocar al objeto en alguna posici\'on de un mapa. Si se intenta poner un objeto en una posici\'on diferente a su tipo este autom\'aticamente se destruye. La otra funci\'on \verb|take_damage|, a partir de un ataque sufrido indica como se reducen los puntos de vida del objeto.
