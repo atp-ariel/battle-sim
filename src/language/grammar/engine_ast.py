@@ -52,7 +52,7 @@ def build_program(tokens:List[str],nodes:List):
 def build_statements1(tokens:List[str],nodes:List):
     statements=nodes.pop()
     statement=nodes.pop()
-    statements=Statements(stament,staments)
+    statements=Statements(statement,statements)
     nodes.append(statements)
     
 def build_statements2(tokens:List[str],nodes:List):
@@ -89,11 +89,6 @@ def build_params2(tokens:List[str],nodes:List):
     params=Params(type.type, tokens[len(tokens)-1], None)
     nodes.append(params)
     
-def build_block(tokens:List[str],nodes:List):
-    statements=nodes.pop()
-    block=Block(obtain_statements([], statements))
-    nodes.append(block)
-    
 def build_func_def1(tokens:List[str],nodes:List):
     name=tokens[len(tokens)-6]
     block=nodes.pop()
@@ -101,14 +96,14 @@ def build_func_def1(tokens:List[str],nodes:List):
     arg_names=[t[0] for t in params]
     arg_types=[t[1] for t in params]
     return_type=nodes.pop()
-    func_def=FuncDef(name,return_type.type,arg_names,arg_types,block.statements)
+    func_def=FuncDef(name,return_type.type,arg_names,arg_types,obtain_statements([], block))
     nodes.append(func_def)
     
 def build_func_def2(tokens:List[str],nodes:List):
     name=tokens[len(tokens)-5]
     block=nodes.pop()
     return_type=nodes.pop()
-    func_def=FuncDef(name,return_typr,None,None,block.statements)
+    func_def=FuncDef(name,return_typr,None,None,obtain_statements([], block))
     nodes.append(func_def)
     
 def build_if_def1(tokens:List[str],nodes:List):
@@ -117,7 +112,7 @@ def build_if_def1(tokens:List[str],nodes:List):
     block=nodes.pop()
     expression=nodes.pop()
     
-    if_def=If(expression,block.statements)
+    if_def=If(expression,obtain_statements([], block))
     branch=Branch([if_def],None)
     
     obtain_elif(branch, elif_def)
@@ -130,7 +125,7 @@ def build_if_def2(tokens:List[str],nodes:List):
     block=nodes.pop()
     expression=nodes.pop()
     
-    if_def=If(expression,block.statements)
+    if_def=If(expression,obtain_statements([], block))
     branch=Branch([if_def],else_def.body)
     
     nodes.append(branch)
@@ -139,7 +134,7 @@ def build_if_def3(tokens:List[str],nodes:List):
     block=nodes.pop()
     expression=nodes.pop()
     
-    if_def=If(expression,block.statements)
+    if_def=If(expression,obtain_statements([], block))
     branch=Branch([if_def],None)
     
     nodes.append(branch)
@@ -149,7 +144,7 @@ def build_elif_def1(tokens:List[str],nodes:List):
     block=nodes.pop()
     expression=nodes.pop()
     
-    elif_def=ElifDef(expression, block.statements, elif_def, None)
+    elif_def=ElifDef(expression, obtain_statements([], block), elif_def, None)
     
     nodes.append(elif_def)
 
@@ -158,7 +153,7 @@ def build_elif_def2(tokens:List[str],nodes:List):
     block=nodes.pop()
     expression=nodes.pop()
     
-    elif_def=ElifDef(expression, block.statements, None, else_def)
+    elif_def=ElifDef(expression, obtain_statements([], block), None, else_def)
     
     nodes.append(elif_def)
     
@@ -167,14 +162,14 @@ def build_elif_def3(tokens:List[str],nodes:List):
     block=nodes.pop()
     expression=nodes.pop()
     
-    elif_def=ElifDef(expression, block.statements, None, None)
+    elif_def=ElifDef(expression, obtain_statements([], block), None, None)
     
     nodes.append(elif_def)
     
 def build_else_def(tokens:List[str],nodes:List):
     
     block=nodes.pop()
-    else_def=ElseDef(block.statements)
+    else_def=ElseDef(obtain_statements([], block))
     nodes.append(else_def)
     
 def build_while_def(tokens:List[str],nodes:List):
@@ -182,7 +177,7 @@ def build_while_def(tokens:List[str],nodes:List):
     block=nodes.pop()
     expression=nodes.pop()
     
-    while_def=WhileDef(expression,block.statements)
+    while_def=WhileDef(expression,obtain_statements([], block))
     
     nodes.append(while_def)
     
@@ -221,7 +216,7 @@ def build_expressions1(tokens:List[str],nodes:List):
 def build_expressions2(tokens:List[str],nodes:List):
     expression=nodes.pop()
     expressions=Expressions(expression, None)
-    nodes.append(expression)
+    nodes.append(expressions)
     
 def build_ternary_expression(tokens:List[str],nodes:List):
     right=nodes.pop()

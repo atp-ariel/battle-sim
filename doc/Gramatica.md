@@ -114,12 +114,9 @@ pow ->  primary '^' factor              build_aritmetic_expression
     |   primary
 
 primary ->  primary '.' NAME            build_primary1
-        |   primary '(' args ')'        build_primary2
+        |   primary '(' expressions ')'        build_primary2
         |   primary '(' ')'             build_primary3
         |   atom
-
-args -> expression ',' args
-      | expression
 
 atom -> NAME                            build_Variable
     |   'True'                          build_Bool

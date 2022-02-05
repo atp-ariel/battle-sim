@@ -153,10 +153,6 @@ class Params:
     params : 'Params'
 
 @dataclass    
-class Block:
-    statements: List[Statement]
-
-@dataclass    
 class Statements:
     statement : Statement
     statements : 'Statements' 
@@ -168,7 +164,7 @@ class ElseDef:
 @dataclass    
 class ElifDef:
     expression : Expression
-    body : Block
+    body : List[Statement]
     elif_def : 'ElifDef'
     else_def : ElseDef
 
