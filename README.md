@@ -19,9 +19,9 @@
   <p align="center">
     Software para simular batallas bélicas entre ejércitos. Proyecto que vincula conocimientos de Inteligencia Artificial, Simulación y Compilación.
     <br />
-    <a href="https://github.com/ArielTriana/battle-sim/blob/main/doc/report/Informe.pdf"><strong>Ver informe »</strong></a>
+    <a href="https://github.com/ArielTriana/battle-sim/blob/dev/doc/reporte%20final/Informe.pdf"><strong>Ver informe »</strong></a>
     <br />
-    <a href="https://github.com/ArielTriana/battle-sim/raw/main/doc/report/Informe.pdf"><strong> Descargar informe</strong></a> 
+    <a href="https://github.com/ArielTriana/battle-sim/raw/main/doc/reporte%20final/Informe.pdf"><strong> Descargar informe</strong></a> 
     <br />
     <br />
     <a href="https://github.com/ArielTriana/battle-sim/issues/new?assignees=&labels=bug%2C+help+wanted&template=reporte-de-error-en-el-proyecto.md&title=%5BERROR%5D">Reportar Error</a>
@@ -93,16 +93,15 @@ Se tiene la idea de poder implementar una opción para que el usuario pueda defi
 * [Python](https://python.org)
 * [Pytest](https://pytest.org)
 * [Pytest-cov](https://pytest-cov.readthedocs.io)
+* [Typer]([https://https://typer.tiangolo.com](https://typer.tiangolo.com/)/)
 
 <p align="right">(<a href="#top">volver arriba</a>)</p>
 
 
 
-<!--
-## Getting Started
+## Primeros pasos
 
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
+
 
 ### Prerequisites
 
@@ -140,20 +139,6 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 
 <p align="right">(<a href="#top">volver arriba</a>)</p>
 
-
-
-## Roadmap
-
-- [] Feature 1
-- [] Feature 2
-- [] Feature 3
-    - [] Nested Feature
-
-See the [open issues](https://github.com/github_username/repo_name/issues) for a full list of proposed features (and known issues).
-
-<p align="right">(<a href="#top">volver arriba</a>)</p>
-
--->
 
 <!-- CONTRIBUTING -->
 ## Contribuciones
@@ -203,8 +188,7 @@ Usted debe siempre que arregle un error o añada nuevas funcionalidades agregar 
 Sus casos de prueba deben ir en la carpeta `test`. Para ejecutar los casos de pruba ejecute los comandos siguientes:
 
 ```
-pytest test
-pytest --cov
+python -m pytest --cov
 ```
 
 El primer comando ejecutará todos los comandos en la carpeta `test` y calculará el `coverage` de los casos de prueba.
@@ -234,7 +218,7 @@ El siguiente proyecto está distribuido bajo MIT License. Ver [LICENSE.txt](http
             <br/>
             Rocio Ortiz Gancedo
             <br/>
-            🤔📝
+            🤔📝💻
             <br/>
             <a href="https://github.com/rocioog00"><img src="https://upload.wikimedia.org/wikipedia/commons/a/ae/Github-desktop-logo-symbol.svg" height="18"></a>
             <a href="https://t.me/rocioog"><img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" height="18"/></a>
