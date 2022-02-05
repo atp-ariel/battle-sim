@@ -21,18 +21,18 @@ statement ->    func_def
             |   expressions 
 
 
-func_def ->     'function' return_type NAME '(' params ')' '->' block       build_func_def1
-            |   'function' return_type NAME '(' ')' '->' block              build_func_def2
+func_def ->     'function' return_type NAME '(' params ')' '->' "{" statements "}"       build_func_def1
+            |   'function' return_type NAME '(' ')' '->' "{" statements "}"              build_func_def2
 
-if_def ->   'if' expression '->' block '&' elif_def                             build_if_def1
-        |   'if' expression '->' block '&' else_def                             build_if_def2
-        |   'if' expression '->' block                                      build_if_def3
+if_def ->   'if' expression '->' "{" statements "}" elif_def                             build_if_def1
+        |   'if' expression '->' "{" statements "}" else_def                             build_if_def2
+        |   'if' expression '->' "{" statements "}"                                      build_if_def3
 
-elif_def ->     'elif' expression '->' block '&' elif_def                       build_elif_def1
-            |   'elif' expression '->' block '&' else_def                       build_elif_def2
-            |   'elif' expression '->' block                                build_elif_def3
+elif_def ->     'elif' expression '->' "{" statements "}" elif_def                       build_elif_def1
+            |   'elif' expression '->' "{" statements "}" else_def                       build_elif_def2
+            |   'elif' expression '->' "{" statements "}"                                build_elif_def3
 
-else_def -> 'else' '->' block                                               build_else_def
+else_def -> 'else' '->' "{" statements "}"                                               build_else_def
 
 class_def ->    'class' NAME 'is' NAME '->' '{'  constructor_def ; functions '}'   build_class_def1
         |       'class' NAME 'is' NAME '->' '{'  constructor_def ; '}'                     build_class_def2
@@ -52,7 +52,7 @@ attributes -> attr_def ;  attributes             build_attributes1
 attr_def ->  type 'this' '.' NAME '=' expression           build_attr_def
 
 
-while_def ->    'while' expression '->' block              build_while_def
+while_def ->    'while' expression '->' "{" statements "}"              build_while_def
 
 return_type ->  'void'                        build_return_type
             |   type                          build_return_type
@@ -67,8 +67,6 @@ decl ->  type NAME '=' expression                              build_decl
 
 return_stmt ->  'return' expression                                      build_return1
             |   'return'                                        build_return2
-
-block ->     "{" statements "}"   build_block
 
 params ->   type NAME ',' params      build_params1
         |  type NAME                  build_params2                                 

@@ -30,7 +30,6 @@ rparent = Terminal(")", ")")
 arrow = Terminal("->", "->")
 _if = Terminal("if", "if")
 expression = NonTerminal("expression")
-block = NonTerminal("block")
 elif_def = NonTerminal("elif_def")
 else_def = NonTerminal("else_def")
 _elif = Terminal("elif", "elif")
@@ -105,18 +104,18 @@ statement += Production([_break],build_breack)
 statement += Production([_continue],build_continue)
 statement += Production([expressions])
 
-func_def += Production([function, return_type, name, lparent, params, rparent, arrow, block],build_func_def1)
-func_def += Production([function, return_type, name, lparent, rparent, arrow, block],build_func_def2)
+func_def += Production([function, return_type, name, lparent, params, rparent, arrow, lcurly, statements, rcurly],build_func_def1)
+func_def += Production([function, return_type, name, lparent, rparent, arrow, lcurly, statements, rcurly],build_func_def2)
 
-if_def += Production([_if, expression, arrow, block, elif_def], build_if_def1)
-if_def += Production([_if, expression, arrow, block, else_def],build_if_def2)
-if_def += Production([_if, expression, arrow, block], build_if_def3)
+if_def += Production([_if, expression, arrow, lcurly, statements, rcurly, elif_def], build_if_def1)
+if_def += Production([_if, expression, arrow, lcurly, statements, rcurly, else_def],build_if_def2)
+if_def += Production([_if, expression, arrow, lcurly, statements, rcurly], build_if_def3)
 
-elif_def += Production([_elif, expression, arrow, block, elif_def], build_elif_def1)
-elif_def += Production([_elif, expression, arrow, block, else_def], build_elif_def2)
-elif_def += Production([_elif, expression, arrow, block], build_elif_def3)
+elif_def += Production([_elif, expression, arrow, lcurly, statements, rcurly, elif_def], build_elif_def1)
+elif_def += Production([_elif, expression, arrow, lcurly, statements, rcurly, else_def], build_elif_def2)
+elif_def += Production([_elif, expression, arrow, lcurly, statements, rcurly], build_elif_def3)
 
-else_def += Production([_else, arrow, block], build_else_def)
+else_def += Production([_else, arrow, lcurly, statements, rcurly], build_else_def)
 
 class_def += Production([_class, name, _is, name, arrow, lcurly, constructor, Semicolon, functions, rcurly], build_class_def1)
 class_def += Production([_class, name, _is, name, arrow, lcurly, constructor, Semicolon ,rcurly], build_class_def2)
@@ -133,7 +132,7 @@ attr += Production([attr_def, Semicolon],  build_attributes2)
 
 attr_def += Production([_type, this, dot, name, oeq, expression], build_attr_def)
 
-while_def += Production([_while, expression, arrow, block],  build_while_def)
+while_def += Production([_while, expression, arrow, lcurly, statements, rcurly],  build_while_def)
 
 return_type += Production([void], build_return_type)
 return_type += Production([_type], build_return_type)
@@ -148,8 +147,6 @@ assign += Production([name, oeq, expression], build_assign)
 
 return_stat += Production([_return, expression], build_return1)
 return_stat += Production([_return], build_return2)
-
-block += Production([ lcurly, statements, rcurly], build_block)
 
 params += Production([_type, name, comma, params],  build_params1)
 params += Production([_type, name], build_params2)
