@@ -17,7 +17,7 @@ class BSObject(ABC):
     # poner en celda el objeto
     def put_in_cell(self, map: Map, type: str, row: int, col: int):
         if map[row][col].type != type:
-            raise Exception("Cell is not type of: " + type)
+            self.life_points=0
         else:
             if map[row][col].bs_object != None:
                 raise Exception("Casilla ocupada")
@@ -38,7 +38,7 @@ class StaticObject(BSObject):
         BSObject.__init__(self,id, life_points, defense)
 
     def put_in_cell(self, map: Map, row: int, col: int):
-        BSObject.put_in_cell(map, "earth", row, col)
+        BSObject.put_in_cell(self, map, "earth", row, col)
 
 
 class BSUnit(BSObject):
@@ -49,7 +49,7 @@ class BSUnit(BSObject):
         if not (radio >= 1 and radio <= 9):
             raise Exception('radio invalido')
         if vision < max_range:
-            raise Exception('La vision no puede ser mayor que el rango maximo')
+            raise Exception('La vision no puede ser menor que el rango maximo')
         self.side=None
         self.moral = moral
         self.attack = attack
@@ -98,24 +98,40 @@ class BSUnit(BSObject):
             i = cell.row - k
             if i >= 0:
                 for j in range(cell.col - k, cell.col + k + 1):
+                    if j >= self.map.no_columns:
+                        break
+                    if j < 0:
+                        continue 
                     if isinstance(self.map[i][j].bs_object, BSUnit) and self.map[i][j].bs_object.side != self.side:
                         return (True, self.map[i][j])
 
             i = cell.row + k
             if i < self.map.no_rows:
                 for j in range(cell.col - k, cell.col + k + 1):
+                    if j >= self.map.no_columns:
+                        break
+                    if j < 0:
+                        continue 
                     if isinstance(self.map[i][j].bs_object, BSUnit) and self.map[i][j].bs_object.side != self.side:
                         return (True, self.map[i][j])
 
             j = cell.col - k
             if j >= 0:
                 for i in range(cell.row - k + 1, cell.row + k):
+                    if i >= self.map.no_rows:
+                        break
+                    if i < 0:
+                        continue 
                     if isinstance(self.map[i][j].bs_object, BSUnit) and self.map[i][j].bs_object.side != self.side:
                         return (True, self.map[i][j])
 
             j = cell.col + k
             if j < self.map.no_columns:
                 for i in range(cell.row - k + 1, cell.row + k):
+                    if i >= self.map.no_rows:
+                        break
+                    if i < 0:
+                        continue 
                     if isinstance(self.map[i][j].bs_object, BSUnit) and self.map[i][j].bs_object.side != self.side:
                         return (True, self.map[i][j])
 
@@ -156,9 +172,12 @@ class BSUnit(BSObject):
     # calcular el costo de moverse a la celda
     def move_cost_calculate(self, cell, type):
 
-        if cell.passable == 0 or cell.type != type or cell.bs_object is not None or abs(cell.heigth - self.cell.heigth) > 0.05:
-            return 1000000
+        if cell.passable == 0 or cell.type != type or cell.bs_object is not None:
+            return float("inf")
 
+        if type=='earth' and abs(cell.height - self.cell.height) > 0.3:
+            return float("inf")
+        
         cost = 10-cell.passable/2
 
         if cell in self.visited_cells:
@@ -174,13 +193,14 @@ class BSUnit(BSObject):
 
         if near_enemy:
             cost -= self.ofensive*1 / \
-                math.sqrt(self.calculate_distance(self.cell, enemy_cell)-self.min_range)
+                math.sqrt(self.calculate_distance(self.cell, enemy_cell))
 
         cost = self.in_range_of_enemy(cell, cost)
 
         return cost
 
     def enemy_cost_calculate(self, enemy):
+        damage=self.attack + (self.moral + self.cell.passable)/2
 
         estimated_life_points = random.uniform(max(0, enemy.life_points - 10 + self.intelligence),
                                                min(10,enemy.life_points + 10 - self.intelligence))
@@ -188,7 +208,7 @@ class BSUnit(BSObject):
         estimated_defense = random.uniform(max(0, enemy.defense - 10 + self.intelligence),
                                            min(10,enemy.defense + 10 - self.intelligence))
 
-        return estimated_life_points / (self.attack / estimated_defense)
+        return estimated_life_points / (damage / estimated_defense)
 
     # detecta si un amigo pudiera ser afectado por el ataque 
     def friend_in_danger(self, cell):
@@ -209,7 +229,7 @@ class BSUnit(BSObject):
     # buscar enemigo para atacar
     def enemy_to_attack(self):
 
-        cost = -1
+        cost = float('inf')
         attacked_enemy = None
 
         for k in range(self.min_range, self.max_range + 1):
@@ -224,7 +244,7 @@ class BSUnit(BSObject):
                         if self.radio > 1 and self.friend_in_danger(self.map[i][j]):
                             continue
                         new_cost = self.enemy_cost_calculate(self.map[i][j].bs_object)
-                        if cost == -1 or cost > new_cost:
+                        if  cost > new_cost:
                             cost = new_cost
                             attacked_enemy = self.map[i][j].bs_object
 
@@ -239,7 +259,7 @@ class BSUnit(BSObject):
                         if self.radio > 1 and self.friend_in_danger(self.map[i][j]):
                             continue
                         new_cost = self.enemy_cost_calculate(self.map[i][j].bs_object)
-                        if cost == -1 or cost > new_cost:
+                        if  cost > new_cost:
                             cost = new_cost
                             attacked_enemy = self.map[i][j].bs_object
 
@@ -254,7 +274,7 @@ class BSUnit(BSObject):
                         if self.radio > 1 and self.friend_in_danger(self.map[i][j]):
                             continue
                         new_cost = self.enemy_cost_calculate(self.map[i][j].bs_object)
-                        if cost == -1 or cost > new_cost:
+                        if cost > new_cost:
                             cost = new_cost
                             attacked_enemy = self.map[i][j].bs_object
 
@@ -269,7 +289,7 @@ class BSUnit(BSObject):
                         if self.radio > 1 and self.friend_in_danger(self.map[i][j]):
                             continue
                         new_cost = self.enemy_cost_calculate(self.map[i][j].bs_object)
-                        if cost == -1 or cost > new_cost:
+                        if  cost > new_cost:
                             cost = new_cost
                             attacked_enemy = self.map[i][j].bs_object
 
@@ -308,7 +328,7 @@ class BSUnit(BSObject):
                           abs(enemy.cell.col-self.cell.col))
 
         miss_distance = (range_enemy-self.min_range) / \
-            (self.max_range-self.min_range)/10
+            (self.max_range-self.min_range+0.1)/10
 
         positions = [(-1, 1), (-1, 0), (-1, 1), (0, -1),
                      (0, 1), (1, -1), (1, 0), (1, 1)]
@@ -321,20 +341,23 @@ class BSUnit(BSObject):
             if self.radio > 1:
                 cells_to_attack = self.radio-1
                 while cells_to_attack:
+                    cells_to_attack -= 1
 
-                    randint = random.randint(0, len(positions))
+                    randint = random.randint(0, len(positions) - 1)
                     position = positions[randint]
                     positions.pop(randint)
 
+                    if self.cell.row + position[0] < 0 or self.cell.row + position[0] >= self.map.no_rows or self.cell.col+position[1] < 0 or self.cell.col+position[1] >= self.map.no_columns:
+                        continue
                     if self.map[self.cell.row + position[0]][self.cell.col+position[1]].bs_object != None:
                         bs_object = self.map[self.cell.row +
-                                             position[0]][self.cell.col+position[1]]
+                                             position[0]][self.cell.col+position[1]].bs_object
                         bs_object.take_damage(damage*4/5)
 
                         if bs_object is BSUnit and bs_object.life_points <= 0:
                             self.no_defeated_units += 1
-                    
-                    cells_to_attack -= 1
+                            self.side.no_enemy_units_defeated += 1
+                            bs_object.side.no_own_units_defeated += 1
 
         elif precision > len(block_objects)/10 + miss_distance:
             enemy.take_damage(damage)
@@ -342,23 +365,29 @@ class BSUnit(BSObject):
             if self.radio > 1:
                 cells_to_attack = self.radio
                 while cells_to_attack:
+                    cells_to_attack -= 1
 
-                    randint = random.randint(0, len(positions))
+                    randint = random.randint(0, len(positions)-1)
                     position = positions[randint]
                     positions.pop(randint)
+                    if self.cell.row + position[0] < 0 or self.cell.row + position[0] >= self.map.no_rows or self.cell.col+position[1] < 0 or self.cell.col+position[1] >= self.map.no_columns:
+                        continue
 
                     if self.map[self.cell.row + position[0]][self.cell.col+position[1]].bs_object != None:
                         bs_object = self.map[self.cell.row +
-                                             position[0]][self.cell.col+position[1]]
+                                             position[0]][self.cell.col+position[1]].bs_object
                         bs_object.take_damage(damage*4/5)
 
                         if bs_object is BSUnit and bs_object.life_points <= 0:
                             self.no_defeated_units += 1
+                            self.side.no_enemy_units_defeated += 1
+                            bs_object.side.no_own_units_defeated += 1
                     
-                    cells_to_attack -= 1
                 
         if enemy.life_points <= 0:
             self.no_defeated_units += 1
+            self.side.no_enemy_units_defeated += 1
+            enemy.side.no_own_units_defeated += 1
 
     # moverse a una celda
     def move_to_cell(self, cell):
@@ -375,11 +404,12 @@ class BSUnit(BSObject):
         else:
             self.turns_recharging -= 1
             
-        if enemy != None:
+        if enemy is not None:
             self.attack_enemy(enemy)
             self.turns_recharging = self.recharge_turns
-        else:
-            cost = 10000
+            print(f"Unidad {self.id} ataca a la Unidad {enemy.id} de la celda {enemy.cell}")
+        elif self.movil:
+            cost = float("inf")
             cell=self.cell
             for i in range(self.cell.row-1, self.cell.row+2):
                 if i >= self.map.no_rows:
@@ -395,13 +425,14 @@ class BSUnit(BSObject):
                     if new_cost < cost:
                         cost = new_cost
                         cell = self.map[i][j]
-            if cost < 10000:
+            if cost < float("inf"):
                 self.move_to_cell(cell)
                 self.visited_cells.add(cell)
+                print(f"Unidad {self.id} moviendose para la celda {cell}")
 
 class LandUnit(BSUnit):
     def __init__(self, id, life_points, defense, attack, moral, ofensive,min_range, max_range, radio, vision, intelligence, recharge_turns, solidarity, movil):
-        BSUnit.__init__(self,id,life_points,defense,side,attack,moral,ofensive,min_range,max_range,radio,vision,intelligence,recharge_turns,solidarity,movil)
+        BSUnit.__init__(self,id,life_points,defense,attack,moral,ofensive,min_range,max_range,radio,vision,intelligence,recharge_turns,solidarity,movil)
 
     def put_in_cell(self, map, row, col):
         BSUnit.put_in_cell(self,map, "earth", row, col)
@@ -419,11 +450,3 @@ class NavalUnit(BSUnit):
 
     def turn(self):
         BSUnit.turn(self,'water')
-
-
-class AirUnit(BSUnit):
-    def __init__(self, id, life_points, defense, attack, moral, ofensive,min_range, max_range, radio, vision, intelligence, recharge_turns, solidarity, movil):
-        BSUnit.__init__(self,id,life_points,defense,attack,moral,ofensive,min_range,max_range,radio,vision,intelligence,recharge_turns,solidarity,movil)
-
-    def put_in_cell(self, map, row, col):
-        BSUnit.put_in_cell(self, map, "air", row, col)

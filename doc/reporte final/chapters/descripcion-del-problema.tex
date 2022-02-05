@@ -1,4 +1,4 @@
-\chapter{La Simulaci\'on}
+\section{La Simulaci\'on}
 
 Como planteamos en el cap\'itulo anterior, se quiere desarrollar un programa que permita la simulaci\'on de enfrentamientos b\'elicos entre dos o m\'as bandos.
 
@@ -11,7 +11,7 @@ Para esto se tienen pensado los siguientes aspectos que van a ser fijos en cada 
 	
 \end{enumerate}
 
-\section{El mapa}
+\subsection{El mapa}
 
 El mapa consiste en una matriz bidimensional de $m$ filas y $n$ columnas. Cada objeto de la matriz es un objeto \verb|Cell|. Un objeto \verb|Cell| representa cada una de las casillas que conforman el mapa y tiene los siguientes atributos:
 
@@ -33,15 +33,38 @@ El mapa para una simulaci\'on se crea instanciando una clase \verb|LandMap| con 
 	\item Un n\'umero entre 0 y 1 que indica el nivel del mar. Todas las celdas cuya altura sea menor a este n\'umero ser\'an consideradas como celdas marinas y todas las celdas superior a este n\'umero ser\'an consideradas terrestres.
 \end{itemize}
 
-\section{Los objetos}
+\subsubsection{Generación aleatoria de mapas}
+
+La representación abstracta de un mapa es una matriz de alturas, o sea, una matriz de valores en el intervalo $[0,1]$, donde la noción de nivel del mar es 0.45, o sea, todo valor $x > 0.45$ es una elevación y todo valor $x < 0.45$ es una depresión cubierta por agua. Es importante poder generar un mapa de alturas con un porcentaje de relieve determinado por el usuario que sea lo más realista posible pero esto de forma aleatoria. Por tal razón queda totalmente descartado el enfoque que va por generar una matriz $M$ donde $M[i,j]$ es un número totalmente al azar, pues se obtendrían matrices de ruido similares a la estática en las señales de televisión, además se violaría la restricción del porciento de elevaciones.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=8cm]{chapters/img/estatica.jpg}
+	\caption{Estática en la señal de TV}
+\end{figure}
+
+Luego de una consulta bibliográfica, se encontraron algunos procedimientos para la generación de mapas de alturas muy interesantes:
+
+\begin{itemize}
+	\item \textbf{Algoritmo de Perlin Noise:} debe su nombre a su creador, Ken Perlin, que durante el rodaje de la película Tron creó el algoritmo con el fin de crear texturas procedimentales para los efectos generados por el ordenador. La idea tras el algoritmo es generar una nueva matriz de dimensión menor a la requerida y superponerla a la requerida escalando de forma que encajen perfectamente. A cada esquina de cada celda de la nueva matriz se le asigna un vector gradiente pseudoaleatorio. Además se determinan los valores offset que representan la posición de cada punto de la matriz original dentro de la celda de la nueva matriz. Luego, para cada esquina de la celda que encierra un punto se determina el vector que va desde ella hasta el punto y se hace el producto escalar de ese vector con el vector gradiente. Se realiza una interpolación lineal entre todos los resultados de los productos escalares y este es el valor del punto. El comportamiento de este algoritmo no puede ser modificado pero aún así fue de gran significación en la época y hoy día.
+	\item \textbf{Algoritmo Voronoi:} consiste en dividir el espacio en diagramas de Voronoi, que son, simplemente, particiones de un plano en regiones basadas en la 	distancia a ciertos puntos específicos del plano. Ese conjunto específico de puntos 	se denomina ``semillas, sitios o generadores''. Se suelen especificar de antemano y 	para cada uno de estos sitios se genera una región del plano que consiste en todos 	los puntos que están más cerca de este sitio que de ningún otro. 
+	\item \textbf{Algoritmo de cortes:} tiene un comportamiento poco intuito pero interesante, se selecciona un corte en la matriz, se define como corte una linea recta que divida el plano o terreno en dos mitades, luego se decide elevar  una de las mitades y bajar o no modificar las otras. Este mismo proceso se repite miles de veces y se obtienen resultados aceptables. El algoritmo es ineficiente, por la cantidad de iteraciones necesarias para obtener buenos resultados.
+	\item \textbf{Algoritmos de erosión térmica e hídrica:} algoritmos que simulan los procesos naturales de erosión térmica e hídrica. En el caso de la térmica se fija un valor $T$ que representa el valor a partir del cual se va a erosionar, y se recorre la matriz buscando los puntos que cumplen que la diferencia de altura con sus vecinos es superior a $T$. En dichos puntos el algoritmo resta valor de altura a sus vecinos cuya distancia sea mayor que $T$ de forma que todas las distancias queden menor que $T$. En el caso de la erosión hídrica se define una matriz de agua y una matriz de sedimentos la cual representa un porciento de material que puede ser movido por la erosión. Y se realiza un procedimiento parecido a la erosión térmica.
+\end{itemize}
+
+Ahora estos algoritmo generan mapas de alturas con apariencia realista, pero no son suficientes para cumplir las restricciones de relieve. Por tanto, nuestra propuesta es un algoritmo evolutivo para cumplir con la restricción anteriormente mencionada.
+
+Los algoritmos evolutivos son estrategias de optimización y búsqueda de soluciones que toman como inspiración la evolución en distintos sistemas biológicos. La idea fundamental de estos algoritmos es mantener un conjunto de individuos que representan una posible solución del problema. Estos individuos se mezclan y compiten entre sí, siguiendo el principio de selección natural por el cual sólo los mejor adaptados sobreviven al paso del tiempo. Esto redunda en una evolución hacia soluciones cada vez más aptas. 
+
+\subsection{Los objetos}
 
 Un objeto es todo lo que se puede poner el mapa y cada objeto ocupa una y solo una casilla del mapa. Estos tienen propiedades como el id que s \'unico para cada objeto, los puntos de vida que determinan el estado de un objeto y la defensa un par\'ametro que indica cuan resistente es un objeto a los da\~{n}os que puede sufrir durante la simulaci\'on. Todos estos par\'ametros son n\'umeros de 1 a 10. Cuando la vida de un objeto llegue a 0, este se destruye desapareciendo del mapa. Los objetos se clasifican en dos tipos: unidades y objetos est\'aticos. Los objetos adem\'as tienen definidas dos funciones \verb|put_in_cell| cuya funci\'on es colocar al objeto en alguna posici\'on de un mapa. Si se intenta poner un objeto en una posici\'on diferente a su tipo este autom\'aticamente se destruye. La otra funci\'on \verb|take_damage|, a partir de un ataque sufrido indica como se reducen los puntos de vida del objeto.
 
-\subsection{Objetos est\'aticos}
+\subsubsection{Objetos est\'aticos}
 
 Los objetos est\'aticos los podemos definir como objetos propios del ambiente. Estos no pertenecen a ning\'un bando y no pueden realizar acciones pero si pueden ser afectados por las acciones que realicen las unidades. Estos solo pueden ser puestos en celdas terrestres. Ejemplos de estos objetos pueden ser \'arboles, rocas, muros, etc. Todos estos objetos son terrestres. 
 
-\subsection{Unidades}
+\subsubsection{Unidades}
 
 Las unidades son los agentes de la simulaci\'on. El objetivo de cada una de las unidades es destruir a las unidades enemigas (las que no pertenecen a su mismo bando), y para ello podr\'a analizar parte del ambiente en el que se encuentra y tomar la decisi\'on que sea m\'as conveniente seg\'un sean las circunstancias. 
 
@@ -54,7 +77,7 @@ Dado que el ambiente estar\'a cambiando constantemente, las unidades ser\'an age
 
 Dado esto se defini\'o un sistema experto que actuar\'a como la funci\'on del agente. Este ser\'a descrito posteriormente.
 
-\subsubsection{Propiedades de las unidades}
+\textbf{Propiedades de las unidades}
 
 Las unidades adem\'as de las descritas anteriormente que tienen todos los objetos cuentan con las siguientes propiedades:
 
@@ -88,14 +111,16 @@ Entonces si el enemigo no es ignorado debido a lo anterior, se calcula el costo 
 
 Luego de haber analizado todos los enemigos, el seleccionado por la unidad para atacarlo es aquel cuyo costo es menor. Si no se detecta ning\'un posible enemigo a atacar entonces la unidad no realiza un ataque en el turno.
  
-Si la unidad no realiza un ataque, entonces chequea si se puede mover a alguna casilla adyacente a la que se encuentra. Esto se hace de la siguiente forma:
+Si la unidad no realiza un ataque, entonces, en caso de que se m\'ovil, chequea si se puede mover a alguna casilla adyacente a la que se encuentra. Esto se hace de la siguiente forma:
  
-Se fija un costo en infinito. Luego por cada una de las celdas que la rodean en todos los puntos cardinales posibles (NW, N, NE, W, E, SW, S y SE)ase calcula el costo de moverse a dicha celda, y nos quedammados con la celda cuyo to es el menor. Luego si el menor costo detectado es menor a infinito10000 la unidad se mueve a dicha c En caso contrario la unidad mantiene su posici\'on. 
+Se fija un costo en infinito. Luego por cada una de las celdas que la rodean en todos los puntos cardinales posibles (NW, N, NE, W, E, SW, S y SE)ase calcula el costo de moverse a dicha celda, y nos quedamos con la celda cuyo co es el menor. Luego si el menor costo detectado es menor a infinito la unidad se mueve a dicha celda en caso contrario la unidad mantiene su posici\'on. 
  
 Ahora veamos como calcular el costo de que una unidad se mueva de una celda a otra.
  
-Si la celda nueva es intransitable (tiene el par\'ametro \verb|passable| en 0), el tipo de la celda es diferente al tipo de la unidad o si en la celda hay alg\'un objeto se devuelve infinito. Estos son todos los casos en los que la unidad no puede moverse a dicha celda. Para las unidades terrestres siola diferencia de alturas entre doslaeltas es muy grande (mayor a 0.3), tampoco pueden avanzar a dicha celda, retorn\'andose infinito. 
+Si la celda nueva es intransitable (tiene el par\'ametro \verb|passable| en 0), el tipo de la celda es diferente al tipo de la unidad o si en la celda hay alg\'un objeto se devuelve infinito. Estos son todos los casos en los que la unidad no puede moverse a dicha celda. Para las unidades terrestres siola diferencia de alturas entre dosla ltas es muy grande (mayor a 0.3), tampoco pueden avanzar a dicha celda, retorn\'andose infinito. 
  
 Entonces en un primer momento se fija el costo en 10 - \verb|passable|/2, de esta manera se premia ir a celdas m\'as transitables. A continuaci\'on se comprueba si esa celda est\'a entre las que la unidad recuerda como ya visitadas. Si as\'i es, el coste se incrementar\'a en \verb|passable|/3. As\'i logramos incentivar que las unidades visiten celdas no visitadas con anterioridad  
   
-Ahora se comprueba si la celda se encuentra en zona ``amiga'', es decir, si esa celda es adyacente   
+Ahora se comprueba si la celda se encuentra en zona ``amiga'', es decir, si esa celda es adyacente a alguna celda en la que se encuentre alg\'un compa\~{n}ero de su bando. Si as\'i es y nuestra unidad protagonista es solidaria, el coste se reducir\'a a la mitad. Si es una zona amiga pero la unidad no es solidaria, el coste solo se reducir\'a dividi\'endose por la ra\'iz cuadrada de 2. De esta manera se incentiva que las unidades tiendan a permanecer en grupo y m\'as cuanto m\'as solidarias son.
+
+Si la celda que se est\'a estudiando es una celda en la que nuestra unidad tendr\'a al alcance un enemigo, su coste se reducir\'a en el valor del par\'ametro \verb|ofensive|  multiplicado por la inversa de la ra\'iz cuadrada de la distancia m\'inima hasta el enemigo. Adem\'as la unidad observa las celdas cercanas a la celda que se est\'a estudiando que est\'en dentro de su rango de visi\'on. Si detecta que al moverse a dicha celda se encontrar\'a en rango de alg\'un enemigo el costo se aumenta en 1.1 por cada enemigo que pudiera atacar a la unidad. De esta manera se est\'a diciendo que, cuanto m\'as ofensiva sea nuestra unidad, m\'as se aproximar\'a al enemigo, aunque con cierta precauci\'on.  

@@ -3,12 +3,12 @@ from typing import List
 
 class Cell:
 
-    def __init__(self, passable : float, type : string, row : int, column: int, heigth: float):
+    def __init__(self, passable : float, type : str, row : int, column: int, height: float):
         self.passable = passable
         self.type = type
         self.row = row
         self.col = column
-        self.heigth = heigth
+        self.height = height
         self.bs_object = None
         
     def __hash__(self):
@@ -19,14 +19,18 @@ class Cell:
             return self.row == o.row and self.col == o.col
         return False
 
+    def __str__(self):
+        return f"({self.row}, {self.col})"
+    
+    def __repr__(self) -> str:
+        return self.__str__()
 
 class Map(ABC):
 
     @abstractclassmethod
-    def __init__(self, no_rows : int, no_columns:int, sides:List):
+    def __init__(self, no_rows : int, no_columns:int):
         self.no_rows = no_rows
         self.no_columns = no_columns
-        self.sides = sides
         self.matrix = None
 
     def __getitem__(self, i):
@@ -35,15 +39,7 @@ class Map(ABC):
 
 class LandMap(Map):
 
-    def __init__(self, no_rows, no_columns, heigth_map, sea_heigth, sides):
-        Map.__init__(no_rows, no_columns, sides)
-        self.matrix = [[Cell(5, "earth" if heigth_map[i][j] > sea_heigth else "water",
-                             i, j, heigth_map[i][j]) for j in range(no_columns)] for i in range(no_rows)]
-
-
-class AirMap(Map):
-
-    def __init__(self, no_rows, no_columns, sides):
-        Map.__init__(no_rows, no_columns, sides)
-        self.matrix = [[Cell(5, "air", i, j, None)
-                        for j in range(no_columns)] for i in range(no_rows)]
+    def __init__(self, no_rows, no_columns, passable_map, height_map, sea_height):
+        Map.__init__(no_rows, no_columns)
+        self.matrix = [[Cell(passable_map[i][j], "earth" if height_map[i][j] > sea_height else "water",
+                             i, j, height_map[i][j]) for j in range(no_columns)] for i in range(no_rows)]

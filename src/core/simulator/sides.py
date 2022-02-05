@@ -32,3 +32,6 @@ class Side:
         if isinstance(o, Side):
             return self.id==o.id
         return False
+
+    def __hash__(self) -> int:
+        return self.id
