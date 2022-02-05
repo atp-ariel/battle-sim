@@ -1,6 +1,7 @@
 from typing import Deque
 from ..tokenizer import Tokenizer
 from ..parser import Parser, build_parser
+from ..code_generation import CodeGenerate
 from .bs_grammar import GRAMMAR
 from os.path import exists
 from json import load
@@ -32,4 +33,11 @@ class Compiler:
 
         program_ast = self.parser.parse(tokens)
 
-        return program_ast
+        code_program = CodeGenerate().visit(program_ast)
+        
+        f = open("caca.py", "w")
+        f.write(code_program)
+        f.close()
+
+        
+        

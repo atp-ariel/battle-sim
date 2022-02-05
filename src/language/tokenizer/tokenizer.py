@@ -32,6 +32,7 @@ TOKENS: List[TokenDefinition] = [
     TokenDefinition(TokenType.Equal, 1),
     TokenDefinition(TokenType.Neq, 1),
     TokenDefinition(TokenType.Lte, 1),
+    TokenDefinition(TokenType.Lt, 1),
     TokenDefinition(TokenType.Gte, 1),
     TokenDefinition(TokenType.Gt, 1),
     TokenDefinition(TokenType.Plus, 1),
@@ -47,7 +48,12 @@ TOKENS: List[TokenDefinition] = [
     TokenDefinition(TokenType.void, 1),
     TokenDefinition(TokenType.Constructor, 1),
     TokenDefinition(TokenType.This, 1),
-    TokenDefinition(TokenType.OAnd, 1)
+    TokenDefinition(TokenType.OAnd, 1),
+    TokenDefinition(TokenType.While, 1),
+    TokenDefinition(TokenType.LeftBracket, 1),
+    TokenDefinition(TokenType.RightBracket, 1),
+    TokenDefinition(TokenType.Bool, 1)
+    
 ]
 
 

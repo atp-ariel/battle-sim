@@ -1,5 +1,5 @@
 from ..grammar import *
-from ..grammar.engine_ast import *
+from ..parser.engine_ast import *
 
 eof = Terminal("EOF")
 

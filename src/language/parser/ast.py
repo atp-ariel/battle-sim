@@ -1,21 +1,26 @@
-from abc import ABC,abstractmethod
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import List
+
 
 class Context:
     pass
 
+
 @dataclass
 class Node(ABC):
-   pass
+    pass
 
-@dataclass    
+
+@dataclass
 class Statement(Node):
     pass
+
 
 @dataclass
 class Expression(Node):
     pass
+
 
 @dataclass
 class FuncDef(Statement):
@@ -23,7 +28,8 @@ class FuncDef(Statement):
     return_type: str
     arg_names: List[str]
     arg_types: List[str]
-    body : List[Statement]
+    body: List[Statement]
+
 
 @dataclass
 class AttrDef(Node):
@@ -31,165 +37,195 @@ class AttrDef(Node):
     type: str
     init: Expression
 
+
 @dataclass
 class ClassDef(Node):
     name: str
-    parent : str
+    parent: str
     arg_names: List[str]
     arg_types: List[str]
     attributes: List[AttrDef]
     methods: List[FuncDef]
+
 
 @dataclass
 class BsFile(Node):
     classes: List[ClassDef]
     statements: List[Statement]
 
+
 @dataclass
 class If(Statement):
-    condition : Expression
-    body : List[Statement]
+    condition: Expression
+    body: List[Statement]
+
 
 @dataclass
 class Branch(Statement):
-    ifs : List[If]
-    else_body : List[Statement]
+    ifs: List[If]
+    else_body: List[Statement]
+
 
 @dataclass
 class WhileDef(Statement):
-    condition : Expression
-    body : List[Statement]
-        
+    condition: Expression
+    body: List[Statement]
+
+
 @dataclass
 class Decl(Statement):
-    type : str
+    type: str
     name: str
     expression: Expression
 
-@dataclass    
+
+@dataclass
 class Assign(Statement):
     name: str
     expression: Expression
 
-@dataclass    
-class Return(Statement):
-    expression : Expression
 
-@dataclass        
+@dataclass
+class Return(Statement):
+    expression: Expression
+
+
+@dataclass
 class Break(Statement):
     pass
+
 
 @dataclass
 class Continue(Statement):
     pass
 
-#endregion
+# endregion
 
-#region BinaryExpressions
+# region BinaryExpressions
+
 
 @dataclass
 class BinaryExpression(Expression):
     op: str
-    left : Expression
-    right : Expression
+    left: Expression
+    right: Expression
 
-@dataclass    
+
+@dataclass
 class AritmeticBinaryExpression(BinaryExpression):
     pass
-        
-@dataclass   
-class TernaryExpression(Expression):
-    left : Expression
-    condition : Expression
-    right : Expression
-    
-#endregion
 
-#region AtomicExpressions
+
+@dataclass
+class TernaryExpression(Expression):
+    left: Expression
+    condition: Expression
+    right: Expression
+
+# endregion
+
+# region AtomicExpressions
 @dataclass
 class Inversion(Expression):
-    expression : Expression
+    expression: Expression
+
 
 @dataclass
 class Primary(Expression):
-    expression : Expression
-    name : str
-    args : List[Expression]
+    expression: Expression
+    name: str
+    args: List[Expression]
+
 
 @dataclass
 class Variable(Expression):
-    name : str
-    
+    name: str
+
+
 @dataclass
 class Number(Expression):
     value: str
 
-@dataclass    
+
+@dataclass
 class Bool(Expression):
     value: str
 
-@dataclass    
+
+@dataclass
 class MyNone(Expression):
     pass
 
-@dataclass    
-class MyList(Expression):
-    inner_list : List[Expression]
 
-#endregion
+@dataclass
+class MyList(Expression):
+    inner_list: List[Expression]
+
+# endregion
+
 
 @dataclass
 class ReturnType:
-    type : str
-    
+    type: str
+
+
 @dataclass
 class Type:
-    type : str
+    type: str
 
-@dataclass    
+
+@dataclass
 class Params:
-    type : str
-    name : str
-    params : 'Params'
+    type: str
+    name: str
+    params: 'Params'
 
-@dataclass    
+
+@dataclass
 class Statements:
-    statement : Statement
-    statements : 'Statements' 
+    statement: Statement
+    statements: 'Statements'
+
 
 @dataclass
 class ElseDef:
-    body : List[Statement]
+    body: List[Statement]
 
-@dataclass    
+
+@dataclass
 class ElifDef:
-    expression : Expression
-    body : List[Statement]
-    elif_def : 'ElifDef'
-    else_def : ElseDef
+    expression: Expression
+    body: List[Statement]
+    elif_def: 'ElifDef'
+    else_def: ElseDef
 
-@dataclass    
+
+@dataclass
 class Expressions:
-    expression : Expression
-    expressions : 'Expressions'
+    expression: Expression
+    expressions: 'Expressions'
+
 
 @dataclass
 class Functions:
-    function : FuncDef
-    functions : 'Functions'
+    function: FuncDef
+    functions: 'Functions'
+
 
 @dataclass
 class Attributes:
     attr_def: AttrDef
     attributes: 'Attributes'
 
-@dataclass    
+
+@dataclass
 class Constructor:
     arg_names: List[str]
     arg_types: List[str]
-    attributes : List[AttrDef]
+    attributes: List[AttrDef]
+
 
 @dataclass
 class Classes:
-    class_def : ClassDef
-    classes : 'Classes'
+    class_def: ClassDef
+    classes: 'Classes'
