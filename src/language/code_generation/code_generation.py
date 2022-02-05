@@ -20,11 +20,11 @@ class CodeGenerate:
 
     def write(self, string: str):
         tab_string = ''.join('\t' for i in range(self.count_tabs))
-        self.file.write(tab_string+string)
+        self.file.write(tab_string + string)
 
     @visitor(BsFile)
     def visit(self, node: BsFile):
-        # TODO: poner todas las importaciones necesarias en el archivo
+        self.write("from .core import *\n\n")
 
         for class_def in node.classes:
             self.visit(class_def)

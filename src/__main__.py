@@ -4,7 +4,8 @@ from typer import run, Exit, style, colors
 from sys import exc_info
 
 
-def compile(bs: str, py: str = ""):
+
+def compile(bs: str, py: str = "", run: bool = True):
     if bs == str():
         raise ValueError(f"Parameter {bs} must be a path")
     bs: Path = Path(bs).resolve()
@@ -22,10 +23,12 @@ def compile(bs: str, py: str = ""):
                 except BaseException as e:
                     print(style("Error", fg=colors.RED, bold=True) + "\t" + str(exc_info()[1]))
                     Exit(code=1)
-
-            with open(py, "w") as fpy:
-                fpy.write(python_code)
-            print(f"{style('Compiled!', fg=colors.BRIGHT_GREEN, bold=True)}\nResult file: {py}")
+            if not run:
+                with open(py, "w") as fpy:
+                    fpy.write(python_code)
+                print(f"{style('Compiled!', fg=colors.BRIGHT_GREEN, bold=True)}\nResult file: {py}")
+            else:
+                exec(python_code)
             return
         raise ValueError(f"File {bs} dont exist")
     raise ValueError(f"File {bs} must be Battle Script type")

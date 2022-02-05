@@ -42,17 +42,14 @@
         <li><a href="#built-with">Built With</a></li>
       </ul>-->
     </li>
-    <!--
     <li>
-      <a href="#getting-started">Getting Started</a>
+      <a href="#primeros-pasos">Primeros pasos</a>
       <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
+        <li><a href="#prerequisitos">Prerequisitos</a></li>
+        <li><a href="#installaciṕn">Instalación</a></li>
       </ul>
     </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
-    -->
+    <li><a href="#uso">Uso</a></li>
     <li><a href="#contribuciones">Contribuciones</a>
         <ul>
             <li><a href="#política-de-ramas">Política de ramas</a></li>
@@ -101,41 +98,34 @@ Se tiene la idea de poder implementar una opción para que el usuario pueda defi
 
 ## Primeros pasos
 
+Siga la guía de instalación para ejecutar el proyecto de forma local.
 
+### Prerequisitos
 
-### Prerequisites
+Es necesario tener Docker instalado en su ordenador, si usted no tiene Docker obedezca [las siguientes instrucciones](https://docs.docker.com/get-docker/)
 
-This is an example of how to list things you need to use the software and how to install them.
-* npm
-  ```sh
-  npm install npm@latest -g
-  ```
+### Instalación
 
-### Installation
+Ejecute los siguientes comandos en la consola:
 
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
-   ```sh
-   git clone https://github.com/github_username/repo_name.git
-   ```
-3. Install NPM packages
-   ```sh
-   npm install
-   ```
-4. Enter your API in `config.js`
-   ```js
-   const API_KEY = 'ENTER YOUR API';
-   ```
+1. `docker build -t battle_sim --rm .`
+2. `docker run -it --name compiler --rm battle_sim`
 
 <p align="right">(<a href="#top">volver arriba</a>)</p>
 
 
 
-## Usage
+## Uso
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+Para ejecutar el compilador del lenguaje siga las instrucciones:
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+### Compilar en un archivo .py
+
+Para obtener el compilado a .py, ejecute `python -m src <bs-path> --py=<py-path> --no-run`, si `py-path` no es provisto, el archivo generado se salvará en el directorio de `bs-path`. 
+
+### Para compilar y ejecutar el archivo
+
+Ejecute la siguiente linea `python -m src <bs-path>`
 
 <p align="right">(<a href="#top">volver arriba</a>)</p>
 

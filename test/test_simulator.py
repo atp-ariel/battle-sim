@@ -1,10 +1,5 @@
 from doctest import TestResults
-from src.core.simulator.sides import Side
-from src.core.simulator.simulator import Simulator
-from src.core.maps.genetic import GAT_Generator
-from src.core.maps.heightmap import HeightMap
-from src.core.bs_objects import LandUnit
-from src.core.maps.maps import LandMap
+from src.core import *
 from random import randint as r
 from numpy import array
 import pytest
