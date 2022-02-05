@@ -1,0 +1,13 @@
+class Soldier is LandUnit -> { 
+    constructor(number id, number attack) -> { 
+        number this.id = id; 
+        number this.attack = attack; 
+    };
+}; 
+& 
+function number W(number a) -> { 
+    while True -> {
+        a = a + 1;
+    }; 
+    return a;
+};

@@ -4,15 +4,16 @@ from .token import Token
 class Lexer:
     def __init__(self, pattern):
         self.source = pattern
-        self.symbols = {'(':'LEFT_PAREN', ')':'RIGHT_PAREN', '*':'STAR', '|':'ALT', '\x08':'CONCAT', '+':'PLUS', '?':'QMARK', '.': "DOT"}
+        self.symbols = {'(': 'LEFT_PAREN', ')': 'RIGHT_PAREN', '*': 'STAR',
+                        '|': 'ALT', '\x08': 'CONCAT', '+': 'PLUS', '?': 'QMARK', '.': "DOT"}
         self.current = 0
         self.length = len(self.source)
-       
-    def __call__(self) -> Token: 
+
+    def __call__(self) -> Token:
         if self.current < self.length:
             c = self.source[self.current]
             self.current += 1
-            if c not in self.symbols.keys(): # CHAR or escaping char
+            if c not in self.symbols.keys():  # CHAR or escaping char
                 if c == '\\':
                     # escape char
                     if self.current < self.length:

@@ -81,9 +81,9 @@ class CodeGenerate:
         self.count_tabs -= 1
 
         for f in node.methods:
-            f.arg_names.insert(0,"self")
+            f.arg_names.insert(0, "self")
             self.visit(f)
-        
+
         self.count_tabs -= 1
 
     @visitor(FuncDef)

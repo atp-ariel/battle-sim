@@ -1,4 +1,4 @@
-from typing import  Iterable, List, Tuple
+from typing import Iterable, List, Tuple
 from .token import Token, TokenType, TokenDefinition
 from ..regex import Match
 from queue import deque
@@ -63,8 +63,9 @@ class Tokenizer:
 
         matches = {}
         for token_def in TOKENS:
-            matches[token_def] = token_def.type.value[0].find_all(bs_content_file)
-        
+            matches[token_def] = token_def.type.value[0].find_all(
+                bs_content_file)
+
         i = 0
         while i < len(bs_content_file):
             token_in_i: List[Tuple[TokenDefinition, Match]] = []
@@ -74,14 +75,17 @@ class Tokenizer:
                 for t in v:
                     if t.start == i:
                         token_in_i.append((k, t))
-                    
+
             # Get match with highest precedence
             if len(token_in_i):
-                token_in_i = sorted(token_in_i, key=lambda tup: tup[0].precendece)
-                token = Token(token_in_i[0][0].type, token_in_i[0][1].value, token_in_i[0][1].start, token_in_i[0][1].end)
-                tokens.append(token)    
+                token_in_i = sorted(
+                    token_in_i, key=lambda tup: tup[0].precendece)
+                token = Token(token_in_i[0][0].type, token_in_i[0][1].value,
+                              token_in_i[0][1].start, token_in_i[0][1].end)
+                tokens.append(token)
                 i = token.end
 
             i += 1
-        tokens.append(Token(TokenType.EOF, "EOF", tokens[-1].end + 1, tokens[-1].end + 4))
-        return deque(tokens)          
+        tokens.append(Token(TokenType.EOF, "EOF",
+                            tokens[-1].end + 1, tokens[-1].end + 4))
+        return deque(tokens)

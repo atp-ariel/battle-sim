@@ -1,16 +1,35 @@
+from pathlib import Path
 from .language.compiler import Compiler
+from typer import run, Exit, style, colors
+from sys import exc_info
 
-# program = "class Soldier is LandUnit -> {  constructor(number id) -> { number this.id = id; }; }; & List a = [ 1, 2, 3, [1,2] ];"
-# Compiler()(program)
 
-# program = "class Soldier is LandUnit -> {  constructor(number id) -> { number this.id = id; }; }; class Archer is LandUnit -> {  constructor(number id, number life_points) -> { number this.id = id; number this.life_points = life_points; }; }; & number a = 3;"
-# Compiler()(program)
+def compile(bs: str, py: str = ""):
+    if bs == str():
+        raise ValueError(f"Parameter {bs} must be a path")
+    bs: Path = Path(bs).resolve()
 
-# program = "class Soldier is LandUnit -> {  constructor(number id) -> { number this.id = id; }; function number W(number a) -> { return a + 2; };}; & number a = 3; while 5 eq 1 -> { a = -1 * a;  };"
-# Compiler()(program)
+    if bs.suffix == ".bs":
+        py: Path = Path(py) if py != str() else Path(
+            str(bs.parent) + "/" + bs.stem + ".py").resolve()
 
-# program = "class Soldier is LandUnit -> {  constructor(number id) -> { number this.id = id + 3 * 5^-2; }; function number W(number a) -> { if a lt 0 and a eq 0-> { return -1 * a;  } elif a gt 1 -> {return 4;} else -> { return a; }; };}; class Archer is LandUnit -> {  constructor(number id, number life_points) -> { number this.id = id; number this.life_points = life_points; }; }; & Soldier b = Soldier(1); Soldier bOne = Soldier(3); Archer a = Archer(1, 10); if a eq None -> { a = a + 1; }; a = [1,2,3, [1,2,3,4] ];"
-# Compiler()(program)
+        if bs.exists():
+            compiler = Compiler()
+            python_code = str()
+            with open(bs, "r") as fbs:
+                try:
+                    python_code = compiler(fbs.read())
+                except BaseException as e:
+                    print(style("Error", fg=colors.RED, bold=True) + "\t" + str(exc_info()[1]))
+                    Exit(code=1)
 
-program = "class Soldier is LandUnit -> { constructor(number id, number attack) -> { number this.id = id; number this.attack = attack; }; }; & function number W(number a) -> { while True -> {a = a + 1;}; return a;};"
-Compiler()(program)
+            with open(py, "w") as fpy:
+                fpy.write(python_code)
+            print(f"{style('Compiled!', fg=colors.BRIGHT_GREEN, bold=True)}\nResult file: {py}")
+            return
+        raise ValueError(f"File {bs} dont exist")
+    raise ValueError(f"File {bs} must be Battle Script type")
+
+
+if __name__ == "__main__":
+    run(compile)

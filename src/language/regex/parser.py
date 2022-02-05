@@ -2,8 +2,10 @@ from typing import List
 from .token import Token
 from .lexer import Lexer
 
+
 class ParseError(Exception):
     pass
+
 
 class Parser:
     '''
@@ -30,21 +32,22 @@ class Parser:
             | char              literal {push char}
             | .
     '''
+
     def __init__(self, lexer: Lexer):
-        self.lexer : Lexer  = lexer
-        self.tokens : List[Token] = []
-        self.lookahead : Token  = self.lexer()
-    
+        self.lexer: Lexer = lexer
+        self.tokens: List[Token] = []
+        self.lookahead: Token = self.lexer()
+
     def consume(self, name: str):
         if self.lookahead.name == name:
             self.lookahead = self.lexer()
         elif self.lookahead.name != name:
             raise ParseError
 
-    def __call__(self) -> List[Token]: 
+    def __call__(self) -> List[Token]:
         self.exp()
         return self.tokens
-    
+
     def exp(self):
         self.term()
         if self.lookahead.name == 'ALT':
@@ -58,7 +61,7 @@ class Parser:
         if self.lookahead.value not in ')|':
             self.term()
             self.tokens.append(Token('CONCAT', '\x08'))
-    
+
     def factor(self):
         self.primary()
         if self.lookahead.name in ['STAR', 'PLUS', 'QMARK']:

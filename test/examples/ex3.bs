@@ -1,0 +1,14 @@
+class Soldier is LandUnit -> {  
+    constructor(number id) -> { 
+        number this.id = id; 
+    };
+    function number W(number a) -> { 
+        return a + 2; 
+    };
+}; 
+& 
+number a = 3; 
+while 5 eq 1 -> 
+{ 
+    a = -1 * a;  
+};

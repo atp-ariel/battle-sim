@@ -35,9 +35,7 @@ class Parser:
             do = state_action[token.name]
 
             if do[0] == 'OK':
-                print('Valid sequence of tokens')
                 return nodes[0]
-
 
             if do[0] == 'S':
                 states_stack.append(do[1])
@@ -56,7 +54,7 @@ class Parser:
 
                 state_go_to = self.go_to[states_stack[len(states_stack)-1]]
                 if prod.head.name not in state_go_to:
-                    raise Exception(f"Invalid sequence of tokens {prod.head.name}")
+                    raise Exception(
+                        f"Invalid sequence of tokens {prod.head.name}")
                 tokens_stack.append(prod.head.name)
                 states_stack.append(state_go_to[prod.head.name])
-
