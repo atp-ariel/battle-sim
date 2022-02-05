@@ -15,6 +15,7 @@ class CodeGenerate:
             "lt": "<",
             "gte": ">=",
             "gt": ">",
+            "^": "**"
         }
 
     def write(self, string: str):
@@ -29,7 +30,10 @@ class CodeGenerate:
             self.visit(class_def)
 
         for statement in node.statements:
-            self.visit(statement)
+            if isinstance(statement, Expression):
+                self.write(self.visit(statement) + "\n")
+            else:
+                self.visit(statement)
 
         return self.file.getvalue()
 
@@ -197,11 +201,11 @@ class CodeGenerate:
 
         exp = self.visit(node.expression)
         if node.args is None:
-            return f'{exp}.{node.name}\n'
+            return f'{exp}.{node.name}'
         else:
             args = ', '.join(self.visit(e) for e in node.args)
 
-            return f'{exp}({args})\n'
+            return f'{exp}({args})'
 
     @visitor(Variable)
     def visit(self, node: Variable):

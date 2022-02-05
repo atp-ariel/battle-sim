@@ -52,6 +52,7 @@ class TokenType(Enum):
     Constructor = (Regex("constructor"), "constructor")
     OAnd = (Regex("&"), "&")
     EOF = (Regex("EOF"), "EOF")
+    List = (Regex("List"), "List")
 
 class TokenDefinition:
     def __init__(self, ttype: TokenType, precendence: int):

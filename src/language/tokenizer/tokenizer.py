@@ -52,8 +52,8 @@ TOKENS: List[TokenDefinition] = [
     TokenDefinition(TokenType.While, 1),
     TokenDefinition(TokenType.LeftBracket, 1),
     TokenDefinition(TokenType.RightBracket, 1),
-    TokenDefinition(TokenType.Bool, 1)
-    
+    TokenDefinition(TokenType.Bool, 1),
+    TokenDefinition(TokenType.List, 1)
 ]
 
 

@@ -18,7 +18,7 @@ statement ->    func_def
             |   return_stat 
             |   'break'                            build_breack                             
             |   'continue'                         build_continue             
-            |   expressions 
+            |   expression
 
 
 func_def ->     'function' return_type NAME '(' params ')' '->' "{" statements "}"       build_func_def1
@@ -59,6 +59,7 @@ return_type ->  'void'                        build_return_type
 
 type ->   'number'        build_type
       |   'bool'          build_type
+      |   'List'          build_type
       |   NAME            build_type
 
 assign -> NAME '=' expression                         build_assign
