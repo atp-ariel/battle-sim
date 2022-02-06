@@ -114,7 +114,7 @@ factor ->   '+' factor
 pow ->  primary '^' factor              build_aritmetic_expression
     |   primary
 
-primary ->  yy '.' NAME            build_primary1
+primary ->  primary '.' NAME            build_primary1
         |   primary '(' expressions ')'        build_primary2
         |   primary '(' ')'             build_primary3
         |   atom

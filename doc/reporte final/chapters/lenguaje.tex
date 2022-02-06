@@ -55,7 +55,7 @@ constructor_def -> 'constructor' '(' params ')' '->' '{' attributes '}'
 attributes -> attr_def ';'  attributes             
             | attr_def ';'                        
 
-attr_def ->  type 'this' '.' NAME '=' expression           
+attr_def ->  type 'self' '.' NAME '=' expression           
 
 
 while_def ->    'while' expression '->' "{" statements "}"              
@@ -131,6 +131,7 @@ atom -> NAME
     |   'None'                          
     |   NUMBER                          
     |   list
+    |   'self'
 
 list -> '[' expressions ']'             
     |   '[' ']'                         
