@@ -76,6 +76,9 @@ class Context:
             return func in self._func_context
 
         else:
+            if func in self._func_context:
+                return True
+                
             return self.father.check_func(func)
 
     def check_func_args(self,func,args):
