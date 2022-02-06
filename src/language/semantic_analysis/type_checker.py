@@ -50,6 +50,11 @@ class Type_Checker:
 
         node.computed_type=None
 
+
+    @visitor(Self)
+    def visit(self,node:Self):
+        node.computed_type="Self"
+
     @visitor(Branch)
     def visit(self,node:Branch):
         for i in node.ifs:
@@ -167,10 +172,10 @@ class Type_Checker:
         if node.args is None:
             _type = self.context.get_type_object(node.expression.computed_type)
 
-            if _type.is_method:
+            if _type.is_method(node.name):
                 node.computed_type = _type.get_method(node.name)[0]
 
-            elif _type.is_attribute:
+            elif _type.is_attribute(node.name):
                 node.computed_type = _type.get_attribute(node.name)[0]
 
         else:

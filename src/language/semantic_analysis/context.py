@@ -1,8 +1,18 @@
 class Type:
-    def __init__(self,name):
+    def __init__(self,name,parent=None):
         self.name=name
         self.attributes={}
         self.methods={}
+        self.parent=parent
+
+        if not parent ins None:
+            for m in parent.methods:
+                self.methods[m]=parent.methods[m]
+
+            for a in parent.attributes:
+                self.attributes[a]=parent.attributes[a]
+
+        
 
     def get_attribute(self,attribute):
         if attribute in self.attributes:
@@ -78,7 +88,7 @@ class Context:
         else:
             if func in self._func_context:
                 return True
-                
+
             return self.father.check_func(func)
 
     def check_func_args(self,func,args):
@@ -146,11 +156,9 @@ class Context:
         self.children.append(child)
         return child
      
-    def create_type(self,name):
-        if name in self._type_context:
-            return self._type_context[name]
-            
-        t=Type(name)
+    def create_type(self,name,parent):     
+        _parent=self.get_type_object(parent)       
+        t=Type(name,_parent)
         self._type_context[name]=t
         return t
 
@@ -162,6 +170,18 @@ class Context:
             return self._func_context[func][0]
 
     def get_type_object(self,name):
-        if name in self._type_context:
-            return self._type_context[name]
+        if self.father is None:
+            if name in self._type_context:
+                return self._type_context[name]
+
+            else:
+                raise Exception("Type '{name}' is not defined")
+
+        else:
+            if name in self._type_context:
+                return self._type_context[name]
+
+            else:
+                return father.get_type_object(name)
+            
     #def define_symbol(symbol,type)
