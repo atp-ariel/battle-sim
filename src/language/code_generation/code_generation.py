@@ -81,7 +81,6 @@ class CodeGenerate:
         self.count_tabs -= 1
 
         for f in node.methods:
-            f.arg_names.insert(0, "self")
             self.visit(f)
 
         self.count_tabs -= 1
@@ -227,7 +226,3 @@ class CodeGenerate:
     def visit(self, node: MyList):
         args = ', '.join(self.visit(e) for e in node.inner_list)
         return f'[{args}]'
-    
-    @visitor(Self)
-    def visit(self, node:Self):
-        return 'self'
