@@ -360,3 +360,188 @@ class Tokenizer:
 \end{verbatim}
 
 Este algoritmo tiene complejidad temporal $O(n*m)$ donde $m$ es la cantidad de tokens, y $n$ el tamaño de la cadena de entrada.
+
+\subsection{Parser}
+
+\subsubsection{Construcci\'on del Parser}
+
+El c\'odigo referente a la construcci\'on del parser se encuentra en el m\'odulo \textbf{src.parser.build\_parser}.
+
+El parser implementado es un parser LR(1) can\'onico y para eso se definieron las clases \verb|Item| e \verb|ItemLR1| que representan la definici\'on de Item LR(0) e Item LR(1).
+
+La clase \verb|Item| tien como atributos una producci\'on y un \'indice tal que los s\'imbolos en las posiciones menores que el \'indice son los s\'imbolos de la producci\'on que se han detectado y los s\'imbolos en las posiciones mayores o igual al \'indice son los s\'imbolos de la producci\'on que faltan por ver.
+
+La clase \verb|ItemmLR1| es la definici\'on de un item LR(1). Obs\'ervese que esta hereda de \verb|Item| y adem\'as se agregan como atributos adicionales el lookahead, un string que representa al item y un valor de hash calculado a partir de este string. Adem\'as se implementan las funciones de \verb|__hash__| y \verb|__eq__|. 
+
+Adem\'as se implement\'o la clase \verb|State| que representa un estado del aut\'omata LR(1). Un estado tiene los siguientes atributos:
+
+\begin{itemize}
+	\item \verb|kernel| que es una lista de items LR(1) que son el kernel del estado.
+	\item \verb|string| un cadena que representa al estado, que no es m\'as que la concatenaci\'on de los items kernel del estado delimitados por el caracter $|$.
+	\item \verb|items| que es el conjunto de items del estado (de ah\'i la necesidad de implementar la funci\'on \verb|__hash__| para la clase \verb|ItemLR1|).
+	\item \verb|nexts| es un diccionario tal que las llaves son los s\'imbolos que pueden venir a continuaci\'on dado que el parser se encuentra en dicho estado. Y el valor asociado al s\'imbolo es el estado al que se mueve el parser si se detecta dicho s\'imbolo.
+	\item \verb|expected_symbols| es un diccionario tal que las llaves son los s\'imbolos que pueden venir a continuaci\'on dado que el parser se encuentra en dicho estado.Y el valor asociado al s\'imbolo es un conjunto de items del estado que tienen a dicho s\'imbolo en la posici\'on que marca su \'indice respectivo.
+	\item \verb|number| que es el n\'umero correspondiente al estado.
+\end{itemize} 
+
+Esta clase tiene definida, entre otras, dos funciones interesantes: \verb|add_item(self, item: ItemLR1)|, \verb|build(self, initial_items)| y \verb|go_to(self, sym: Symbol, states_dict, state_list, q: deque,| \verb| initial_items)| La primera a\~{n}ade un item LR(1) al conjunto de items del estado. La segunda se utiliza para construir el estado a partir de los items kernel del estado y los items iniciales de la gram\'atica(los que tienen su \'indice en 0). La idea detr\'as de este segundo m\'etodo es crear una cola a partir de los items kernel, luego mientras la cola no este vac\'ia se extrae el primer item de la cola. Si el s\'imbolo en la posici\'on que indica el \'indice es un no terminal se computan todos los items no kernel que este item genera y por cada uno de estos se comprueba si ya pertenece al conjunto de items del estado. En caso de no estarlo se a\~{n}ade el item al conjunto de items y a la cola de items. 
+
+La tercera funci\'on se utiliza para computar todas las transiciones desde el estado actual hacia otro estado dado un s\'imbolo determinado. La idea seguida para esta funci\'on es por cada uno de los items que tienen al s\'imbolo en la posici\'on que indica su respectivo \'indice, generar un nuevo item con los mismos atributos que el item original, excepto por el \'indice que ser\'a el del original aumentado en 1. F\'ijese que los nuevos items generados indican que ya se vio el s\'imbolo analizado en sus respectivas producciones. Estos nuevos items se a\~{n}aden a una lista, con la cual se crea un nuevo estado a partir de dicha lista. O sea, dicha lista es el kernel del nuevo estado. Luego se comprueba si este nuevo estado ya fue generado. Si no lo ha sido entonces se construye el nuevo estado por completo. Finalmente se a\~{n}ade la transici\'on.
+
+Luego se tiene la clase \verb|Automaton| la cual se instancia con una gram\'atica y tiene definida la funci\'on \verb|build(self)|; la cual construye un aut\'omata LR(1) a partir de la gram\'atica. Esta funci\'on devuelve una lista de estados y las transiciones vienen dadas por el diccionario \verb|nexts| que cada estado tiene como atributo. En este m\'etodo primero se crea el no terminal inicial y se la a\~{n}ade una producci\'on con el nodo inicial de la gram\'atica. Luego por cada una de las producciones se generan los items iniciales. Luego se crea el estado inicial y a partir de este se van generando el resto de los estados utilizando una cola de estados, que se inicializa con el estado inicial, y la funci\'on \verb|go_to| de cada estado.  Mientras la cola no este vacia se extrae el primer estado de la misma y cada vez que se encuentre un estado nuevo se a\~{nade} a la cola. El estado generado y los nuevos estados se van guardando en una lista que es la que devuelve el m\'etodo.
+
+Por \'ultimo tenemos la clase \verb|TableActionGoTo|, la cual se instancia a partir de una gram\'atica y tiene un m\'etodo \verb|build(self, path: str)| la cual construye las tablas ``Action'' y ``GoTo'' y las guarda como objetos .json en la direcci\'on especificada. Ambas tablas las representaremos como listas de diccionarios, tal que el elemento $i$ de cada lista ser\'a un diccionario correspondiente al estado $i$ del aut\'omata. La lista \verb|action| representar\'a la tabla ``Action'' y la lista \verb|go_to| representar\'a la tabla ``GoTo''.
+
+Entonces por cada estado se crean dos diccionarios: \verb|state_action| y \verb|state_go_to| y se analizan cada una de sus posibles transiciones. Si el s\'imbolo con el que se hace la transici\'on hacia otro estado es un terminal entonces, se agrega al diccionario \verb|state_action| el s\'imbolo como llave y una tupla de dos elementos como su valor correspondiente, de tal forma que el primer elemento de dicha tupla es el car\'acter 'S', que indica que la acci\'on a hacer es Shift, y el segundo elemento es el n\'umero del estado al que lleva la transici\'on. Si por el contrario el s\'imbolo es un no terminal se a\~{n}aden como llave y valor respectivamente el s\'imbolo y el n\'umero del estado al que lleva la transici\'on en el diccionario \verb|state_go_to|. Luego se analizan todos los items del estado cuya producci\'on ya fue vista por completo y si existe un par de items con igual lookahead se reporta la existencia de un conflicto Reduce - Reduce.
+
+Por cada lookahead y su respectivo item detectados anteriormente, se chequea si el lookahead aparece entre las llaves del diccionario \verb|state_action| y de ser as\'i entonces ocurre un conflicto Shift-Reduce y se reporta el mismo. En caso contrario se a\~{n}ade al diccionario \verb|state_action| el lookahead como llave y como su valor asociado una tupla de dos elementos, tal que el primer elemento es el car\'acter 'R', que indica que hay que hacer Reduce, y el segundo elemento es el id de la producci\'on que se debe reducir. Si el lookahead detectado es el s\'imbolo especial '\$' y adem\'as la parte izquierda del item correspondiente es el s\'imbolo inicial 'S' definido como el inicial, entonces la cadena es v\'alida y se a\~{n}ade al diccionario \verb|state_action| dicho s\'imbolo como llave y como su valor correspondiente una tubla con un solo elemento : la cadena 'OK'. 
+
+Luego de todos estos an\'alisis sobre el estado se a\~{n}aden los diccionarios \verb|state_action| y \verb|state_go_to| a las listas \verb|action| y \verb|go_to| respectivamente. Cuando se terminen de analizar todos los estados estas listas se guardan en sendos archivos de tipo json en la direcci\'on especificada.
+
+\subsubsection{AST y \'Arbol de derivaci\'on}
+El c\'odigo referente a este apartado se encuentra en el m\'odulo src.language.parser.ast.
+
+Para la construcci\'on del AST durante el proceso de parsing se implementaron las definiciones de sus nodos y de algunos nodos del \'arbol derivaci\'on, para facilitar este proceso. Los nodos del AST heredan de forma indirecta de la clase abstracta \verb|Node|, dividi\'endose en instrucciones y expresiones, excepto por los siguientes nodos que heredan directamente de \verb|Node|:
+
+\begin{itemize}
+	\item \verb|BSFile|: Nodo ra\'iz del AST.
+	\item \verb |AttrDef|: Definici\'on de atributo de una clase.  
+	\item \verb|ClassDef|: Definici\'on de una clase.
+\end{itemize}
+
+El resto de nodos del AST se dividen en instrucciones y expresiones. Los nodos instrucciones son los siguientes:
+
+\begin{itemize}
+	\item \verb|FuncDef|: Definici\'on de funci\'on.
+	\item \verb|If|: Instrucci\'on \textbf{if}. 
+	\item \verb|Branch|: Lista de instrucciones \textbf{if} y una instrucci\'on \textbf{else}
+	\item \verb|WhileDef|: Instrucci\'on \textbf{while}
+	\item \verb|Decl|: Declaraci\'on de variable.
+	\item \verb|Assign|: Asignaci\'on de variable. 
+	\item \verb|Return|: Instrucci\'on \textbf{return}.
+	\item \verb|Break|: Instrucci\'on \textbf{break}.
+	\item \verb|Continue|: Instrucci\'on \textbf{continue}.
+\end{itemize}
+
+Los nodos expresiones son los siguientes:
+
+\begin{itemize}
+	\item \verb|BinaryExpression|: Expresi\'on binaria.
+	\item \verb|AritmeticBinaryExpression|: Expresi\'on binaria que solo se puede realizar entre dos n\'umeros.
+	\item \verb|TernaryExpression|: Expresi\'on ternaria
+	\item \verb|Inversion|: Expresi\'on que es la negaci\'on de otra expresi\'on.
+	\item \verb|Primary|: Engloba tanto el llamado a una funci\'on, como la acci\'on de referirse a un atributo de la clase (incluyendo las funciones de dicha clase).
+	\item \verb|Variable|: Variable.
+	\item \verb|Number|: N\'umero
+	\item \verb|Bool|: Expresi\'on booleana
+	\item \verb|MyNone|: Expresi\'on None
+	\item \verb|MyList|: Lista
+\end{itemize}
+
+El resto de clases implementadas en este m\'odulo corresponden a los nodos del \'arbol de derivaci\'on, los cuales son utilizados para construir los nodos anteriormente mencionados.
+
+Para construir al AST durante el proceso de parsing se atributaron algunas derivaciones de la gram\'atica, utilizando las funciones implementadas en el m\'odulo src.language.parser.engine\_ast.
+
+\subsubsection{Parseo de una cadena}
+
+El c\'odigo referente a este apartado se encuentra en el m\'odulo src.language.parser.parser.
+
+Para esto se implement\'o la clase \verb|Parser|, la cual se instancia con una gram\'atica y las tablas de ``Action'' y ``GoTo''. En esta clase se implement\'o la funci\'on \verb|parse|, la cual recibe una cola de tokens y de ser una cadena sint\'acticamente correcta, devuelve el AST generado a partir de la cadena. Primeramente se a\~{n}ade un token especial que se considera como el toquen final de la secuencia y se definen tres pilas:
+
+\begin{itemize}
+	\item \verb|tokens_stack|: En esta se van a ir guardando los lexemas de los tokens vistos.
+	\item \verb|states_stack|: En esta se van a ir guardando los por los que se ha transitado hasta el momento.
+	\item \verb|nodes|: En esta se van a ir guardando los nodos del AST y el \'arbol de derivaci\'on. De tal forma que al final del proceso de parsing en esta solo quede la ra\'iz del AST.
+\end{itemize}
+
+Entonces mientras queden tokens por ver de la secuencia, se toma el primer de token de la misma y se cargan las acciones del estado actual (el que est\'a en el tope de la pila de estados). Si no existe ninguna acci\'on con dicho token hacia otro estado, entonces se reporta que se detect\'o un token inesperado en la secuencia. Pasado este
+punto se consulta por la acci\'on que se debe realizar. 
+
+Si la acci\'on es 'OK' es porque la cadena es v\'alida y se retorna el objeto en la posici\'on 0 de pila \verb|nodes| (el AST). Si la acci\'on es hacer Shift se a\~{n}ade el estado a la pila de estados, se a\~{n}ade el lexema del token a la pila de los tokens y se saca el mismo de la secuencia.
+
+Si lo que toca es hacer Reduce, entonces se obtiene la producci\'on con la que se va a reducir y si adem\'as la producci\'on es atributada, o sea si esta producci\'on tiene asociada una funci\'on que construye un nodo del AST O o del \'arbol de derivaci\'on, se llama a esta funci\'on pas\'andole como argumentos la pila de tokens y la pila de nodos. Estas funciones son las que modifican la pila de nodos. Cada una de ellas extrae o no un determinado n\'umero de nodos de la pila de nodos y agrega un nodo nuevo a la pila de nodos. Luego se extraen de la pila de tokens una cantidad de elementos igual a la longitud de la parte derecha de la producci\'on que se reduce. De igual forma se hace con la pila de estados. 
+
+Entonces con el estado que queda en el tope de la pila se cargan utilizando la tabla ``GoTo'' las transiciones que se pueden hacer con no terminales en dicho estado. Si no existen transiciones en dicho estado con el no terminal que es parte izquierda de la producci\'on que se redujo, entonces se lanza un error indicando que la secuencia de tokens es inv\'alida. En caso contrario se a\~{n}ade el a\~{n}ade el no terminal a la pila de tokens y se a\~{n}ade el estado al que se avanza con dicho token a la pila de estados.
+
+\subsection{An\'alisis Sem\'antico}
+\subsubsection{Definiendo tipos}
+Para implementar nuevos tipos en el lenguaje se sigui\'o la idea de Python: se implement\'o una clase \verb|Type| en la que cada clase del lenguaje ser\'a una instancia de esta.
+ 
+  \verb|Type| consta de los siguientes atributos y m\'etodos 
+  \begin{itemize}
+  \item Atributos
+  \begin{itemize}
+  \item \verb|name|: Nombre de la clase o nuevo tipo
+  
+  \item \verb|attributes|: Atributos de la clase.
+  
+  \item  \verb|methods|: M\'etodos de la clase
+  \end{itemize}
+  
+  \item M\'etodos
+  \begin{itemize}
+  \item \verb|get_attribute|:  Devuelve el atributo de la clase que se pide si este existe.
+  
+  \item \verb|get_method|: Devuelve el m\'etodo de la clase que se pide si este existe.
+  
+  \item \verb|define_attribute|: Define el atriuto de la clase.
+  
+  \item \verb|define_method|: Define el m\'etodo de la clase.
+  
+  \item \verb|is_attribute|: Revisa si el atributo existe.
+  
+  \item \verb|is_method|: Revisa si el m\'etodo existe.
+  \end{itemize}
+  \end{itemize}
+\subsubsection{Context}
+Para definir en contexto en el que se escribe un programa con el lenguaje, se implement\'o la clase \verb|Context|, esta cuenta con los siguientes atributos y m\'etodos 
+\begin{itemize}
+\item Atributos
+\begin{itemize}
+\item \verb|father|: Contexto padre de este contexto
+
+\item \verb|children|: Contextos hijos de este contexto
+
+\item \verb|_var_context|: Variables del contexto. 
+
+\item \verb|_func_context|: Funciones del contexto
+
+\item \verb|_type_context|: Tipos definidos en el contexto
+\end{itemize}
+
+\item M\'etodos
+\begin{itemize}
+\item \verb|check_var|: Revisa si la variable est\'a definida en el contexto
+
+	\item \verb|check_var_type|: Revisa que la variable est\'e definida en el contexto y el tipo corresponda con el tipo de la variable
+	
+	\item \verb|check_func|: Revisa que la funci\'on est\'e definida
+	
+	\item \verb|check_func_args|: Revisa si la funci\'on est\'a definida y los tipos de los argumentos coinciden con los tipos de la funci\'on
+	
+	\item \verb|get_type|: Devuelve el tipo de una variable en el contexto
+	
+	\item \verb|define_var|: Si la variable no existe en el contexto, la crea. En caso contrario le asigna el valor siempre que este corresponda con el tipo de la variable
+	
+	\item \verb|define_func|: Define la funci\'on si no existe en el contexto
+	
+	\item \verb|create_child_context|: Crea un contexto hijo
+	
+	\item \verb|create_type|: Crea un nuevo tipo en el contexto
+	
+	\item \verb|get_return_type|: Dvuelve el tipo de retorno de una funci\'on si esta est\'a definida en el contexto
+	
+	\item \verb|get_type_object|: Devuelve la clase a la que pertenece objeto dado 
+\end{itemize}
+
+\end{itemize}
+
+\subsubsection{Visitor}
+Para verificar la correcci\'on de la sem\'antica se implement\'o el patr\'on \verb|Visitor| que visitar\'a el \'arbol de sintaxis abstracta en tres pasadas distintas
+\begin{itemize}
+\item \verb|Type_Collector|: Es la primera pasada con el patr\'on \verb|Visitor| en este se recogen todos los tipos que se van a definir, para crearlos en el contexto
+
+\item \verb|Type_Builder|: Es la segunda pasada con el patr\'on, se toman todos los tipos que se definieron anteriormente y se definen sus m\'etodos y atributos.
+
+\item \verb|Type_Checker|: Es la tercera pasada con el patr\'on, en esta se revisan que los tipos de cada expresi\'on no entren en contradicci\'on
+\end{itemize}

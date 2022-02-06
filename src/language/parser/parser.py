@@ -23,7 +23,7 @@ class Parser:
         states_stack = [0]
         nodes = []
 
-        while len(secuence) > 0 or len(tokens_stack) > 0:
+        while len(secuence) > 0:
             token = secuence[0]
 
             state_action = self.action[states_stack[len(states_stack)-1]]
