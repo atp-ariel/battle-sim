@@ -49,7 +49,7 @@ constructor_def -> 'constructor' '(' params ')' '->' '{' attributes '}'         
 attributes -> attr_def ';'  attributes             build_attributes1
             | attr_def ';'                        build_attributes2
 
-attr_def ->  type 'this' '.' NAME '=' expression           build_attr_def
+attr_def ->  type 'self' '.' NAME '=' expression           build_attr_def
 
 
 while_def ->    'while' expression '->' "{" statements "}"              build_while_def
@@ -114,7 +114,7 @@ factor ->   '+' factor
 pow ->  primary '^' factor              build_aritmetic_expression
     |   primary
 
-primary ->  primary '.' NAME            build_primary1
+primary ->  yy '.' NAME            build_primary1
         |   primary '(' expressions ')'        build_primary2
         |   primary '(' ')'             build_primary3
         |   atom
@@ -125,6 +125,7 @@ atom -> NAME                            build_Variable
     |   'None'                          build_None
     |   NUMBER                          build_Number
     |   list
+    |   'self'
 
 list -> '[' expressions ']'             build_list1
     |   '[' ']'                         build_list2

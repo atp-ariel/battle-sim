@@ -1,6 +1,6 @@
 class Soldier is LandUnit -> {  
     constructor(number id) -> { 
-        number this.id = id; 
+        number self.id = id; 
     }; 
 }; 
 & 

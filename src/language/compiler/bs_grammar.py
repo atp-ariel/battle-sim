@@ -22,7 +22,7 @@ constructor = NonTerminal("constructor_def")
 tconstructor = Terminal("constructor", "constructor")
 attr = NonTerminal("attributes")
 attr_def = NonTerminal("attr_def")
-this = Terminal("this", "this")
+_self = Terminal("self", "self")
 function = Terminal("function", "function")
 name = Terminal("NAME")
 lparent = Terminal("(", "(")
@@ -144,7 +144,7 @@ constructor += Production([tconstructor, lparent,
 attr += Production([attr_def, Semicolon, attr],  build_attributes1)
 attr += Production([attr_def, Semicolon],  build_attributes2)
 
-attr_def += Production([_type, this, dot, name, oeq,
+attr_def += Production([_type, _self, dot, name, oeq,
                         expression], build_attr_def)
 
 while_def += Production([_while, expression, arrow,
@@ -219,6 +219,7 @@ atom += Production([false], build_Bool)
 atom += Production([none], build_None)
 atom += Production([number], build_Number)
 atom += Production([_list])
+atom += Production([_self])
 
 _list += Production([lbracket, expressions, rbracket], build_list1)
 _list += Production([lbracket, rbracket], build_list2)

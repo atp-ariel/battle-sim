@@ -1,7 +1,7 @@
 class Soldier is LandUnit -> { 
     constructor(number id, number attack) -> { 
-        number this.id = id; 
-        number this.attack = attack; 
+        number self.id = id; 
+        number self.attack = attack; 
     };
 }; 
 & 

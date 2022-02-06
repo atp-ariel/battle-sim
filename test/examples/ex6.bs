@@ -1,13 +1,17 @@
 class Soldier is LandUnit -> {
     constructor(number id, number attack) -> {
-        number this.id = id;
-        number this.attack = attack;
+        number self.id = id;
+        number self.attack = attack;
     };
 };
 class Archer is LandUnit -> {
     constructor(number id, number max_range) -> {
-        number this.id = id;
-        number this.max_range = max_range;
+        number self.id = id;
+        number self.max_range = max_range;
+    };
+
+    function number plus_id() -> {
+        return self.id + 1;
     };
 };
 &

@@ -47,7 +47,7 @@ TOKENS: List[TokenDefinition] = [
     TokenDefinition(TokenType.none, 1),
     TokenDefinition(TokenType.void, 1),
     TokenDefinition(TokenType.Constructor, 1),
-    TokenDefinition(TokenType.This, 1),
+    TokenDefinition(TokenType.Self, 1),
     TokenDefinition(TokenType.OAnd, 1),
     TokenDefinition(TokenType.While, 1),
     TokenDefinition(TokenType.LeftBracket, 1),
