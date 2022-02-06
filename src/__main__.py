@@ -40,4 +40,4 @@ def compile(bs: str, py: str = "", run: bool = True):
 
 if __name__ == "__main__":
     run(compile)
-    # compile("./test/examples/ex1.bs")
+    # compile("./test/examples/ex6.bs", run=False)

@@ -71,6 +71,9 @@ class Simulator:
             end=int(beg+self.interval)
             if self.no_enemies:
                 print("Simulación Finalizada")
+                print("|\tBandos\t|\tBajas amigas\t|\tBajas enemigas\t|")
+                for side in self.sides:
+                    print(f"|\tBando {side.id}\t|\t{side.no_own_units_defeated}\t|\t{side.no_enemy_units_defeated}\t|")
                 return
 
             k-=1
@@ -79,3 +82,5 @@ class Simulator:
             self.simulator_by_turns(beg,end)
             beg=end
 
+    def start(self):
+        self.simulating_k_turns()
