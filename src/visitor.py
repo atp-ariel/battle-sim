@@ -1,61 +1,30 @@
-import context
+def _qualname(obj):
+    """Get the fully-qualified name of an object (including module)."""
+    return obj.__module__ + '.' + obj.__qualname__
 
-class Type_Collector:
-    @visitor
-    def visit(self,node:Program):
-        self.context=Context()
+def _declaring_class(obj):
+    """Get the name of the class that declared an object."""
+    name = _qualname(obj)
+    return name[:name.rfind('.')]
 
-        for classDef in node.classes:
-            self.visit(classDef) #revisar esto
+# Stores the actual visitor methods
+_methods = {}
 
-    @visitor
-    def visit(self,node:ClassDef):
-        self.context.create_type(node.name))
+# Delegating visitor implementation
+def _visitor_impl(self, arg):
+    """Actual visitor method implementation."""
+    method = _methods[(_qualname(type(self)), type(arg))]
+    return method(self, arg)
 
-class Type_Builder:
-    context:Context
-    current_type:Type
+# The actual @visitor decorator
+def visitor(arg_type):
+    """Decorator that creates a visitor method."""
 
-    @visitor
-    def visit(self,node:Program):
-        for classDef in node.classes:
-        self.visit(classDef)
+    def decorator(fn):
+        declaring_class = _declaring_class(fn)
+        _methods[(declaring_class, arg_type)] = fn
 
-    @visitor
-    def visit(self,node:ClassDef):
-        self.currentType=self.context.get_type(node.name)
-        for attrDef in node.attributes:
-            self.visit(attrDef)
+        # Replace all decorated methods with _visitor_impl
+        return _visitor_impl
 
-        for methodDef in node.methods:
-            self.visit(methodDef)
-
-    @visitor
-    def visit(self,node:AttrDef):
-    attr_type=self.context.get_type(node.type)
-    self.current_type.define_attribute(node.name,attr_type)
-
-    @visitor
-    def visit(self,node:MethodDef):
-        return_type=self.context.get_type(node.return_type)
-        arg_types=[self.context.get_type(t) for t in node.arg_types]
-        self.current_type.define_method(node.name,return_type,node.arg_names,arg_types)
-
-class Type_Checker:
-    def __init__(self,context):
-        self.context=context
-
-    @visitor
-    def visit(self,node:BinaryExpression,logger):
-        self.visit(node.left,logger)
-        self.visit(node.right,logger)
-
-        if node.left.computed_type!=node.right.computed_type:
-            logger.error("Type mismatch...")
-            node.computed_type=None
-            
-        else:
-            node.computed_type=node.left.computed_type
-
-#Program cob node.Clases
-#BinaryExpression node.computed_type
+    return decorator

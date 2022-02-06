@@ -60,9 +60,9 @@ El algoritmo evolutivo en cuestión inicia con una población de individuos gene
 
 \begin{verbatim}
 def fit_func(self, heightmap: HeightMap):
-	count = sum(sum(heightmap.__map__ > self.__sea__))
-	per = count / prod(self.__shape__)
-	return per if per < self.percentage else 0
+    count = sum(sum(heightmap.__map__ > self.__sea__))
+    per = count / prod(self.__shape__)
+    return per if per < self.percentage else 0
 \end{verbatim}
 
 Esto es, se cuentan la cantidad de posiciones que su valor de altura supera el nivel del mar, y se calcula el porciento que representan estas del total, si este porciento es superior al porciento de la restricción del problema entonces se le asocia a dicho individo el valor 0.  Por tanto, el valor \verb|fit| máximo que puede tener cualquier individuo es el porciento de la restricción y el menor el 0.
@@ -74,6 +74,7 @@ El proceso de mutación del individuo resultante de la mezcla es el siguiente:
 \begin{enumerate}
 	\item Se genera una matriz temporal \verb|tmp| que representará una máscara de sua
 \end{enumerate}
+
 \subsection{Los objetos}
 
 Un objeto es todo lo que se puede poner el mapa y cada objeto ocupa una y solo una casilla del mapa. Estos tienen propiedades como el id que s \'unico para cada objeto, los puntos de vida que determinan el estado de un objeto y la defensa un par\'ametro que indica cuan resistente es un objeto a los da\~{n}os que puede sufrir durante la simulaci\'on. Todos estos par\'ametros son n\'umeros de 1 a 10. Cuando la vida de un objeto llegue a 0, este se destruye desapareciendo del mapa. Los objetos se clasifican en dos tipos: unidades y objetos est\'aticos. Los objetos adem\'as tienen definidas dos funciones \verb|put_in_cell| cuya funci\'on es colocar al objeto en alguna posici\'on de un mapa. Si se intenta poner un objeto en una posici\'on diferente a su tipo este autom\'aticamente se destruye. La otra funci\'on \verb|take_damage|, a partir de un ataque sufrido indica como se reducen los puntos de vida del objeto.
@@ -141,4 +142,24 @@ Entonces en un primer momento se fija el costo en 10 - \verb|passable|/2, de est
   
 Ahora se comprueba si la celda se encuentra en zona ``amiga'', es decir, si esa celda es adyacente a alguna celda en la que se encuentre alg\'un compa\~{n}ero de su bando. Si as\'i es y nuestra unidad protagonista es solidaria, el coste se reducir\'a a la mitad. Si es una zona amiga pero la unidad no es solidaria, el coste solo se reducir\'a dividi\'endose por la ra\'iz cuadrada de 2. De esta manera se incentiva que las unidades tiendan a permanecer en grupo y m\'as cuanto m\'as solidarias son.
 
-Si la celda que se est\'a estudiando es una celda en la que nuestra unidad tendr\'a al alcance un enemigo, su coste se reducir\'a en el valor del par\'ametro \verb|ofensive|  multiplicado por la inversa de la ra\'iz cuadrada de la distancia m\'inima hasta el enemigo. Adem\'as la unidad observa las celdas cercanas a la celda que se est\'a estudiando que est\'en dentro de su rango de visi\'on. Si detecta que al moverse a dicha celda se encontrar\'a en rango de alg\'un enemigo el costo se aumenta en 1.1 por cada enemigo que pudiera atacar a la unidad. De esta manera se est\'a diciendo que, cuanto m\'as ofensiva sea nuestra unidad, m\'as se aproximar\'a al enemigo, aunque con cierta precauci\'on.  
+Si la celda que se est\'a estudiando es una celda en la que nuestra unidad tendr\'a al alcance un enemigo, su coste se reducir\'a en el valor del par\'ametro \verb|ofensive|  multiplicado por la inversa de la ra\'iz cuadrada de la distancia m\'inima hasta el enemigo. Adem\'as la unidad observa las celdas cercanas a la celda que se est\'a estudiando que est\'en dentro de su rango de visi\'on. Si detecta que al moverse a dicha celda se encontrar\'a en rango de alg\'un enemigo el costo se aumenta en 1.1 por cada enemigo que pudiera atacar a la unidad. De esta manera se est\'a diciendo que, cuanto m\'as ofensiva sea nuestra unidad, m\'as se aproximar\'a al enemigo, aunque con cierta precauci\'on.
+
+A continuaci\'on se hace una breve explicaci\'on de las funciones implementadas a las unidades. Adem\'as de las   
+ya mencionadas, implementadas en ``BSObject'', un agente ``BSUnit'' tiene implementadas las siguientes funciones:
+
+\begin{itemize}
+	\item \verb|calculate_distance(self, cell1, cell2) -> int| con la que la unidad calcula la distancia entre dos celda. La distancia se calcula como la cantidad m\'inima de celdas que tiene recorrer la unidad para ir de una celda a otra.
+	\item \verb|nearby_friend(self, cell) -> bool| con la que el agente determina si movi\'endose a la celda de entrada estar\'a cerca de un compa\~{n}ero.
+	\item \verb|enemy_in_range(self, cell)| con la que la unidad determina si movi\'endose a la celda de entrada estar\'a cerca de un compa\~{n}ero.
+	\item \verb|in_range_of_enemy(self, cell) -> int| con la que la unidad detecta a los enemigos de que puden atacarla si se mueve a dicha celda.
+	\item \verb|move_cost_calculate(self, cell, type) -> float| con la que la unidad calcula el costo de moverse a la celda.
+	\item\verb|enemy_cost_calculate(self, enemy) -> float| con la que la unidad calcula el costo de atacar a un determinado enemigo.
+	\item \verb|enemy_to_attack(self)| con la que la unidad selecciona, de ser posible, un enemigo para atacarlo.
+	\item \verb|take_damage(self, damage)| que es una redefinici\'on del m\'etodo de ``BSObject'' para tener en cuenta la moral de la unidad.
+	\item \verb|attack_enemy(self, enemy)| la cual es la acci\'on de atacar a un enemigo.
+	\item \verb|move_to_cell(self, cell)| la cual es la acci\'on de moverse a una celda determinada.
+	\item \verb|def turn(self, type)| con la que la unidad determina que hacer durante un turno, el par\'ametro \verb|type| hace referencia al tipo de celda que la unidad puede visitar.
+\end{itemize}
+
+Los m\'etodos \verb|put_in_cell| y \verb|turn| se redefinen en las clases ``LandUnit'' y ``NavalUnit'' haciendo un llamado a las funciones respectivas de ``BSUnit'' pasando ``earth'' y ``water'' al par\'ametro type respectivamente.
+

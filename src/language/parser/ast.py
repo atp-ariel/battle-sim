@@ -2,11 +2,6 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import List
 
-
-class Context:
-    pass
-
-
 @dataclass
 class Node(ABC):
     pass
