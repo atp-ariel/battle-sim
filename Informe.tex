@@ -1,0 +1,70 @@
+\documentclass{llncs}
+
+\usepackage{llncsdoc}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage[spanish]{babel}
+\usepackage[margin=3cm]{geometry}
+\usepackage{hyperref}
+\usepackage{listings}
+
+%META INFO DEL DOCUMENTO
+
+%% TITULO
+\title{Battle-sim: Simulador de enfrentamientos bélicos}
+%% AUTORES
+\author{Rocio Ortiz Gancedo - C311\\Carlos Toledo Silva - C311\\Ariel A. Triana Pérez - C311}
+\date{2021}
+
+\pagenumbering{gobble}
+\begin{document}
+
+\markboth{Battle-sim: Simulador de enfrentamientos bélicos}{Battle-sim: Simulador de enfrentamientos bélicos}
+\thispagestyle{empty}
+
+
+\makeatletter
+
+    % PORTADA DEL DOCUMENTO %
+    \begin{titlepage}
+        \centering
+        
+        \includegraphics[width=0.2\textwidth]{chapters/img/logo-matcom.jpg}
+        
+        \vspace{0.5cm}
+        
+        {\scshape \LARGE Universidad de La Habana \par}
+        {\scshape \Large Facultad de Matemática y Computación \par}
+        
+        \vspace{6.5cm}
+        
+        {\bfseries \Huge \textbf{\@title} \par}
+        \vspace{0.2cm}
+        \textit{Proyecto de Inteligencia Artificial, Compilación y Simulación}
+        
+        \vfill
+        
+        \textbf{Equipo de desarrollo:}
+        
+        \@author
+        
+        \vspace{1cm}
+        
+        \@date
+    \end{titlepage}
+    % FIN DE LA PORTADA %
+
+    % INDICE %
+    \tableofcontents
+    % FIN DEL INDICE %
+
+    % CAPITULOS %
+    \mainmatter
+    \include{chapters/introduccion}
+    \include{chapters/descripcion-del-problema}
+    \include{chapters/lenguaje}
+    \include{chapters/asignaturas}
+    \include{chapters/aplicacion}
+    \backmatter
+    % FIN DE LOS CAPITULOS %
+\end{document}

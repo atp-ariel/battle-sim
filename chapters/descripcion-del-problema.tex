@@ -1,0 +1,214 @@
+\section{La Simulaci\'on}
+
+Como planteamos en el cap\'itulo anterior, se quiere desarrollar un programa que permita la simulaci\'on de enfrentamientos b\'elicos entre dos o m\'as bandos.
+
+Para esto se tienen pensado los siguientes aspectos que van a ser fijos en cada una de las simulaciones:
+
+\begin{enumerate}
+	\item La existencia de un mapa o terreno donde se producir\'a el enfrentamiento. Este tendr\'a propiedades que se ser\'an modificables como las dimensiones, el relieve, la hidrograf\'ia, etc. La idea es que este se represente por una matriz bidimensional.
+	
+	\item Las acciones ser\'an por turnos. Como tenemos dos bandos les llamaremos: bando A y bando B. En el turno del bando A cada una de las unidades de A realizar\'a una y solo una acci\'on (ya sea moverse hacia otra posici\'on, atacar o mantener la posici\'on). Luego de esto se pasar\'a al turno del bando B, que al igual que A, podr\'a hacer una y solo una acci\'on con cada una de sus unidades. Esta forma de implementaci\'on permite un comportamiento de acci\'on-reacci\'on entre los dos bandos, asemej\'andose a lo que ocurre en la vida real.
+	
+\end{enumerate}
+
+\subsection{El mapa}
+
+El mapa consiste en una matriz bidimensional de $m$ filas y $n$ columnas. Cada objeto de la matriz es un objeto \verb|Cell|. Un objeto \verb|Cell| representa cada una de las casillas que conforman el mapa y tiene los siguientes atributos:
+
+\begin{itemize}
+	\item \verb|passable|: Valor entre 0 y 10 que indica cuan accesible es una celda. Las unidades tienden a buscar las celdas que tengan este par\'ametro lo m\'as alto posible, pues mientras mayor sea este valor, pueden hacer ataques m\'as poderosos.
+	\item \verb|row|: Este par\'ametro es un n\'umero entero que indica la fila en la que se encuentra la celda.
+	\item \verb|col|: Este par\'ametro es un n\'umero entero que indica la columna en que se encuentra la celda
+	\item \verb|height|: Este par\'ametro es un n\'umero entre 0 y 1 que indica la altura de la casilla. En dependencia de este par\'ametro la casilla ser\'a terrestre o marina.
+	\item \verb|bs_object|: Este par\'ametro hace referencia al objeto que se encuentra en la casilla. Si en la casilla no se encuentra ning\'un objeto entonces este par\'ametro es \verb|None|.
+\end{itemize}
+
+El mapa para una simulaci\'on se crea instanciando una clase \verb|LandMap| con los siguientes argumentos:
+
+\begin{itemize}
+	\item N\'umero de filas $m$
+	\item N\'umero de columnas $n$
+	\item Un array bidimensional de $m$ filas por $n$ columnas tal que cada posici\'on $i,j$ del array es un n\'umero entre 0 y 10 que indica cuan accesible es la celda $i,j$
+	\item Un array bidimensional de $m$ filas por $n$ columnas tal que cada posici\'on $i,j$ del array es un n\'umero entre 0 y 1 que indica la altura de celda $i,j$
+	\item Un n\'umero entre 0 y 1 que indica el nivel del mar. Todas las celdas cuya altura sea menor a este n\'umero ser\'an consideradas como celdas marinas y todas las celdas superior a este n\'umero ser\'an consideradas terrestres.
+\end{itemize}
+
+\subsubsection{Generación aleatoria de mapas}
+
+La representación abstracta de un mapa es una matriz de alturas, o sea, una matriz de valores en el intervalo $[0,1]$, donde la noción de nivel del mar es 0.45, o sea, todo valor $x > 0.45$ es una elevación y todo valor $x < 0.45$ es una depresión cubierta por agua. Es importante poder generar un mapa de alturas con un porcentaje de relieve determinado por el usuario que sea lo más realista posible pero esto de forma aleatoria. Por tal razón queda totalmente descartado el enfoque que va por generar una matriz $M$ donde $M[i,j]$ es un número totalmente al azar, pues se obtendrían matrices de ruido similares a la estática en las señales de televisión, además se violaría la restricción del porciento de elevaciones.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=8cm]{chapters/img/estatica.jpg}
+	\caption{Estática en la señal de TV}
+\end{figure}
+
+Luego de una consulta bibliográfica, se encontraron algunos procedimientos para la generación de mapas de alturas muy interesantes:
+
+\begin{itemize}
+	\item \textbf{Algoritmo de Perlin Noise:} debe su nombre a su creador, Ken Perlin, que durante el rodaje de la película Tron creó el algoritmo con el fin de crear texturas procedimentales para los efectos generados por el ordenador. La idea tras el algoritmo es generar una nueva matriz de dimensión menor a la requerida y superponerla a la requerida escalando de forma que encajen perfectamente. A cada esquina de cada celda de la nueva matriz se le asigna un vector gradiente pseudoaleatorio. Además se determinan los valores offset que representan la posición de cada punto de la matriz original dentro de la celda de la nueva matriz. Luego, para cada esquina de la celda que encierra un punto se determina el vector que va desde ella hasta el punto y se hace el producto escalar de ese vector con el vector gradiente. Se realiza una interpolación lineal entre todos los resultados de los productos escalares y este es el valor del punto. El comportamiento de este algoritmo no puede ser modificado pero aún así fue de gran significación en la época y hoy día.
+	\item \textbf{Algoritmo Voronoi:} consiste en dividir el espacio en diagramas de Voronoi, que son, simplemente, particiones de un plano en regiones basadas en la 	distancia a ciertos puntos específicos del plano. Ese conjunto específico de puntos 	se denomina ``semillas, sitios o generadores''. Se suelen especificar de antemano y 	para cada uno de estos sitios se genera una región del plano que consiste en todos 	los puntos que están más cerca de este sitio que de ningún otro. 
+	\item \textbf{Algoritmo de cortes:} tiene un comportamiento poco intuito pero interesante, se selecciona un corte en la matriz, se define como corte una linea recta que divida el plano o terreno en dos mitades, luego se decide elevar  una de las mitades y bajar o no modificar las otras. Este mismo proceso se repite miles de veces y se obtienen resultados aceptables. El algoritmo es ineficiente, por la cantidad de iteraciones necesarias para obtener buenos resultados.
+	\item \textbf{Algoritmos de erosión térmica e hídrica:} algoritmos que simulan los procesos naturales de erosión térmica e hídrica. En el caso de la térmica se fija un valor $T$ que representa el valor a partir del cual se va a erosionar, y se recorre la matriz buscando los puntos que cumplen que la diferencia de altura con sus vecinos es superior a $T$. En dichos puntos el algoritmo resta valor de altura a sus vecinos cuya distancia sea mayor que $T$ de forma que todas las distancias queden menor que $T$. En el caso de la erosión hídrica se define una matriz de agua y una matriz de sedimentos la cual representa un porciento de material que puede ser movido por la erosión. Y se realiza un procedimiento parecido a la erosión térmica.
+\end{itemize}
+
+Ahora estos algoritmo generan mapas de alturas con apariencia realista, pero no son suficientes para cumplir las restricciones de relieve. Por tanto, nuestra propuesta es la implementación de un algoritmo evolutivo que genera un mapa de alturas realista y satisfaga la restricción anteriormente mencionada.
+
+Los algoritmos evolutivos son estrategias de optimización y búsqueda de soluciones que toman como inspiración la evolución en distintos sistemas biológicos. La idea fundamental de estos algoritmos es mantener un conjunto de individuos que representan una posible solución del problema. Estos individuos se mezclan y compiten entre sí, siguiendo el principio de selección natural por el cual sólo los mejor adaptados sobreviven al paso del tiempo. Esto redunda en una evolución hacia soluciones cada vez más aptas. 
+
+El algoritmo evolutivo en cuestión inicia con una población de individuos generados utilizando el algoritmo de Perlin Noise implementado en la biblioteca de Python bajo el nombre \verb|perlin-noise|.	Luego se realizan un cantidad de iteraciones seleccionando los individuos más adaptados, mezclándolos y mutándolos.  Se considera individuo mejor adaptado aquel cuyo valor \verb|fit| sea mayor. Este valor se calcula como sigue:
+
+\begin{verbatim}
+def fit_func(self, heightmap: HeightMap):
+	count = sum(sum(heightmap.__map__ > self.__sea__))
+	per = count / prod(self.__shape__)
+	return per if per < self.percentage else 0
+\end{verbatim}
+\subsection{Los objetos}
+
+Un objeto es todo lo que se puede poner el mapa y cada objeto ocupa una y solo una casilla del mapa. Estos tienen propiedades como el id que s \'unico para cada objeto, los puntos de vida que determinan el estado de un objeto y la defensa un par\'ametro que indica cuan resistente es un objeto a los da\~{n}os que puede sufrir durante la simulaci\'on. Todos estos par\'ametros son n\'umeros de 1 a 10. Cuando la vida de un objeto llegue a 0, este se destruye desapareciendo del mapa. Los objetos se clasifican en dos tipos: unidades y objetos est\'aticos. Los objetos adem\'as tienen definidas dos funciones \verb|put_in_cell| cuya funci\'on es colocar al objeto en alguna posici\'on de un mapa. Si se intenta poner un objeto en una posici\'on diferente a su tipo este autom\'aticamente se destruye. La otra funci\'on \verb|take_damage|, a partir de un ataque sufrido indica como se reducen los puntos de vida del objeto.
+
+\subsubsection{Objetos est\'aticos}
+
+Los objetos est\'aticos los podemos definir como objetos propios del ambiente. Estos no pertenecen a ning\'un bando y no pueden realizar acciones pero si pueden ser afectados por las acciones que realicen las unidades. Estos solo pueden ser puestos en celdas terrestres. Ejemplos de estos objetos pueden ser \'arboles, rocas, muros, etc. Todos estos objetos son terrestres. 
+
+\subsubsection{Unidades}
+
+Las unidades son los agentes de la simulaci\'on. El objetivo de cada una de las unidades es destruir a las unidades enemigas (las que no pertenecen a su mismo bando), y para ello podr\'a analizar parte del ambiente en el que se encuentra y tomar la decisi\'on que sea m\'as conveniente seg\'un sean las circunstancias. 
+
+Dado que el ambiente estar\'a cambiando constantemente, las unidades ser\'an agentes casi puramente reactivos. La arquitectura empleada para definir el comportamiento de las unidades es la Arquitectura de Brooks (de categorización o inclusión) que recordemos tiene las siguientes caracter\'isticas: 
+
+\begin{itemize}
+	\item La toma de decisión se realiza a través de un conjunto de comportamientos para lograr objetivos (reglas de la forma situación $\rightarrow$ acción).
+	\item Las reglas pueden dispararse de manera simultánea por lo que debe un mecanismo para escoger entre ellas.	
+\end{itemize}
+
+Dado esto se defini\'o un sistema experto que actuar\'a como la funci\'on del agente. Este ser\'a descrito posteriormente.
+
+\textbf{Propiedades de las unidades}
+
+Las unidades adem\'as de las descritas anteriormente que tienen todos los objetos cuentan con las siguientes propiedades:
+
+\begin{itemize}
+	\item \verb|side|: Una instancia de la clase \verb|Side| que indica el bando al que pertenece la unidad
+	\item \verb|attack|: Valor entre 1 y 10 que marca la capacidad de causar da\~{n}os a sus oponentes.
+	\item \verb|moral|: Valor entre 1 y 10 que marca la moral con la unidad encara la batalla. Cuanto mayor es ese valor m\'as efectivos son sus ataques y sus defensas.
+	\item \verb|ofensive|: Valor entre 1 y 10 que indica cuan ofensiva es una unidad. Un valor alto la hace m\'as ofensiva y un valor bajo la hace m\'as defensiva.
+	\item \verb|min_range|: Valor entero entre 0 y 10 que indica el rango m\'inimo al que se debe encontrar un enemigo para que la unidad pueda atacarlo.
+	\item \verb|max_range|: Valor entero entre 0 y 10 que indica el rango m\'aximo al que se debe encontrar un enemigo para que la unidad pueda atacarlo.
+	\item \verb|radio|: Valor entero entre 1 y 9 que indica el n\'umero de casillas que son afectadas por un ataque de la unidad. Si es 1 se afecta solo a la casilla seleccionada para el ataque. Si es 9 se afectan la casilla seleccionada y las 8 adyacentes a esta. Si es 1 $<$ \verb|radio| $<$ 9, entonces se toman como casillas afectadas la seleccionada y $\verb|radio|-1$ casillas adyacentes a esta.
+	\item \verb|vision| : Valor entre 1 y 10 que indica la cantidad de celdas en una determinada direcci\'on, que la unidad puede ``ver'' (saber que objetos est\'an en dicha celda).   
+	\item \verb|intelligence|: Valor entre 0 y 10 que indica la inteligencia de la unidad. Mientras m\'as inteligente sea una unidad con mayor precisi\'on puede calcular los atributos de sus enemigos.
+	\item \verb|recharge_turns|: Turnos que demora la unidad en recargar despu\'es de hacer un ataque. Mientras est\'e recargando la unidad no podr\'a atacar pero si puede moverse.
+	\item \verb|solidarity|: Valor booleano que indica si la unidad es solidaria o no.
+	\item \verb|movil|: Valor booleano que indica si la unidad puede desplazarse por el mapa.  
+\end{itemize}
+
+\subsubsection{Sistema experto}
+
+A continuaci\'on se explicar\'a el sistema experto implementado que act\'ua como funci\'on del agente la cual describe el comportamiento del agente durante un turno.
+
+
+Lo primero que la funci\'on hace es buscar si se existe un enemigo al que se pueda atacar. Para eso primero se comprueba si la unidad no est\'a recargando, si lo est\'a se reduce en uno los turnos que debe esperar para atacar, si no lo est\'a se busca el mejor enemigo para atacar. 
+ 
+El mejor enemigo para atacar se determina de la siguiente forma:
+ 
+Por cada casilla atacable (casilla que se encuentra a una distancia de la unidad entre su rango m\'inimo y su rango m\'aximo), se chequea si en la casilla hay un enemigo. Si el radio de ataque es mayor que 1 y hay una unidad amiga cerca del enemigo que pudiera verse afectada por el ataque, se ignora este enemigo. Esto se defini\'o as\'i para evitar el da\~{n}o ocasionado por fuego amigo.
+ 
+Entonces si el enemigo no es ignorado debido a lo anterior, se calcula el costo de atacar al enemigo. Para dicho c\'alculo la unidad estima la vida y la defensa del enemigo y con estas estimaciones calcula cuantos turnos podr\'ia tomarle destruir a dicho enemigo. Mientras mayor sea la inteligencia de la unidad m\'as precisas ser\'an las estimaciones.
+
+Luego de haber analizado todos los enemigos, el seleccionado por la unidad para atacarlo es aquel cuyo costo es menor. Si no se detecta ning\'un posible enemigo a atacar entonces la unidad no realiza un ataque en el turno.
+ 
+Si la unidad no realiza un ataque, entonces, en caso de que se m\'ovil, chequea si se puede mover a alguna casilla adyacente a la que se encuentra. Esto se hace de la siguiente forma:
+ 
+Se fija un costo en infinito. Luego por cada una de las celdas que la rodean en todos los puntos cardinales posibles (NW, N, NE, W, E, SW, S y SE)ase calcula el costo de moverse a dicha celda, y nos quedamos con la celda cuyo co es el menor. Luego si el menor costo detectado es menor a infinito la unidad se mueve a dicha celda en caso contrario la unidad mantiene su posici\'on. 
+ 
+Ahora veamos como calcular el costo de que una unidad se mueva de una celda a otra.
+ 
+Si la celda nueva es intransitable (tiene el par\'ametro \verb|passable| en 0), el tipo de la celda es diferente al tipo de la unidad o si en la celda hay alg\'un objeto se devuelve infinito. Estos son todos los casos en los que la unidad no puede moverse a dicha celda. Para las unidades terrestres siola diferencia de alturas entre dosla ltas es muy grande (mayor a 0.3), tampoco pueden avanzar a dicha celda, retorn\'andose infinito. 
+ 
+Entonces en un primer momento se fija el costo en 10 - \verb|passable|/2, de esta manera se premia ir a celdas m\'as transitables. A continuaci\'on se comprueba si esa celda est\'a entre las que la unidad recuerda como ya visitadas. Si as\'i es, el coste se incrementar\'a en \verb|passable|/3. As\'i logramos incentivar que las unidades visiten celdas no visitadas con anterioridad  
+  
+Ahora se comprueba si la celda se encuentra en zona ``amiga'', es decir, si esa celda es adyacente a alguna celda en la que se encuentre alg\'un compa\~{n}ero de su bando. Si as\'i es y nuestra unidad protagonista es solidaria, el coste se reducir\'a a la mitad. Si es una zona amiga pero la unidad no es solidaria, el coste solo se reducir\'a dividi\'endose por la ra\'iz cuadrada de 2. De esta manera se incentiva que las unidades tiendan a permanecer en grupo y m\'as cuanto m\'as solidarias son.
+
+Si la celda que se est\'a estudiando es una celda en la que nuestra unidad tendr\'a al alcance un enemigo, su coste se reducir\'a en el valor del par\'ametro \verb|ofensive|  multiplicado por la inversa de la ra\'iz cuadrada de la distancia m\'inima hasta el enemigo. Adem\'as la unidad observa las celdas cercanas a la celda que se est\'a estudiando que est\'en dentro de su rango de visi\'on. Si detecta que al moverse a dicha celda se encontrar\'a en rango de alg\'un enemigo el costo se aumenta en 1.1 por cada enemigo que pudiera atacar a la unidad. De esta manera se est\'a diciendo que, cuanto m\'as ofensiva sea nuestra unidad, m\'as se aproximar\'a al enemigo, aunque con cierta precauci\'on.  
+
+\subsection{El simulador}
+
+\subsubsection{Los bandos}
+
+Dentro de la simulaci\'on de batalla las diferentes unidades de los ej\'ercitos  se organizar\'an por bandos que se enfrentar\'an durante la batalla. Dos ej\'ercitos aliados pertenecen al mismo bando y dos ej\'ercitos enemigos pertenecen a bandos distintos.
+
+Para este proceso se implement\'o la clase \verb|Side| que consta de los siguientes atributos y m\'etodos:
+\begin{itemize}
+\item Atributos
+\begin{itemize}
+\item \verb|id|: Valor num\'erico \'unico que se le asocia al bando, se utiliza entre otras cosas para hallar el Hash
+
+\item \verb|name|: Nombre que se le dio al bando
+
+\item \verb|units|: Unidades que se encuentran en el bando
+
+\item \verb|no_own_units_defeated|: Cantidad de unidades del bando que fueron derrotadas
+
+\item \verb|no_enemy_units_defeated|: Cantidad de unidades enemigas que han sido derrotadas
+
+\end{itemize}
+
+\item M\'etodos 
+\begin{itemize}
+\item \verb|add_unit|: Este m\'etodo permite agregar una unidad al bando. Esta acci\'on no tendr\'a efecto hasta el turno siguiente despu\'es de realizarse.
+
+\item \verb|remove_unit|: Este m\'etod posibilita quitar una unidad del bando. Esta acci\'on no tendr\'a efecto hasta el turno siguiente despu\'es de realizarse.
+
+\item \verb|get_units|: Devuelve todas las unidades actuales en la simulaci\'on, aunque estas de momento no realicen turno porque se añadieron recientemente.
+
+\item \verb|__iter__|: Para iterar las unidades
+
+\item \verb|__eq__|: Comparar si dos bandos son el mismo bando
+
+\item \verb|__hash__|: Calcular el hash de un bando
+\end{itemize}
+\end{itemize}
+
+\subsubsection{Los eventos}
+
+Para la simulaci\'on de la batalla se implement\'o la clase \verb|Simulator|  encargada de simular los eventos que ocurrir\'an durante el enfrentamiento. Se le llamar\'a evento a la acci\'on de alguna de las unidades activas en el terreno en un tiempo determinado, sabiendo que una unidad selecciona la acci\'on a realizar de acuerdo al algoritmo.
+
+La clase \verb|Simulator| consta de los siguientes atributos y m\'etodos:
+
+\begin{itemize}
+
+\item Atributos
+ \begin{itemize}
+ \item \verb|earth_map|: Mapa del terreno donde ocurre la simulaci\'on
+ 
+ \item \verb|sides|: Bandos que participan en la simulaci\'on
+ 
+ \item \verb|units|: Unidades que participan en la simulación. Incluye a todas las unidades de todos los bandos
+ 
+ \item \verb|time_beg|: Momento en que se empieza la simulaci\'on.
+ 
+ \item \verb|interval|: Tama\~no del intervalo que dura un turno
+ 
+ \item \verb|turns|: Cantidad de turnos a simular.
+ 
+ \item \verb|no_enemies|: Con este atributo se conoce si ya terminó la simulaci\'on, pues almacena si queda m\'as de un bando con unidades vivas.
+ 
+ \end{itemize}
+ \item M\'etodos
+ 
+ \begin{itemize}
+ \item \verb|event_is_pos|: Revisa si un evento es posible, principalmente comprueba que la unidad que realizar\'a la acci\'on est\'a viva.
+ 
+ \item \verb|get_events|: Toma todas las unidades que a\'un est\'an vivas y les asigna un tiempo de forma aleatoria dentro del intervalo dado. Para seleccionar el tiempo de forma aleatoria se utiliz\'o la distribuci\'on beta que es una distribución de variable aleatoria continua, a diferencia de la uniforme, es bastante m\'as felxible gracias a los par\'ametros $ \alpha $ y $ \beta $, adem\'as de no tener problemas de p\'erdida de memoria como la exponencial. Una vez asociado un tiempo en el que cada unidad viva realizar\'a una acci\'on, estos pasan a ser los eventos a simular.
+ 
+ \item \verb|simulator_by_turns|: Se van a sacar los eventos a partir de un intervalo dado y se ejecutar\'an por orden uno a uno seg\'un el tiempo que se le asign\'o cuando se hizo el evento.
+ 
+ 
+ \item \verb|simulating_k_turns|: Se sacan los $k$ primeros turnos, a partir del atributo \verb|turns| cada turno en un intervalo de tama\~no \verb|interval|
+ \end{itemize}
+ 
+\end{itemize}
+
+
