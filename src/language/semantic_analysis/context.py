@@ -16,11 +16,24 @@ class Type:
         self.attributes[name]=[attribute,_type]
         #Se guarda en diccionario el atributo y el tipo
 
-        #Cómo me sé el tipo de attribute???????
+    def get_type(self,attribute):
+        if attribute in self.attributes:
+            _type=attributes[attribute]
+        
+            if _type=="func":
+                _type=self.methods[attribute][0]
+
+            return _type
+
+        else:
+            raise Exception(f"type object '{self.name}' has no attribute '{attribute}'")
+
+
 
 
     def define_method(self,name,return_type,arguments,argument_types):
         self.methods[name]=[return_type,arguments,argument_types]
+        self.attributes[name]=[name,"func"]
         #Se guarda en diccionario el tipo de retorno, los argumentos y el tipo de los argumentos
 
     def is_attribute(self,name):

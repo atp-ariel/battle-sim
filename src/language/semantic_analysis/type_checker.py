@@ -187,11 +187,16 @@ class Type_Checker:
 
     @visitor(Variable)
     def visit(self, node: Variable):
-        # No me queda claro si ya está definida o no
         if self.context.var_is_definied(node.name):
             node.computed_type = self.context.get_type(node.name)
 
         else:
+            for t in context._type_context:
+                attr=context.get_type_object(t).attributes
+                for a in attr:
+                    if node.name==a:
+                        node.computed_type = t.get_type(a)
+
             logging.error(f"name {node.name} is not defined")
             
     @visitor(Number)
