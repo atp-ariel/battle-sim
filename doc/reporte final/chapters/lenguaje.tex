@@ -366,3 +366,86 @@ class Tokenizer:
 \end{verbatim}
 
 Este algoritmo tiene complejidad temporal $O(n*m)$ donde $m$ es la cantidad de tokens, y $n$ el tamaño de la cadena de entrada.
+
+\subsection{An\'alisis Sem\'antico}
+\subsubsection{Definiendo tipos}
+Para implementar nuevos tipos en el lenguaje se sigui\'o la idea de Python: se implement\'o una clase \verb|Type| en la que cada clase del lenguaje ser\'a una instancia de esta.
+ 
+  \verb|Type| consta de los siguientes atributos y m\'etodos 
+  \begin{itemize}
+  \item Atributos
+  \begin{itemize}
+  \item \verb|name|: Nombre de la clase o nuevo tipo
+  
+  \item \verb|attributes|: Atributos de la clase.
+  
+  \item  \verb|methods|: M\'etodos de la clase
+  \end{itemize}
+  
+  \item M\'etodos
+  \begin{itemize}
+  \item \verb|get_attribute|:  Devuelve el atributo de la clase que se pide si este existe.
+  
+  \item \verb|get_method|: Devuelve el m\'etodo de la clase que se pide si este existe.
+  
+  \item \verb|define_attribute|: Define el atriuto de la clase.
+  
+  \item \verb|define_method|: Define el m\'etodo de la clase.
+  
+  \item \verb|is_attribute|: Revisa si el atributo existe.
+  
+  \item \verb|is_method|: Revisa si el m\'etodo existe.
+  \end{itemize}
+  \end{itemize}
+\subsubsection{Context}
+Para definir en contexto en el que se escribe un programa con el lenguaje, se implement\'o la clase \verb|Context|, esta cuenta con los siguientes atributos y m\'etodos 
+\begin{itemize}
+\item Atributos
+\begin{itemize}
+\item \verb|father|: Contexto padre de este contexto
+
+\item \verb|children|: Contextos hijos de este contexto
+
+\item \verb|_var_context|: Variables del contexto. 
+
+\item \verb|_func_context|: Funciones del contexto
+
+\item \verb|_type_context|: Tipos definidos en el contexto
+\end{itemize}
+
+\item M\'etodos
+\begin{itemize}
+\item \verb|check_var|: Revisa si la variable est\'a definida en el contexto
+
+	\item \verb|check_var_type|: Revisa que la variable est\'e definida en el contexto y el tipo corresponda con el tipo de la variable
+	
+	\item \verb|check_func|: Revisa que la funci\'on est\'e definida
+	
+	\item \verb|check_func_args|: Revisa si la funci\'on est\'a definida y los tipos de los argumentos coinciden con los tipos de la funci\'on
+	
+	\item \verb|get_type|: Devuelve el tipo de una variable en el contexto
+	
+	\item \verb|define_var|: Si la variable no existe en el contexto, la crea. En caso contrario le asigna el valor siempre que este corresponda con el tipo de la variable
+	
+	\item \verb|define_func|: Define la funci\'on si no existe en el contexto
+	
+	\item \verb|create_child_context|: Crea un contexto hijo
+	
+	\item \verb|create_type|: Crea un nuevo tipo en el contexto
+	
+	\item \verb|get_return_type|: Dvuelve el tipo de retorno de una funci\'on si esta est\'a definida en el contexto
+	
+	\item \verb|get_type_object|: Devuelve la clase a la que pertenece objeto dado 
+\end{itemize}
+
+\end{itemize}
+
+\subsubsection{Visitor}
+Para verificar la correcci\'on de la sem\'antica se implement\'o el patr\'on \verb|Visitor| que visitar\'a el \'arbol de sintaxis abstracta en tres pasadas distintas
+\begin{itemize}
+\item \verb|Type_Collector|: Es la primera pasada con el patr\'on \verb|Visitor| en este se recogen todos los tipos que se van a definir, para crearlos en el contexto
+
+\item \verb|Type_Builder|: Es la segunda pasada con el patr\'on, se toman todos los tipos que se definieron anteriormente y se definen sus m\'etodos y atributos.
+
+\item \verb|Type_Checker|: Es la tercera pasada con el patr\'on, en esta se revisan que los tipos de cada expresi\'on no entren en contradicci\'on
+\end{itemize}
