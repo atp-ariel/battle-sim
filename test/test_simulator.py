@@ -1,12 +1,12 @@
-from doctest import TestResults
 from src.core import *
 from random import randint as r
 from numpy import array
 import pytest
 from collections import namedtuple
 
+
 skip_if = namedtuple("SkipIf", "condition reason")
-SKIP_BIGGER = skip_if(TestResults, "large case delay")
+SKIP_BIGGER = skip_if(True, "large case delay")
 
 
 @pytest.mark.skipif(SKIP_BIGGER.condition, reason=SKIP_BIGGER.reason)
