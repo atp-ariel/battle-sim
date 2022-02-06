@@ -78,8 +78,14 @@ El proceso de mutación del individuo resultante de la mezcla es el siguiente:
 		\item La matriz \verb|temp| se multiplica por el escalar -0.3.
 		\item La matriz \verb|temp| se suma al individuo proveniente de la mezcla. Dando como resultado un individuo mutado donde de forma general se le baja altura a todas las posiciones.  
 	\end{itemize}
-	\item Si el porciento de relieve de la restricción es inferior o igual a 0.4 
+	\item Si el porciento de relieve de la restricción es inferior o igual a 0.4 entonces se realiza el siguiente procedimiento: 
+	\begin{itemize}
+		\item Se recorren todas las posiciones del individuo resultante de la mezcla y se mutan aquellas que están por encima del nivel mar. Se calcula el valor \verb|w| que representa la cuán por encima del nivel del mar está dicha posición.
+		\item A las posiciones que están por encima del nivel del mar se le resta el resultado de multiplicar el valor \verb|w| por el resultado de la suma de la posición en individuo mutado y  la posición en \verb|tmp|
+	\end{itemize}
 \end{enumerate}
+
+El algoritmo evolutivo en cuestión tiene ciertos parámetros que definen las condiciones de paradas. Se definió la cantidad de iteraciones en 100 iteraciones. Se definió un nivel de tolerancia al porciento de relieve de la restricción en 0.03, de forma que cuando exista un individuo cuyo valor \verb|fit| esté en el intervalo $[p - 0.03, p + 0.03]$, donde $p$ es el valor de la restricción, el algoritmo se detiene.
 
 \subsection{Los objetos}
 
