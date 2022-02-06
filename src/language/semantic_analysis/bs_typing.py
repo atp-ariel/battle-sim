@@ -4,6 +4,8 @@
 2-Recolectar Métodos de tipos
 3-Verificar la semántica
 """
+
+
 class battle_sim_typing:
     def __init__(self, program, collector, builder, checker, context):
         self.program=program

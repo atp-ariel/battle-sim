@@ -139,8 +139,8 @@ class Context:
         return t
 
     def var_is_definied(self,name):
-        return name in self._var_context
-
+        return self.check_var(name)
+        
     def get_return_type(self,func):
         if self.check_func(func):
             return self._func_context[func][0]

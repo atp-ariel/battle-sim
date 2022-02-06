@@ -19,14 +19,14 @@ def compile(bs: str, py: str = "", run: bool = True):
             python_code = str()
             with open(bs, "r") as fbs:
                 # # ! Uncomment for debug
-                # python_code = compiler(fbs.read())
+                python_code = compiler(fbs.read())
 
                 # ! Comment for debug
-                try:
-                    python_code = compiler(fbs.read())
-                except BaseException as e:
-                    print(style("Error", fg=colors.RED, bold=True) + "\t" + str(exc_info()[1]))
-                    Exit(code=1)
+                # try:
+                #     python_code = compiler(fbs.read())
+                # except BaseException as e:
+                #     print(style("Error", fg=colors.RED, bold=True) + "\t" + str(exc_info()[1]))
+                #     Exit(code=1)
             if not run:
                 with open(py, "w") as fpy:
                     fpy.write(python_code)
@@ -39,5 +39,5 @@ def compile(bs: str, py: str = "", run: bool = True):
 
 
 if __name__ == "__main__":
-    run(compile)
-    # compile("./test/examples/ex6.bs", run=False)
+    # run(compile)
+    compile("./test/examples/ex1.bs", run=False)

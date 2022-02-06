@@ -2,38 +2,38 @@ from .context import  *
 from typing import List
 from ...utils.visitor import *
 from ..parser.ast import *
-
+import logging
 
 class Type_Checker:
     def __init__(self, context):
         self.context = context
 
     @visitor(BsFile)
-    def visit(self, node: BsFile, logger):
+    def visit(self, node: BsFile):
         for c in node.classes:
-            self.visit(c, logger)
+            self.visit(c)
         
         for s in node.statements:
-            self.visit(s, logger)
+            self.visit(s)
 
     @visitor(ClassDef)
-    def visit(self,node:ClassDef,logger):
+    def visit(self,node:ClassDef):
         for a in node.attributes:
-            self.visit(a,logger)
+            self.visit(a)
 
         for m in node.methods:
-            self.visit(m,logger)
+            self.visit(m)
 
 
         node.computed_type="Class"
 
     @visitor(AttrDef)
-    def visit(self,node:AttrDef,logger):
-        self.visit(node.init,logger)
+    def visit(self,node:AttrDef):
+        self.visit(node.init)
         node.computed_type=node.init.computed_type
 
     @visitor(FuncDef)
-    def visit(self,node:FuncDef,logger):
+    def visit(self,node:FuncDef):
         for i in node.body:
             self.visit(i)
 
@@ -42,89 +42,89 @@ class Type_Checker:
         
 
     @visitor(If)
-    def visit(self,node:If,logger):
-        self.visit(node.condition,logger)
+    def visit(self,node:If):
+        self.visit(node.condition)
 
         for i in node.body:
-            self.visit(i,logger)
+            self.visit(i)
 
         node.computed_type=None
 
     @visitor(Branch)
-    def visit(self,node:Branch,logger):
+    def visit(self,node:Branch):
         for i in node.ifs:
-            self.visit(i,logger)
+            self.visit(i)
 
         for e in node.else_body:
-            self.visit(e,logger)
+            self.visit(e)
         
         node.computed_type=None
 
 
     @visitor(WhileDef)
-    def visit(self,node:WhileDef,logger):
-        self.visit(node.condition,logger)
+    def visit(self,node:WhileDef):
+        self.visit(node.condition)
 
         for i in node.body:
-            self.visit(i,logger)
+            self.visit(i)
 
         node.computed_type=None
         
 
     @visitor(Decl)
-    def visit(self,node:Decl,logger):
+    def visit(self,node:Decl):
         self.visit(node.expression)
         if self.context.check_var_type(node.name,node.type) and node.expression.computed_type == node.type:
             node.computed_type=None
 
         else:
-            logger.error("Type mismatch...")
+            logging.error("Type mismatch...")
             node.computed_type = None
             
     @visitor(Assign)
-    def visit(self,node:Assign,logger):
+    def visit(self,node:Assign):
         self.visit(node.expression)
         if self.context.check_var_type(node.name,node.expression.computed_type):
             node.computed_type=None
 
         else:
-            logger.error("Type mismatch...")
+            logging.error("Type mismatch...")
             node.computed_type = None
 
     @visitor(Return)
-    def visit(self,node:Return,logger):
+    def visit(self,node:Return):
         self.visit(node.expression)
 
         node.computed_type=None
 
     @visitor(Break)
-    def visit(self,node:Break,logger):
+    def visit(self,node:Break):
         node.computed_type=None
 
     @visitor(Continue)
-    def visit(self,node:Continue,logger):
+    def visit(self,node:Continue):
         node.computed_type=None
 
     @visitor(BinaryExpression)
-    def visit(self, node: BinaryExpression, logger):
+    def visit(self, node: BinaryExpression):
         # Ver AritmeticBinaryExpression
-        self.visit(node.left, logger)
-        self.visit(node.right, logger)
+        self.visit(node.left)
+        self.visit(node.right)
 
         node.computed_type = node.left.computed_type
         node.computed_type = node.right.computed_type
 
         if node.left.computed_type != node.right.computed_type:
-            logger.error("Type mismatch...")
+            logging.error("Type mismatch...")
             node.computed_type = None
 
         else:
             node.computed_type = node.left.computed_type
 
     @visitor(AritmeticBinaryExpression)
-    def visit(self, node: AritmeticBinaryExpression, logger):
-        self.visit(node.left, logger)
-        self.visit(node.right, logger)
+    def visit(self, node: AritmeticBinaryExpression):
+        self.visit(node.left)
+        self.visit(node.right)
 
         if node.left.computed_type != node.right.computed_type:
             if node.left.computed_type == "Var":
@@ -133,7 +133,7 @@ class Type_Checker:
                 self.context.define_var(var, node.computed_type)
 
             else:
-                logger.error("Type mismatch...")
+                logging.error("Type mismatch...")
                 node.computed_type = None
 
         if node.left.computed_type == node.right.computed_type:
@@ -141,28 +141,28 @@ class Type_Checker:
                 node.computed_type = node.left.computed_type
 
     @visitor(TernaryExpression)
-    def visit(self, node: TernaryExpression, logger):
+    def visit(self, node: TernaryExpression):
         self.visit(node.condition)
         self.visit(node.right)
         self.visit(node.left)
 
         if node.right.computed_type == node.left.computed_type:
-            logger.error("Type mismatch...")
+            logging.error("Type mismatch...")
             node.computed_type = None
 
         else:
-            logger.error("Type mismatch...")
+            logging.error("Type mismatch...")
             node.computed_type = None
 
     @visitor(Inversion)
-    def visit(self, node: Inversion, logger):
-        self.visit(node.expression, logger)
+    def visit(self, node: Inversion):
+        self.visit(node.expression)
         if node.expression.computed_type == "Bool":
             node.computed_type = "Bool"
 
     @visitor(Primary)
-    def visit(self, node: Primary, logger):
-        self.visit(node.expression, logger)
+    def visit(self, node: Primary):
+        self.visit(node.expression)
 
         if node.args is None:
             _type = self.context.get_type_object(node.expression.computed_type)
@@ -178,7 +178,7 @@ class Type_Checker:
                 args = [0]*len(node.args)
 
                 for i in range(len(node.args)):
-                    self.visit(node.args[i], logger)
+                    self.visit(node.args[i])
                     args[i] = node.args[i].computed_type
 
                 name = node.expression.name
@@ -186,26 +186,26 @@ class Type_Checker:
                     self.context.get_return_type(name)
 
     @visitor(Variable)
-    def visit(self, node: Variable, logger):
+    def visit(self, node: Variable):
         # No me queda claro si ya está definida o no
         if self.context.var_is_definied(node.name):
             node.computed_type = self.context.get_type(node.name)
 
         else:
-            logger.error(f"name {node.name} is not defined")
+            logging.error(f"name {node.name} is not defined")
             
     @visitor(Number)
-    def visit(self, node: Number, logger):
+    def visit(self, node: Number):
         node.computed_type = "Number"
 
     @visitor(Bool)
-    def visit(self, node: Bool, logger):
+    def visit(self, node: Bool):
         node.computed_type = "Bool"
 
     @visitor(MyNone)
-    def visit(self, node: MyNone, logger):
+    def visit(self, node: MyNone):
         node.computed_type = "MyNone"
 
     @visitor(MyList)
-    def visit(self, node: MyList, logger):
+    def visit(self, node: MyList):
         node.computed_type = "MyList"
