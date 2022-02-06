@@ -7,104 +7,101 @@ El usuario final del proyecto necesita un medio para específicar las condicione
 Se diseñó la siguiente gramática para el lenguaje:
 
 \begin{verbatim}
-bs_file ->  classes statements EOF     
-    |   EOF                       
+bs_file ->  classes '&' statements EOF     
+        |   EOF                       
 
-classes -> class_def  classes         
-    |  class_def                       
+classes -> class_def ';' classes         
+        |  class_def ';'                       
 
-statements ->   statement  statements      
-        |   statement                       
+statements ->   statement ';' statements      
+            |   statement ';'                      
 
 statement ->    func_def
-        |   if_def
-        |   while_def
-        |   decl  ';' 
-        |   assign  ';' 
-        |   return_stat  ';' 
-        |   'break'    ';'                        
-        |   'continue'  ';'                       
-        |   expressions ;
+            |   if_def
+            |   while_def
+            |   decl 
+            |   assign 
+            |   return_stat 
+            |   'break'                            
+            |   'continue'                         
+            |   expression
 
 
-func_def ->     'function' return_type NAME '(' params ')' '->' block       
-        |   'function' return_type NAME '(' ')' '->' block              
+func_def ->     'function' return_type NAME '(' params ')' '->' "{" statements "}"       
+            |   'function' return_type NAME '(' ')' '->' "{" statements "}"              
 
-if_def ->   'if' expression '->' block elif_def                             
-    |   'if' expression '->' block else_def                             
-    |   'if' expression '->' block                                      
+if_def ->   'if' expression '->' "{" statements "}" elif_def                             
+        |   'if' expression '->' "{" statements "}" else_def                             
+        |   'if' expression '->' "{" statements "}"                                      
 
-elif_def ->     'elif' expression '->' block elif_def                       
-        |   'elif' expression '->' block else_def                       
-        |   'elif' expression '->' block                                
+elif_def ->     'elif' expression '->' "{" statements "}" elif_def                       
+            |   'elif' expression '->' "{" statements "}" else_def                       
+            |   'elif' expression '->' "{" statements "}"                                
 
-else_def -> 'else' '->' block                                               
+else_def -> 'else' '->' "{" statements "}"                                               
 
-class_def ->    'class' NAME 'is' NAME '->' '{'  constructor functions '}'   
-    |       'class' NAME 'is' NAME '->' '{'  constructor '}'                     
-
-
-functions -> func_def  functions                     
-       | func_def                                
-
-constructor -> 'constructor' '(' params ')' '->' '{' attributes '}'              
-         | 'constructor' '(' ')' '->' '{'  attributes '}'                 
-         | 'constructor' '(' ')' '->' '{' '}'                   
+class_def ->    'class' NAME 'is' NAME '->' '{'  constructor_def ';' functions '}'   
+        |       'class' NAME 'is' NAME '->' '{'  constructor_def ';' '}'                     
 
 
-attributes -> attr_def  attributes             
-        | attr_def                         
+functions -> func_def ';' functions                     
+           | func_def ';'                               
 
-attr_def ->  type 'this' '.' NAME '=' expression ';'          
+constructor_def -> 'constructor' '(' params ')' '->' '{' attributes '}'              
+             | 'constructor' '(' ')' '->' '{'  attributes '}'                 
+             | 'constructor' '(' ')' '->' '{' '}                        
 
 
-while_def ->    'while' expression '->' block              
+attributes -> attr_def ';'  attributes             
+            | attr_def ';'                        
+
+attr_def ->  type 'this' '.' NAME '=' expression           
+
+
+while_def ->    'while' expression '->' "{" statements "}"              
 
 return_type ->  'void'                        
-        |   type                          
+            |   type                          
 
 type ->   'number'        
-  |   'bool'          
-  |   NAME            
+      |   'bool'          
+      |   'List'          
+      |   NAME            
 
 assign -> NAME '=' expression                         
 
 decl ->  type NAME '=' expression                              
 
 return_stmt ->  'return' expression                                      
-        |   'return'                                        
-
-block ->     '{' statements '}'   
+            |   'return'                                        
 
 params ->   type NAME ',' params      
-    |  type NAME                  
+        |  type NAME                  
 
 
 expressions ->  expression ','  expressions               
-        |   expression                                
+            |   expression                                
 
 expression ->   disjunction 'if' disjunction 'else' expression            
-        |   disjunction                                                
+            |   disjunction                                                
 
 disjunction ->  conjunction 'or' disjunction                                
-        | conjunction                                                   
+            | conjunction                                                   
 
 conjunction ->  inversion 'and' conjunction                                 
-        |   inversion                                                   
+            |   inversion                                                   
 
 inversion ->    'not' inversion                                             
-        |    comparision                                                
+            |    comparision                                                
 
 
-comparision ->  sum compare_par                                            
-        |   sum
-
-compare_par ->  'eq' sum                        
-        |   'neq' sum                       
-        |   'lte' sum                       
-        |   'lt' sum                        
-        |   'gte' sum                       
-        |   'gt' sum                        
+comparision ->  sum 'eq' sum                       
+            |   sum 'neq' sum                      
+            |   sum 'lte' sum                      
+            |   sum 'lt' sum                       
+            |   sum 'gte' sum                      
+            |   sum 'gt' sum                       
+            |   sum
 
 
 sum ->  sum '+' term                            
@@ -117,19 +114,16 @@ term -> term '*' factor
     |   factor
 
 factor ->   '+' factor
-    |   '-' factor
-    |   pow
+        |   '-' factor
+        |   pow
 
 pow ->  primary '^' factor              
     |   primary
 
 primary ->  primary '.' NAME            
-    |   primary '(' args ')'        
-    |   primary '(' ')'             
-    |   atom
-
-args -> expression ',' args
-    | expression
+        |   primary '(' expressions ')'        
+        |   primary '(' ')'             
+        |   atom
 
 atom -> NAME                            
     |   'True'                          
@@ -155,7 +149,7 @@ Para la implementación del tokenizador fue necesario un sistema de expresiones 
 
 \subsubsection{Sistema de expresiones regulares}
 
-Una expresión regulares es una definición recursiva de un lenguaje donde $a$ es la expresión regular para $L(a) = \{a\}$ y $\epsilon$ es la expresión regular para $L(\epsilon) = \{\epsilon\}$. Si $s$ y $r$ son expresiones regulares entonces:
+Una expresión regular es una definición recursiva de un lenguaje donde $a$ es la expresión regular para $L(a) = \{a\}$ y $\epsilon$ es la expresión regular para $L(\epsilon) = \{\epsilon\}$. Si $s$ y $r$ son expresiones regulares entonces:
 
 \begin{itemize}
     \item $(s)|(r)$ es la expresión regular para la unión de lenguajes $L(s) \cup L(r)$
@@ -231,7 +225,7 @@ El proceso de compilación de una expresión regular es bastante sencillo, se ti
 
 Luego del proceso de parsing y verificar que la secuencia de tokens es correcta, se recorre la secuencia de tokens y haciendo uso de la clase \verb|Handler| se construye el autómata de la expresión regular. 
 
-La clase \verb|Handler| es la encargada de dado un conjunto de tokens construir el autómata correspondiente, para ello implementa un método para cada operador de la gramática, estos métodos saben construir el autómata que resulta de aplicar la operación a uno, dos o más autómatas según el operador. La clase implementa el algoritmo Thompson's construction para la construcción del 
+La clase \verb|Handler| es la encargada de dado un conjunto de tokens construir el autómata correspondiente, para ello implementa un método para cada operador de la gramática, estos métodos saben construir el autómata que resulta de aplicar la operación a uno, dos o más autómatas según el operador. La clase implementa el algoritmo Thompson's construction para la construcción del autómata.
 
 \begin{itemize}
         \item \textbf{Reconcimiento de un caracter:} el método de la clase \verb|Handler| encargado de construir dicho autómata construye el estado inicial \verb|s0| y el final \verb|s1| y añade la transición con el caracter en cuestión, como se muestra en la figura siguiente:
