@@ -18,6 +18,10 @@ def compile(bs: str, py: str = "", run: bool = True):
             compiler = Compiler()
             python_code = str()
             with open(bs, "r") as fbs:
+                # # ! Uncomment for debug
+                # python_code = compiler(fbs.read())
+
+                # ! Comment for debug
                 try:
                     python_code = compiler(fbs.read())
                 except BaseException as e:
@@ -36,3 +40,4 @@ def compile(bs: str, py: str = "", run: bool = True):
 
 if __name__ == "__main__":
     run(compile)
+    # compile("./test/examples/ex1.bs")

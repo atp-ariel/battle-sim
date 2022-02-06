@@ -1,4 +1,3 @@
-import visitor
 
 """
 1-Recolectar los tipos del AST en diccionario
@@ -6,12 +5,17 @@ import visitor
 3-Verificar la semántica
 """
 class battle_sim_typing:
-    def __init__(self,program,collector,builder,checker,context):
+    def __init__(self, program, collector, builder, checker, context):
         self.program=program
         self.collector=collector
         self.builder=builder
         self.checker=checker
         self.context=context
+
+    def __call__(self):
+        self.collecting()
+        self.building()
+        self.checking()
 
     def collecting(self):
         self.collector.visit(self.program)
