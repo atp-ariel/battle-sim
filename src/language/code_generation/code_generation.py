@@ -227,3 +227,7 @@ class CodeGenerate:
     def visit(self, node: MyList):
         args = ', '.join(self.visit(e) for e in node.inner_list)
         return f'[{args}]'
+    
+    @vistor(Self)
+    def visit(self, node:Self):
+        return 'self'

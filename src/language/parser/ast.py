@@ -151,6 +151,9 @@ class Bool(Expression):
 class MyNone(Expression):
     pass
 
+@dataclass
+class Self(Expression):
+    pass
 
 @dataclass
 class MyList(Expression):
