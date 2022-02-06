@@ -32,7 +32,7 @@ class BSUnit(BSObject):
         self.visited_cells = set()
 
     # calcular distancia entre dos celdas
-    def calculate_distance(self, cell1, cell2):
+    def calculate_distance(self, cell1, cell2) -> int:
 
         distance_row = abs(cell1.row-cell2.row)
         distance_col = abs(cell1.col-cell2.col)
@@ -103,7 +103,9 @@ class BSUnit(BSObject):
         return (False, None)
 
     # detecta los enemigos de los que se puede estar en rango, aumentando del costo de moverse a esa celda
-    def in_range_of_enemy(self, cell, cost) -> int:
+    def in_range_of_enemy(self, cell) -> int:
+
+        enemies=0
 
         for i in range(cell.row - self.vision, cell.row + self.vision + 1):
             if i >= self.map.no_rows:
@@ -131,11 +133,11 @@ class BSUnit(BSObject):
                     )
                     if cell.row >= limits_max_range[0][0] and cell.col >= limits_max_range[0][1] and cell.row <= limits_max_range[1][0] and cell.col <= limits_max_range[1][1]:
                         if cell.row <= limits_min_range[0][0] or cell.row >= limits_min_range[1][0] or cell.col <= limits_min_range[0][1] or cell.col >= limits_min_range[1][1]:
-                            cost += 1.1
-        return cost
+                            enemies += 1
+        return enemies
 
     # calcular el costo de moverse a la celda
-    def move_cost_calculate(self, cell, type):
+    def move_cost_calculate(self, cell, type) -> float:
 
         if cell.passable == 0 or cell.type != type or cell.bs_object is not None:
             return float("inf")
@@ -160,11 +162,13 @@ class BSUnit(BSObject):
             cost -= self.ofensive*1 / \
                 math.sqrt(self.calculate_distance(self.cell, enemy_cell))
 
-        cost = self.in_range_of_enemy(cell, cost)
+        enemies = self.in_range_of_enemy(cell)
+        
+        cost += enemies*1.1
 
         return cost
 
-    def enemy_cost_calculate(self, enemy):
+    def enemy_cost_calculate(self, enemy) -> float:
         damage = self.attack + (self.moral + self.cell.passable)/2
 
         estimated_life_points = random.uniform(max(0, enemy.life_points - 10 + self.intelligence),
@@ -176,7 +180,7 @@ class BSUnit(BSObject):
         return estimated_life_points / (damage / estimated_defense)
 
     # detecta si un amigo pudiera ser afectado por el ataque
-    def friend_in_danger(self, cell):
+    def friend_in_danger(self, cell) -> bool:
         for i in range(self.cell.row - 1, self.cell.row + 2):
             if i >= self.map.no_rows:
                 break
@@ -364,7 +368,7 @@ class BSUnit(BSObject):
         cell.bs_object = self
 
     # turno de la unidad
-    def turn(self, type_unit):
+    def turn(self, type):
 
         enemy = None
         if self.turns_recharging == 0:
@@ -390,8 +394,7 @@ class BSUnit(BSObject):
                         break
                     if j < 0 or (i == self.cell.row and j == self.cell.col):
                         continue
-                    new_cost = self.move_cost_calculate(
-                        self.map[i][j], type_unit)
+                    new_cost = self.move_cost_calculate(self.map[i][j], type)
                     if new_cost < cost:
                         cost = new_cost
                         cell = self.map[i][j]
