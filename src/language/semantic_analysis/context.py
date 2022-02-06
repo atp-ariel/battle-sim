@@ -48,6 +48,16 @@ class Context:
 
             return self.father.check_var(var)
 
+    def check_var_type(self,var,_type):
+        if self.father==None:
+            return var in self._var_context and self._var_context[var][0]==_type
+
+        else:
+            if var in self._var_context:
+                return True
+
+            return self.father.check_var(var)
+
     def check_func(self,func):
         if self.father==None:
             return func in self._func_context
@@ -94,6 +104,12 @@ class Context:
    
     def define_func(self,func,_type,args,_type_args):
         if _type in self._type_context:
+            
+            if func in self._var_context:
+                raise Exception(f"{func} is already defined")
+
+            self._type_context[func]=["function",None]
+
             data=[_type,[0]*len(args),[0]*len(args)]
             #[tipo de retorno,tipo de argumento,nombre de argumento]
             for i in range(len(args)):
@@ -128,6 +144,7 @@ class Context:
     def get_return_type(self,func):
         if self.check_func(func):
             return self._func_context[func][0]
+
     def get_type_object(self,name):
         if name in self._type_context:
             return self._type_context[name]
