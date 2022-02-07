@@ -34,7 +34,7 @@ El mapa para una simulación se crea instanciando una clase \verb|LandMap| con l
 
 \subsubsection{Generación aleatoria de mapas}
 
-La representación abstracta de un mapa es una matriz de alturas, o sea, una matriz de valores en el intervalo $[0,1]$, donde la noción de nivel del mar es 0.45, o sea, todo valor $x > 0.45$ es una elevación y todo valor $x < 0.45$ es una depresión cubierta por agua. Es importante poder generar un mapa de alturas con un porcentaje de relieve determinado por el usuario que sea lo más realista posible pero esto de forma aleatoria. Por tal razón queda totalmente descartado el enfoque que va por generar una matriz $M$ donde $M[i,j]$ es un número totalmente al azar, pues se obtendrían matrices de ruido similares a la estática en las señales de televisión, además se violaría la restricción del porciento de elevaciones.
+La representación abstracta de un mapa es una matriz de alturas, o sea, una matriz de valores en el intervalo $[0,1]$, donde la noción de nivel del mar es 0.45, o sea, todo valor $x > 0.45$ es una elevación y todo valor $x < 0.45$ es una depresión cubierta por agua. Es importante poder generar un mapa de alturas de forma aleatoria con un porcentaje de relieve determinado por el usuario que sea lo más realista posible. Por tal razón, queda totalmente descartado el enfoque que va por generar una matriz $M$ donde $M[i,j]$ es un número totalmente al azar, pues se obtendrían matrices de ruido similares a la estática en las señales de televisión, además se violaría la restricción del porciento de elevaciones.
 
 \begin{figure}
 	\centering
@@ -51,22 +51,22 @@ Luego de una consulta bibliográfica, se encontraron algunos procedimientos para
 	\item \textbf{Algoritmos de erosión térmica e hídrica:} algoritmos que simulan los procesos naturales de erosión térmica e hídrica. En el caso de la térmica se fija un valor $T$ que representa el valor a partir del cual se va a erosionar, y se recorre la matriz buscando los puntos que cumplen que la diferencia de altura con sus vecinos es superior a $T$. En dichos puntos el algoritmo resta valor de altura a sus vecinos cuya distancia sea mayor que $T$ de forma que todas las distancias queden menor que $T$. En el caso de la erosión hídrica se define una matriz de agua y una matriz de sedimentos la cual representa un porciento de material que puede ser movido por la erosión. Y se realiza un procedimiento parecido a la erosión térmica.
 \end{itemize}
 
-Ahora estos algoritmo generan mapas de alturas con apariencia realista, pero no son suficientes para cumplir las restricciones de relieve. Por tanto, nuestra propuesta es la implementación de un algoritmo evolutivo que genera un mapa de alturas realista y satisfaga la restricción anteriormente mencionada.
+Ahora, estos algoritmos generan mapas de alturas con apariencia realista, pero no son suficientes para cumplir las restricciones de relieve. Por tanto, nuestra propuesta es la implementación de un algoritmo evolutivo que genere un mapa de alturas realista y satisfaga la restricción anteriormente mencionada.
 
-Los algoritmos evolutivos son estrategias de optimización y búsqueda de soluciones que toman como inspiración la evolución en distintos sistemas biológicos. La idea fundamental de estos algoritmos es mantener un conjunto de individuos que representan una posible solución del problema. Estos individuos se mezclan y compiten entre sí, siguiendo el principio de selección natural por el cual sólo los mejor adaptados sobreviven al paso del tiempo. Esto redunda en una evolución hacia soluciones cada vez más aptas. 
+Los algoritmos evolutivos son estrategias de optimización y búsqueda de soluciones que toman como inspiración la evolución en distintos sistemas biológicos. La idea fundamental de estos algoritmos es mantener un conjunto de individuos que representan posibles soluciones del problema. Estos individuos se mezclan y compiten entre sí, siguiendo el principio de selección natural por el cual sólo los mejores adaptados sobreviven al paso del tiempo. Esto redunda en una evolución hacia soluciones cada vez más aptas. 
 
 El algoritmo evolutivo en cuestión inicia con una población de individuos generados utilizando el algoritmo de Perlin Noise implementado en la biblioteca de Python bajo el nombre \verb|perlin-noise|.	Luego se realizan un cantidad de iteraciones seleccionando los individuos más adaptados, mezclándolos y mutándolos.  Se considera individuo mejor adaptado aquel cuyo valor \verb|fit| sea mayor. Este valor se calcula como sigue:
 
 \begin{verbatim}
 def fit_func(self, heightmap: HeightMap):
-	count = sum(sum(heightmap.__map__ > self.__sea__))
-	per = count / prod(self.__shape__)
-	return per if per < self.percentage else 0
+		count = sum(sum(heightmap.__map__ > self.__sea__))
+		per = count / prod(self.__shape__)
+		return per if per < self.percentage else 0
 \end{verbatim}
 
 Esto es, se cuentan la cantidad de posiciones que su valor de altura supera el nivel del mar, y se calcula el porciento que representan estas del total, si este porciento es superior al porciento de la restricción del problema entonces se le asocia a dicho individo el valor 0.  Por tanto, el valor \verb|fit| máximo que puede tener cualquier individuo es el porciento de la restricción y el menor el 0.
 
-Luego, el proceso de selección de individuos se realiza utilizando el procedimiento de Selección competitiva o por torneos, se seleccionan de la población 4 individuos de forma aleatoria, y se realiza una competencia 2 a 2 seleccionando el mejor en cada pareja y estos son los individuos mejor adaptados. El proceso de mezcla de los individuos seleccionados se realiza utilizando una suma ponderada, con valores 0.95 y 0.05 respectivamente. 
+Luego, el proceso de selección de individuos se realiza utilizando el procedimiento de Selección competitiva o por torneos, se seleccionan  4 individuos de la población de forma aleatoria, y se realiza una competencia 2 a 2 seleccionando el mejor en cada pareja y estos son los individuos mejor adaptados. El proceso de mezcla de los individuos seleccionados se realiza utilizando una suma ponderada, con valores 0.95 y 0.05 respectivamente. 
 
 El proceso de mutación del individuo resultante de la mezcla es el siguiente:
 
@@ -74,8 +74,8 @@ El proceso de mutación del individuo resultante de la mezcla es el siguiente:
 	\item Se genera una matriz temporal \verb|tmp| que representará una matriz de suavizado para la mutación. Esta matriz es una matriz de alturas generada igualmente por el algoritmo de Perlin Noise.
 	\item Si el porciento de relieve de la restricción es superior a 0.4 se realiza el procedimiento siguiente:
 	\begin{itemize}
-		\item La matriz \verb|temp| se multiplica por el escalar -0.3.
-		\item La matriz \verb|temp| se suma al individuo proveniente de la mezcla. Dando como resultado un individuo mutado donde de forma general se le baja altura a todas las posiciones.  
+		\item La matriz \verb|tmp| se multiplica por el escalar -0.3.
+		\item La matriz \verb|tmp| se suma al individuo proveniente de la mezcla. Dando como resultado un individuo mutado donde de forma general se le baja altura a todas las posiciones.  
 	\end{itemize}
 	\item Si el porciento de relieve de la restricción es inferior o igual a 0.4 entonces se realiza el siguiente procedimiento: 
 	\begin{itemize}
@@ -85,8 +85,6 @@ El proceso de mutación del individuo resultante de la mezcla es el siguiente:
 \end{enumerate}
 
 El algoritmo evolutivo en cuestión tiene ciertos parámetros que definen las condiciones de paradas. Se definió la cantidad de iteraciones en 100 iteraciones. Se definió un nivel de tolerancia al porciento de relieve de la restricción en 0.03, de forma que cuando exista un individuo cuyo valor \verb|fit| esté en el intervalo $[p - 0.03, p + 0.03]$, donde $p$ es el valor de la restricción, el algoritmo se detiene.
-
-A continuación se muestran el resultado del algoritmo:
 
 \begin{figure}
 	\centering
@@ -99,19 +97,25 @@ A continuación se muestran el resultado del algoritmo:
 	\includegraphics[width=8cm]{chapters/img/map10.png}
 	\caption{Mapa de alturas generado por el algoritmo evolutivo con porciento de relieve de 10\%}
 \end{figure}
+
+
 \subsection{Los objetos}
 
-Un objeto es todo lo que se puede poner el mapa y cada objeto ocupa una y solo una casilla del mapa. Estos tienen propiedades como el id que s único para cada objeto, los puntos de vida que determinan el estado de un objeto y la defensa un parámetro que indica cuan resistente es un objeto a los daños que puede sufrir durante la simulación. Todos estos parámetros son números de 1 a 10. Cuando la vida de un objeto llegue a 0, este se destruye desapareciendo del mapa. Los objetos se clasifican en dos tipos: unidades y objetos estáticos. Los objetos además tienen definidas dos funciones \verb|put_in_cell| cuya función es colocar al objeto en alguna posición de un mapa. Si se intenta poner un objeto en una posición diferente a su tipo este automáticamente se destruye. La otra función \verb|take_damage|, a partir de un ataque sufrido indica como se reducen los puntos de vida del objeto.
+Un objeto es toda entidad que se puede poner en el mapa; cada objeto ocupa una y solo una casilla del mapa. Estos tienen propiedades como el \verb|id| que es el identificador único para cada objeto, los puntos de vida \verb|life_points| que determinan el estado de un objeto y la defensa \verb|defense| un parámetro que indica cuan resistente es un objeto a los daños que puede sufrir durante la simulación. Todos estos parámetros son números en el intervalo de números enteros $[1,10]$. Cuando la vida de un objeto llegue a 0, este se destruye desapareciendo del mapa. 
+
+Los objetos se clasifican en dos tipos: unidades y objetos estáticos. Los objetos además tienen definidas dos funciones \verb|put_in_cell| cuya función es colocar al objeto en alguna posición de un mapa. Si se intenta poner un objeto en una posición diferente a su tipo este automáticamente se destruye. La otra función \verb|take_damage|, a partir de un ataque sufrido indica como se reducen los puntos de vida del objeto.
 
 \subsubsection{Objetos estáticos}
 
-Los objetos estáticos los podemos definir como objetos propios del ambiente. Estos no pertenecen a ningún bando y no pueden realizar acciones pero si pueden ser afectados por las acciones que realicen las unidades. Estos solo pueden ser puestos en celdas terrestres. Ejemplos de estos objetos pueden ser árboles, rocas, muros, etc. Todos estos objetos son terrestres. 
+Los objetos estáticos se definen como objetos propios del ambiente. Estos no pertenecen a ningún bando y no pueden realizar acciones pero si pueden ser afectados por las acciones que realicen las unidades. Estos solo pueden ser puestos en celdas terrestres. Ejemplos de estos objetos pueden ser árboles, rocas, muros, etc. Todos estos objetos son terrestres. 
 
 \subsubsection{Unidades}
 
 Las unidades son los agentes de la simulación. El objetivo de cada una de las unidades es destruir a las unidades enemigas (las que no pertenecen a su mismo bando), y para ello podrá analizar parte del ambiente en el que se encuentra y tomar la decisión que sea más conveniente según sean las circunstancias. 
 
-Dado que el ambiente estará cambiando constantemente, las unidades serán agentes casi puramente reactivos. La arquitectura empleada para definir el comportamiento de las unidades es la Arquitectura de Brooks (de categorización o inclusión) que recordemos tiene las siguientes características: 
+Dado que el ambiente cambia constantemente, las unidades serán agentes casi puramente reactivos. Un agente puramente reactivo es un sistema computacional situado en un ambiente, el cual es capaz de percibir y responder de modo oportuno a los cambios que ocurran en el mismo con  acciones autónomas y sin tomar en cuenta el pasado para lograr sus objetivos. En este caso las unidades son agentes casi puramente reactivos pues para el movimiento de las mismas a través del mapa se tiene en cuenta si una unidad ya estuvo en una posición, con el fin de estimular la exploración del mapa por parte de las unidades.
+
+La arquitectura empleada para definir el comportamiento de las unidades es la Arquitectura de Brooks (de categorización o inclusión) la cual es una arquitectura de control surgida en los años 80 y 90 del siglo pasado. Esta en lugar de guiar el comportamiento mediante representaciones mentales simbólicas del mundo, acopla la información sensorial  a la selección de la acción de manera interna. La arquitectura de Brooks tiene las siguientes características: 
 
 \begin{itemize}
 	\item La toma de decisión se realiza a través de un conjunto de comportamientos para lograr objetivos (reglas de la forma situación $\rightarrow$ acción).
@@ -143,7 +147,6 @@ Las unidades además de las descritas anteriormente que tienen todos los objetos
 
 A continuación se explicará el sistema experto implementado que actúa como función del agente la cual describe el comportamiento del agente durante un turno.
 
-
 Lo primero que la función hace es buscar si se existe un enemigo al que se pueda atacar. Para eso primero se comprueba si la unidad no está recargando, si lo está se reduce en uno los turnos que debe esperar para atacar, si no lo está se busca el mejor enemigo para atacar. 
  
 El mejor enemigo para atacar se determina de la siguiente forma:
@@ -158,7 +161,7 @@ Si la unidad no realiza un ataque, entonces, en caso de que se móvil, chequea s
  
 Se fija un costo en infinito. Luego por cada una de las celdas que la rodean en todos los puntos cardinales posibles (NW, N, NE, W, E, SW, S y SE)ase calcula el costo de moverse a dicha celda, y nos quedamos con la celda cuyo co es el menor. Luego si el menor costo detectado es menor a infinito la unidad se mueve a dicha celda en caso contrario la unidad mantiene su posición. 
  
-Ahora veamos como calcular el costo de que una unidad se mueva de una celda a otra.
+Ahora, ¿cómo calcular el costo que tiene para una unidad moverse de una celda a otra?
  
 Si la celda nueva es intransitable (tiene el parámetro \verb|passable| en 0), el tipo de la celda es diferente al tipo de la unidad o si en la celda hay algún objeto se devuelve infinito. Estos son todos los casos en los que la unidad no puede moverse a dicha celda. Para las unidades terrestres siola diferencia de alturas entre dosla ltas es muy grande (mayor a 0.3), tampoco pueden avanzar a dicha celda, retornándose infinito. 
  
