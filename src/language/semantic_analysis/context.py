@@ -116,7 +116,11 @@ class Context:
             return self.father.check_func_args(func,args)
 
     def get_type(self,var):
-        return self._var_context[var][0]
+        if self.father is None:
+            return self._var_context[var][0]
+
+        else:
+            return father.get_type(var)
 
     def define_var(self,var,_type,value=None):
         if not var in self._var_context and _type in self._type_context:
@@ -166,8 +170,21 @@ class Context:
         return self.check_var(name)
         
     def get_return_type(self,func):
-        if self.check_func(func):
-            return self._func_context[func][0]
+        
+        if self.father is None:
+            if self.check_func(func):
+                return self._func_context[func][0]
+
+
+            else:
+                raise Exception("func '{func}' is not defined")
+
+        else:
+            if name in self._type_context:
+                return self._func_context[func][0]
+
+            else:
+                return father.get_return_type(func)
 
     def get_type_object(self,name):
         if self.father is None:
