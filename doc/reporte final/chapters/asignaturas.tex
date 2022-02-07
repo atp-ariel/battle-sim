@@ -2,17 +2,25 @@
 
 \subsection{Simulación}
 
-Tendríamos como sistema el enfrentamiento bélico. Las entidades serían las unidades, estructuras y elementos del terreno. Como relaciones tendríamos por ejemplo la distancia entre estas entidades, el daño que le causa una unidad a otra, etc. Como proceso tendríamos el movimiento de las unidades, el ataque de una unidad a otra,etc.
-
-Este sistema es observable, permitiéndonos, al ejecutar simulaciones del mismo, obtener resultados y sacar conclusiones a partir de estos. Es controlable pues las unidades realizan acciones según estrategias y la simulación ocurre según reglas definidas. Es modificable pues podemos agregar y eliminar unidades, además de cambiar reglas y estrategias, lo que nos permite obtener diferentes resultados.
+\begin{itemize}
+    \item Implementación de las unidades como agente casi puramente reactivos.
+    \item Utilización de la Arquitectura de Brooks para los agentes.
+\end{itemize}
 
 \subsection{Compilación}
 
-Se definirá un lenguaje en el cual se puedan definir diferentes unidades, estructuras y sus respectivas estadísticas, modificar las características del terreno, crear estrategias y definir reglas para la simulación.
+\begin{itemize}
+    \item Diseño de la gramática del lenguaje.
+    \item Implementación de un tokenizador.
+    \item Implementación de un sistema de expresiones regulares.
+    \item Implementación de un parser $LR(1)$ canónico.
+    \item Implementación del análisis semántico.
+    \item Implementación de la generación de código Python.
+\end{itemize}
 
 \subsection{Inteligencia Artificial}
-Como las unidades se tendrán que mover por el mapa, para lograr un movimiento eficiente de las mismas utilizaremos el algoritmo A*.
 
-Además como tenemos dos bandos enfrentándose nos auxiliaremos de un algoritmo Minimax para realizar los movimientos que harán los bandos en sus respectivos turnos, utilizando una heurística basada en la situación actual del mapa y la estrategia definida por el usuario.
-
-Es muy posible que con el avance de la asignatura y el desarrollo del proyecto utilicemos más herramientas.
+\begin{itemize}
+    \item Implementación de un sistema experto que actúa como función de los agentes de la simulación.
+    \item Implementación de un algoritmo evolutivo para la generación de mapas de alturas bajo la restricción del porciento elevaciones.
+\end{itemize}
