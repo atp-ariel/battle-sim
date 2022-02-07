@@ -1,18 +1,16 @@
 class Type:
-    def __init__(self,name,parent=None):
+    def __init__(self,context,name,parent=None):
         self.name=name
         self.attributes={}
         self.methods={}
         self.parent=parent
 
-        if parent is not None:
+        if not parent ins None:
             for m in parent.methods:
                 self.methods[m]=parent.methods[m]
 
             for a in parent.attributes:
                 self.attributes[a]=parent.attributes[a]
-
-        
 
     def get_attribute(self,attribute):
         if attribute in self.attributes:
@@ -24,11 +22,12 @@ class Type:
     
     def define_attribute(self,name,_type,attribute=None):
         self.attributes[name]=[attribute,_type]
+        context.define_var(name,_type,attribute)
         #Se guarda en diccionario el atributo y el tipo
 
     def get_type(self,attribute):
         if attribute in self.attributes:
-            _type=self.attributes[attribute]
+            _type=attributes[attribute]
         
             if _type=="func":
                 _type=self.methods[attribute][0]
@@ -38,12 +37,10 @@ class Type:
         else:
             raise Exception(f"type object '{self.name}' has no attribute '{attribute}'")
 
-
-
-
     def define_method(self,name,return_type,arguments,argument_types):
         self.methods[name]=[return_type,arguments,argument_types]
         self.attributes[name]=[name,"func"]
+        context.define_func(name,return_type,arguments,argument_types)
         #Se guarda en diccionario el tipo de retorno, los argumentos y el tipo de los argumentos
 
     def is_attribute(self,name):
@@ -55,7 +52,7 @@ class Type:
 class Context:
     def __init__(self,father=None):
         self.father=father
-        self.children=[]
+        self.children={}
         self._var_context={}
         self._func_context={}
         self._type_context={}
@@ -120,7 +117,7 @@ class Context:
             return self._var_context[var][0]
 
         else:
-            return self.father.get_type(var)
+            return father.get_type(var)
 
     def define_var(self,var,_type,value=None):
         if not var in self._var_context and _type in self._type_context:
@@ -134,6 +131,7 @@ class Context:
    
     def define_func(self,func,_type,args,_type_args):
         if _type in self._type_context:
+            self.create_child_context(func)
             
             if func in self._var_context:
                 raise Exception(f"{func} is already defined")
@@ -155,20 +153,19 @@ class Context:
         else:
             raise Exception("Type Error")
 
-    def create_child_context(self):
+    def create_child_context(self,name):
         child=Context(self)
-        self.children.append(child)
+        self.children[name]=child
         return child
      
-    def create_type(self,name,parent=None): 
-        _parent = None
-        if parent is not None:    
-            _parent=self.get_type_object(parent)       
+    def create_type(self,name,parent):     
+        _parent=self.get_type_object(parent)       
         t=Type(name,_parent)
         self._type_context[name]=t
+        child=self.create_child_context(name)
         return t
 
-    def var_is_definied(self,name):
+    def var_is_defined(self,name):
         return self.check_var(name)
         
     def get_return_type(self,func):
@@ -182,11 +179,11 @@ class Context:
                 raise Exception("func '{func}' is not defined")
 
         else:
-            if func in self._type_context:
+            if name in self._type_context:
                 return self._func_context[func][0]
 
             else:
-                return self.father.get_return_type(func)
+                return father.get_return_type(func)
 
     def get_type_object(self,name):
         if self.father is None:
@@ -194,13 +191,23 @@ class Context:
                 return self._type_context[name]
 
             else:
-                raise Exception(f"Type '{name}' is not defined")
+                raise Exception("Type '{name}' is not defined")
 
         else:
             if name in self._type_context:
                 return self._type_context[name]
 
             else:
-                return self.father.get_type_object(name)
-            
+                return father.get_type_object(name)
+
+    def is_type_defined(self,name):
+        if father is None:
+            return name in self._type_context
+
+        else:
+            if name in self._type_context:
+                return True
+
+            else:
+                return father.is_type_defined(name)
     #def define_symbol(symbol,type)
