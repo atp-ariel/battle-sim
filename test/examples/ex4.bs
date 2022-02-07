@@ -2,7 +2,15 @@ class Soldier is LandUnit -> {
     constructor(number id) -> { 
         number self.id = id + 3 * 5^-2; 
     }; 
-    function number W(number a) -> { 
+};
+class Archer is LandUnit -> {  
+    constructor(number id, number life_points) -> { 
+        number self.id = id; 
+        number self.life_points = life_points; 
+    }; 
+}; 
+& 
+function number W(number a) -> { 
         if a lt 0 and a eq 0 -> { 
             return -1 * a;  
         } 
@@ -13,14 +21,6 @@ class Soldier is LandUnit -> {
             return a; 
         }; 
     };
-};
-class Archer is LandUnit -> {  
-    constructor(number id, number life_points) -> { 
-        number self.id = id; 
-        number self.life_points = life_points; 
-    }; 
-}; 
-& 
 Soldier b = Soldier(1); 
 Soldier bOne = Soldier(3); 
 Archer a = Archer(1, 10); 
