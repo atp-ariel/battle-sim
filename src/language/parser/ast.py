@@ -152,10 +152,6 @@ class MyNone(Expression):
     pass
 
 @dataclass
-class Self(Expression):
-    pass
-
-@dataclass
 class MyList(Expression):
     inner_list: List[Expression]
 

@@ -219,7 +219,6 @@ atom += Production([false], build_Bool)
 atom += Production([none], build_None)
 atom += Production([number], build_Number)
 atom += Production([_list])
-atom += Production([_self], build_self)
 
 _list += Production([lbracket, expressions, rbracket], build_list1)
 _list += Production([lbracket, rbracket], build_list2)
