@@ -19,7 +19,7 @@
   <p align="center">
     Software para simular batallas bélicas entre ejércitos. Proyecto que vincula conocimientos de Inteligencia Artificial, Simulación y Compilación.
     <br />
-    <a href="https://github.com/ArielTriana/battle-sim/blob/dev/doc/reporte%20final/Informe.pdf"><strong>Ver informe »</strong></a>
+    <a href="https://github.com/ArielTriana/battle-sim/blob/main/doc/reporte%20final/Informe.pdf"><strong>Ver informe »</strong></a>
     <br />
     <a href="https://github.com/ArielTriana/battle-sim/raw/main/doc/reporte%20final/Informe.pdf"><strong> Descargar informe</strong></a> 
     <br />
