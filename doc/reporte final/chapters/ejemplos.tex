@@ -2,16 +2,147 @@
 
 A continuación se muestran algunos ejemplos de uso del compilador y de ejecución de la simulación.
 
-\subsection{Definiendo la unidad Soldier}
-
 El primer ejemplo que se define a continuación es la creación de la clase Soldier que es un LandUnit. En este caso solo se define el constructor de la clase, que recibe el parámetro \verb|id| que representa el identificador de la unidad en la simulación.
 
 \begin{verbatim}
 class Soldier is LandUnit -> {  
-    constructor(number id) -> { 
-        number self.id = id; 
-    }; 
+    constructor(number id, number attack) -> {
+        number self.id = id;
+        number self.attack = attack;
+    };
 }; 
 \end{verbatim}
 
-Note que tras cualquier instrucción en el lenguaje Battle Script se necesita poner un punto y coma (;) para especificar el fin de la instrucción.
+Note que tras cualquier instrucción en el lenguaje Battle Script se necesita poner un punto y coma (;) para especificar el fin de la instrucción. En este caso solo se indica el par\'ametro id de entrada. Por tanto el resto de par\'ametros de la unidad tomar\'as los valores por defecto. Dentro de una clase se pueden definir funciones como se muestra en el siguiente ejemplo:
+
+\begin{verbatim}
+class Archer is LandUnit -> {
+    constructor(number id, number max_range) -> {
+        number self.id = id;
+        number self.max_range = max_range;
+    };
+		
+    function number plus_id(Archer arch) -> {
+        return arch.id + 1;
+    };
+};
+\end{verbatim}
+
+Una funci\'on, definida dentro de una clase, debe definirse con al menos un par\'ametro cuyo tipo debe coincidir con el tipo de la clase pues este hace referencia a la instancia de la clase.
+
+Las definiciones de clases deben ir todas al inicio del programa y cuando se terminen definir todas se debe poner el car\'acter '\&' para indicar que ya se termin\'o la definici\'on de las clases y ahora se van a comenzar escribir las instrucciones.
+
+Para generar un mapa aleatorio se hace de la siguiente forma:
+
+\begin{verbatim}
+	LandMap map = build_random_map(1, 5, 5);
+\end{verbatim} 
+
+La funci\'on build\_random\_map es una funci\'on built-in que recibe como par\'ametros un n\'umero real entre 0 y 1 que indica el porcentaje de casillas de tierra que se desea tenga el mapa, y dos enteros que indican el n\'umero de filas y de columnas que se desea tenga el mapa.
+
+Entonces pasemos a ver como crear las unidades:
+
+\begin{verbatim}
+Soldier sOne = Soldier(1, 10);
+Soldier sTwo = Soldier(2, 9);
+	
+Archer aOne = Archer(3, 5);
+Archer aTwo = Archer(4, 5);	
+\end{verbatim}  
+
+En este ejemplo hemos creado dos unidades de tipo ``Soldier'' y dos unidades de tipo ``Archer'' utilizando las clases definidas anteriormente.
+
+Para poner una unidad en el mapa se hace de la siguiente forma:
+
+\begin{verbatim}
+sOne.put_in_cell(map, 0, 0);
+\end{verbatim}
+
+Se toma a la unidad y se hace un llamado a la funci\'on \verb|put_in_cell| pas\'andole como argumentos el mapa y par de enteros que indican la fila y la columna de la celda donde se desea colocar la unidad.
+
+Un bando se crean de la siguiente forma:
+  
+\begin{verbatim}
+Side SOne = Side(1, [sOne, aTwo]);
+\end{verbatim}
+
+Como se muestra en los ejemplos anteriores un bando se instancia pas\'andole un id y la lista de unidades que conforman el bando.
+
+Para crear un simulador se hace de la siguiente manera:
+
+\begin{verbatim}
+Simulator sim = Simulator(map, [SOne, STwo], 20, 1);
+\end{verbatim}
+
+F\'ijese que un simulador se instancia con un mapa, la lista de los bandos, la cantidad de turnos m\'aximos que se desea dure la simulaci\'on y un n\'umero que indica la duraci\'on de un turno.
+
+Para echar andar la simulaci\'on lo hacemos de la siguiente forma: 
+
+\begin{verbatim}
+sim.start();
+\end{verbatim}
+
+Entonces un ejemplo completo de un programa podr\'ia ser el siguiente:
+
+\begin{verbatim}
+class Soldier is LandUnit -> {
+    constructor(number id, number attack) -> {
+        number self.id = id;
+        number self.attack = attack;
+    };
+};
+
+class Archer is LandUnit -> {
+    constructor(number id, number max_range) -> {
+        number self.id = id;
+        number self.max_range = max_range;
+    };
+};
+&
+LandMap map = build_random_map(1, 5, 5);
+
+Soldier sOne = Soldier(1, 10);
+Soldier sTwo = Soldier(2, 9);
+
+Archer aOne = Archer(3, 5);
+Archer aTwo = Archer(4, 5);
+
+sOne.put_in_cell(map, 0, 0);
+aTwo.put_in_cell(map, 0, 1);
+
+aOne.put_in_cell(map, 4,4 );
+sTwo.put_in_cell(map, 4, 3);
+
+Side SOne = Side(1, [sOne, aTwo]);
+Side STwo = Side(2, [aOne, sTwo]);
+
+Simulator sim = Simulator(map, [SOne, STwo], 20, 1);
+
+sim.start();
+	
+\end{verbatim}
+
+En el lenguaje adem\'as se pueden definir instrucciones m\'as complicadas tales como: if, while, declaraciones, asignaciones, etc. A continuaci\'on se muestran algunos ejemplos de como hacerlo:
+
+\begin{verbatim}
+function number W(number a) -> { 
+    if a lt 0 and a eq 0 -> { 
+        return -1 * a;  
+    } 
+    elif a gt 1 -> {
+        return 4;
+    } 
+    else -> { 
+        return a; 
+    }; 
+};
+
+function number A(number a) -> { 
+    while True -> {
+        a = a + 1;
+    }; 
+    return a;
+};
+\end{verbatim} 
+
+
