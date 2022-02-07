@@ -227,7 +227,7 @@ class Context:
 
             self.children[child].get_attr_type_children(name,_type)
 
-    def context.get_context(self,name,context):
+    def context_get_context(self,name,context):
         if len(self.children)==0:
                 return
 
