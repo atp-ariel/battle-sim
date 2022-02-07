@@ -131,7 +131,6 @@ atom -> NAME
     |   'None'                          
     |   NUMBER                          
     |   list
-    |   'self'
 
 list -> '[' expressions ']'             
     |   '[' ']'                         
@@ -139,8 +138,7 @@ list -> '[' expressions ']'
 
 \subsection{Compilador}
 
-% TODO: ESCRIBIR MUELA BISCA DEL COMPILADOR
-AQUI VA UNA MUELA BISCA DE CóMO ES EL COMPILADOR A GRANDES RASGOS
+El compilador implementado es un transpilador del lenguaje de dominio específico Battle Script hacia Python. Para ello se implementaron las siguientes etapas del proceso de compilación: tokenización, parsing, análisis semántico y generación de código.
 
 \subsection{Tokenizador}
 
@@ -366,13 +364,13 @@ Este algoritmo tiene complejidad temporal $O(n*m)$ donde $m$ es la cantidad de t
 
 \subsubsection{Construcci\'on del Parser}
 
-El c\'odigo referente a la construcci\'on del parser se encuentra en el m\'odulo \textbf{src.parser.build\_parser}.
+El c\'odigo referente a la construcci\'on del parser se encuentra en el m\'odulo \verb|language.parser.build_parser|.
 
-El parser implementado es un parser LR(1) can\'onico y para eso se definieron las clases \verb|Item| e \verb|ItemLR1| que representan la definici\'on de Item LR(0) e Item LR(1).
+El parser implementado es un parser $LR(1)$ can\'onico, el cual es un parser $LR(k)$ con $k = 1$, es decir, con un solo terminal de anticipación. Una característica especial de este parser es que cualquier gramática $LR(k)$ con $k>1$ puede transformarse en una gramática $LR(1)$. Para la implementación se definieron las clases \verb|Item| e \verb|ItemLR1| que representan la definici\'on de Item LR(0) e Item LR(1).
 
-La clase \verb|Item| tien como atributos una producci\'on y un \'indice tal que los s\'imbolos en las posiciones menores que el \'indice son los s\'imbolos de la producci\'on que se han detectado y los s\'imbolos en las posiciones mayores o igual al \'indice son los s\'imbolos de la producci\'on que faltan por ver.
+La clase \verb|Item| tiene como atributos una producci\'on y un \'indice tal que los s\'imbolos en las posiciones menores que el \'indice son los s\'imbolos de la producci\'on que se han detectado y los s\'imbolos en las posiciones mayores o igual al \'indice son los s\'imbolos de la producci\'on que faltan por ver.
 
-La clase \verb|ItemmLR1| es la definici\'on de un item LR(1). Obs\'ervese que esta hereda de \verb|Item| y adem\'as se agregan como atributos adicionales el lookahead, un string que representa al item y un valor de hash calculado a partir de este string. Adem\'as se implementan las funciones de \verb|__hash__| y \verb|__eq__|. 
+La clase \verb|ItemmLR1| es la definici\'on de un item LR(1). Obs\'ervese que esta hereda de \verb|Item| y adem\'as se agregan como atributos adicionales el \verb|lookahead|, un string que representa al item y un valor de hash calculado a partir de este string. Adem\'as se implementan las funciones de \verb|__hash__| y \verb|__eq__|. 
 
 Adem\'as se implement\'o la clase \verb|State| que representa un estado del aut\'omata LR(1). Un estado tiene los siguientes atributos:
 
@@ -406,7 +404,7 @@ Para la construcci\'on del AST durante el proceso de parsing se implementaron la
 
 \begin{itemize}
 	\item \verb|BSFile|: Nodo ra\'iz del AST.
-	\item \verb |AttrDef|: Definici\'on de atributo de una clase.  
+	\item \verb|AttrDef|: Definici\'on de atributo de una clase.  
 	\item \verb|ClassDef|: Definici\'on de una clase.
 \end{itemize}
 

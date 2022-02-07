@@ -125,7 +125,6 @@ atom -> NAME                            build_Variable
     |   'None'                          build_None
     |   NUMBER                          build_Number
     |   list
-    |   'self'
 
 list -> '[' expressions ']'             build_list1
     |   '[' ']'                         build_list2

@@ -1,0 +1,17 @@
+\section{Ejemplos}
+
+A continuación se muestran algunos ejemplos de uso del compilador y de ejecución de la simulación.
+
+\subsection{Definiendo la unidad Soldier}
+
+El primer ejemplo que se define a continuación es la creación de la clase Soldier que es un LandUnit. En este caso solo se define el constructor de la clase, que recibe el parámetro \verb|id| que representa el identificador de la unidad en la simulación.
+
+\begin{verbatim}
+class Soldier is LandUnit -> {  
+    constructor(number id) -> { 
+        number self.id = id; 
+    }; 
+}; 
+\end{verbatim}
+
+Note que tras cualquier instrucción en el lenguaje Battle Script se necesita poner un punto y coma (;) para especificar el fin de la instrucción.
