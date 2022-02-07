@@ -547,3 +547,10 @@ Para verificar la correcci\'on de la sem\'antica se implement\'o el patr\'on \ve
 
 \item \verb|Type_Checker|: Es la tercera pasada con el patr\'on, en esta se revisan que los tipos de cada expresi\'on no entren en contradicci\'on
 \end{itemize}
+
+\subsection{Generaci\'on de c\'odigo}
+
+Para la generaci\'on de c\'odigo se parte de la ra\'z del AST y haciendo uso del patr\'on ``Visitor'' se visitan cada uno de los nodos del AST. El c\'odigo generado es una cadena en c\'odigo Python, de tal forma que se importan todos los m\'odulos necesarios para realizar una simulaci\'on y el c\'odigo python generado es equivalente a lo que el usuario program\'o en nuestro lenguaje. El c\'odigo referente a este apartado se encuentra en el m\'odulo src.language.code\_generation.code\_genration. En este aparece implementada la clase \verb|CodeGenerate|, la cual tiene como atributos un \verb|StringIO|, un entero que lleva la cantidad de tabuladores para generar el c\'odigo Python correspondiente y un diccionario que traduce algunos de los s\'imbolos de nuestro lenguaje a s\'imbolos en c\'odigo Python. Adem\'as para cada uno de los nodos del AST se implement\'o la funci\'on \verb|visit|. 
+
+Un dato interesante es que para los nodos de tipo \verb|BsFile|, \verb|ClassDef| y los nodos de tipo \verb|Statement|, su m\'etodo \verb|visit| correspondiente escribe su c\'odigo correspondiente en el atributo \verb|StringIO| de la clase. Para los nodos de tipo \verb|Expression| se retorna su c\'odigo correspondiente. Esto se hace as\'i dado que en Python casi todo es una instrucci\'on y muchas de estas dependen de expresiones. La cadena del c\'odigo transpilado a Python es la que devuelve el m\'etodo \verb|visit| correspondiente al nodo \verb|BSFile|, que devuelve el valor del atributo de tipo \verb|StringIO| de la clase \verb|CodeGenerator|. 
+

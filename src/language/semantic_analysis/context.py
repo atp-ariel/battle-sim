@@ -5,7 +5,7 @@ class Type:
         self.methods={}
         self.parent=parent
 
-        if not parent ins None:
+        if parent is not None:
             for m in parent.methods:
                 self.methods[m]=parent.methods[m]
 
@@ -28,7 +28,7 @@ class Type:
 
     def get_type(self,attribute):
         if attribute in self.attributes:
-            _type=attributes[attribute]
+            _type=self.attributes[attribute]
         
             if _type=="func":
                 _type=self.methods[attribute][0]
@@ -116,7 +116,11 @@ class Context:
             return self.father.check_func_args(func,args)
 
     def get_type(self,var):
-        return self._var_context[var][0]
+        if self.father is None:
+            return self._var_context[var][0]
+
+        else:
+            return self.father.get_type(var)
 
     def define_var(self,var,_type,value=None):
         if not var in self._var_context and _type in self._type_context:
@@ -156,8 +160,10 @@ class Context:
         self.children.append(child)
         return child
      
-    def create_type(self,name,parent):     
-        _parent=self.get_type_object(parent)       
+    def create_type(self,name,parent=None): 
+        _parent = None
+        if parent is not None:    
+            _parent=self.get_type_object(parent)       
         t=Type(name,_parent)
         self._type_context[name]=t
         return t
@@ -166,8 +172,21 @@ class Context:
         return self.check_var(name)
         
     def get_return_type(self,func):
-        if self.check_func(func):
-            return self._func_context[func][0]
+        
+        if self.father is None:
+            if self.check_func(func):
+                return self._func_context[func][0]
+
+
+            else:
+                raise Exception("func '{func}' is not defined")
+
+        else:
+            if func in self._type_context:
+                return self._func_context[func][0]
+
+            else:
+                return self.father.get_return_type(func)
 
     def get_type_object(self,name):
         if self.father is None:
@@ -175,13 +194,13 @@ class Context:
                 return self._type_context[name]
 
             else:
-                raise Exception("Type '{name}' is not defined")
+                raise Exception(f"Type '{name}' is not defined")
 
         else:
             if name in self._type_context:
                 return self._type_context[name]
 
             else:
-                return father.get_type_object(name)
+                return self.father.get_type_object(name)
             
     #def define_symbol(symbol,type)

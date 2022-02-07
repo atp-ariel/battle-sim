@@ -1,8 +1,9 @@
-from .context import  *
+from .context import *
 from typing import List
 from ...utils.visitor import *
 from ..parser.ast import *
 import logging
+
 
 class Type_Checker:
     def __init__(self, context):
@@ -12,103 +13,93 @@ class Type_Checker:
     def visit(self, node: BsFile):
         for c in node.classes:
             self.visit(c)
-        
+
         for s in node.statements:
             self.visit(s)
 
     @visitor(ClassDef)
-    def visit(self,node:ClassDef):
+    def visit(self, node: ClassDef):
         for a in node.attributes:
             self.visit(a)
 
         for m in node.methods:
             self.visit(m)
 
-
-        node.computed_type="Class"
+        node.computed_type = "Class"
 
     @visitor(AttrDef)
-    def visit(self,node:AttrDef):
+    def visit(self, node: AttrDef):
         self.visit(node.init)
-        node.computed_type=node.init.computed_type
+        node.computed_type = node.init.computed_type
 
     @visitor(FuncDef)
-    def visit(self,node:FuncDef):
+    def visit(self, node: FuncDef):
         for i in node.body:
             self.visit(i)
 
-        node.computed_type=node.return_type
-
-        
+        node.computed_type = node.return_type
 
     @visitor(If)
-    def visit(self,node:If):
+    def visit(self, node: If):
         self.visit(node.condition)
 
         for i in node.body:
             self.visit(i)
 
-        node.computed_type=None
-
-
-    @visitor(Self)
-    def visit(self,node:Self):
-        node.computed_type="Self"
+        node.computed_type = None
 
     @visitor(Branch)
-    def visit(self,node:Branch):
+    def visit(self, node: Branch):
         for i in node.ifs:
             self.visit(i)
 
         for e in node.else_body:
             self.visit(e)
-        
-        node.computed_type=None
 
+        node.computed_type = None
 
     @visitor(WhileDef)
-    def visit(self,node:WhileDef):
+    def visit(self, node: WhileDef):
         self.visit(node.condition)
 
         for i in node.body:
             self.visit(i)
 
-        node.computed_type=None
-        
+        node.computed_type = None
 
     @visitor(Decl)
-    def visit(self,node:Decl):
+    def visit(self, node: Decl):
         self.visit(node.expression)
-        if self.context.check_var_type(node.name,node.type) and node.expression.computed_type == node.type:
-            node.computed_type=None
+        if self.context.check_var_type(node.name, node.type) and node.expression.computed_type == node.type:
+            node.computed_type = None
 
         else:
             logging.error("Type mismatch...")
             node.computed_type = None
-            
+
     @visitor(Assign)
-    def visit(self,node:Assign):
+    def visit(self, node: Assign):
         self.visit(node.expression)
-        if self.context.check_var_type(node.name,node.expression.computed_type):
-            node.computed_type=None
+        if self.context.check_var_type(node.name, node.expression.computed_type):
+            node.computed_type = None
 
         else:
             logging.error("Type mismatch...")
             node.computed_type = None
 
     @visitor(Return)
-    def visit(self,node:Return):
+    def visit(self, node: Return):
         self.visit(node.expression)
 
-        node.computed_type=None
+        node.computed_type = None
 
     @visitor(Break)
-    def visit(self,node:Break):
-        node.computed_type=None
+    def visit(self, node: Break):
+        node.computed_type = None
 
     @visitor(Continue)
-    def visit(self,node:Continue):
-        node.computed_type=None
+    def visit(self, node: Continue):
+        node.computed_type = None
 
     @visitor(BinaryExpression)
     def visit(self, node: BinaryExpression):
@@ -196,14 +187,15 @@ class Type_Checker:
             node.computed_type = self.context.get_type(node.name)
 
         else:
-            for t in context._type_context:
-                attr=context.get_type_object(t).attributes
+            for t in self.context._type_context:
+                attr = self.context.get_type_object(t).attributes
+                print(attr)
                 for a in attr:
-                    if node.name==a:
-                        node.computed_type = t.get_type(a)
-
+                    if node.name == a:
+                        node.computed_type = self.context.get_type_object(t).get_type(a)
+                        return
             logging.error(f"name {node.name} is not defined")
-            
+
     @visitor(Number)
     def visit(self, node: Number):
         node.computed_type = "Number"
