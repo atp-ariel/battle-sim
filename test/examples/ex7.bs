@@ -1,0 +1,38 @@
+class Soldier is LandUnit -> {
+    constructor(number id, number attack) -> {
+        number self.id = id;
+        number self.attack = attack;
+    };
+};
+class LanchitaDeRegla is NavalUnit -> {
+    constructor(number id, number max_range) -> {
+        number self.id = id;
+        number self.max_range = max_range;
+    };
+
+    function number plus_id(LanchitaDeRegla arch) -> {
+        return arch.id + 1;
+    };
+};
+&
+LandMap map = build_random_map(0.4, 7,7 );
+
+Soldier sOne = Soldier(1, 10);
+Soldier sTwo = Soldier(2, 9);
+
+LanchitaDeRegla aOne = LanchitaDeRegla(3, 5);
+LanchitaDeRegla aTwo = LanchitaDeRegla(4, 5);
+
+Side SOne = Side(1, [sOne, sTwo]);
+Side STwo = Side(2, [aOne, aTwo]);
+
+
+sOne.put_in_cell(map, 0,0);
+aTwo.put_in_cell(map, 0, 1);
+
+aOne.put_in_cell(map, 4,4 );
+sTwo.put_in_cell(map, 4, 3);
+
+aTwo.plus_id();
+Simulator sim = Simulator(map, [SOne, STwo], 20, 1);
+sim.start();
