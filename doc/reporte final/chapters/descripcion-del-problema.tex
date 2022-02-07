@@ -7,7 +7,7 @@ Se fijaron las siguientes reglas para cada una de las simulaciones:
 \begin{enumerate}
 	\item La existencia de un mapa o terreno donde se produce el enfrentamiento. Este tendrá propiedades que se serán modificables como las dimensiones, el relieve, la hidrografía, etc. La representación más abstracta de un mapa o terreno es una matriz de alturas.
 	
-	\item Las acciones serán por turnos; si se tienen dos bandos denominados: \textit{bando A} y \textit{bando B}. En el turno del \textit{bando A} cada una de las unidades de A realizará una y solo una acción (ya sea moverse hacia otra posición, atacar o mantener la posición). Luego, se pasará al turno del \textit{bando B}, que al igual que A, podrá hacer una y solo una acción con cada una de sus unidades. Esta forma de implementación permite un comportamiento de acción-reacción entre los dos bandos, asemejándose a lo que ocurre en la vida real.
+	\item La simulación ocurre por turnos. Durante un turno determinado cada unidad hace una y solo una acción ya sea atacar, moverse o mantener la posición. El objetivo de las unidades de un bando es destruir las unidades de los bandos enemigos. Cada unidad funciona de manera independiente. 
 \end{enumerate}
 
 \subsection{El mapa}
@@ -59,9 +59,9 @@ El algoritmo evolutivo en cuestión inicia con una población de individuos gene
 
 \begin{verbatim}
 def fit_func(self, heightmap: HeightMap):
-		count = sum(sum(heightmap.__map__ > self.__sea__))
-		per = count / prod(self.__shape__)
-		return per if per < self.percentage else 0
+    count = sum(sum(heightmap.__map__ > self.__sea__))
+    per = count / prod(self.__shape__)
+    return per if per < self.percentage else 0
 \end{verbatim}
 
 Esto es, se cuentan la cantidad de posiciones que su valor de altura supera el nivel del mar, y se calcula el porciento que representan estas del total, si este porciento es superior al porciento de la restricción del problema entonces se le asocia a dicho individo el valor 0.  Por tanto, el valor \verb|fit| máximo que puede tener cualquier individuo es el porciento de la restricción y el menor el 0.
@@ -175,7 +175,7 @@ Si la celda que se est\'a estudiando es una celda en la que nuestra unidad tendr
 
 \subsubsection{Los bandos}
 
-Dentro de la simulaci\'on de batalla las diferentes unidades de los ej\'ercitos  se organizar\'an por bandos que se enfrentar\'an durante la batalla. Dos ej\'ercitos aliados pertenecen al mismo bando y dos ej\'ercitos enemigos pertenecen a bandos distintos.
+Dentro de la simulaci\'on de batalla las  unidades se agrupan por bandos que se enfrentar\'an durante la batalla. Dos unidades aliadas pertenecen al mismo bando y dos unidades enemigas pertenecen a bandos distintos.
 
 Para este proceso se implement\'o la clase \verb|Side| que consta de los siguientes atributos y m\'etodos:
 \begin{itemize}
@@ -211,7 +211,7 @@ Para este proceso se implement\'o la clase \verb|Side| que consta de los siguien
 
 \subsubsection{Los eventos}
 
-Para la simulaci\'on de la batalla se implement\'o la clase \verb|Simulator|  encargada de simular los eventos que ocurrir\'an durante el enfrentamiento. Se le llamar\'a evento a la acci\'on de alguna de las unidades activas en el terreno en un tiempo determinado, sabiendo que una unidad selecciona la acci\'on a realizar de acuerdo al algoritmo.
+Para la simulaci\'on de la batalla se implement\'o la clase \verb|Simulator|  encargada de simular los eventos que ocurrir\'an durante el enfrentamiento. Se le llamar\'a evento a la acci\'on de alguna de las unidades activas en el terreno en un tiempo determinado, sabiendo que una unidad selecciona la acci\'on a realizar de acuerdo al sistema experto implementado.
 
 La clase \verb|Simulator| consta de los siguientes atributos y m\'etodos:
 
@@ -239,7 +239,7 @@ La clase \verb|Simulator| consta de los siguientes atributos y m\'etodos:
  \begin{itemize}
  \item \verb|event_is_pos|: Revisa si un evento es posible, principalmente comprueba que la unidad que realizar\'a la acci\'on est\'a viva.
  
- \item \verb|get_events|: Toma todas las unidades que a\'un est\'an vivas y les asigna un tiempo de forma aleatoria dentro del intervalo dado. Para seleccionar el tiempo de forma aleatoria se utiliz\'o la distribuci\'on beta que es una distribución de variable aleatoria continua, a diferencia de la uniforme, es bastante m\'as felxible gracias a los par\'ametros $ \alpha $ y $ \beta $, adem\'as de no tener problemas de p\'erdida de memoria como la exponencial. Una vez asociado un tiempo en el que cada unidad viva realizar\'a una acci\'on, estos pasan a ser los eventos a simular.
+ \item \verb|get_events|: Toma todas las unidades que a\'un est\'an vivas y les asigna un tiempo de forma aleatoria dentro del intervalo dado. Para seleccionar el tiempo de forma aleatoria se utiliz\'o la distribuci\'on Beta que es una distribución de variable aleatoria continua, a diferencia de la uniforme, es  m\'as flexible gracias a los par\'ametros $ \alpha $ y $ \beta $, adem\'as de no tener problemas de p\'erdida de memoria como la exponencial. Una vez asociado un tiempo en el que cada unidad viva realizar\'a una acci\'on, estos pasan a ser los eventos a simular.
  
  \item \verb|simulator_by_turns|: Se van a sacar los eventos a partir de un intervalo dado y se ejecutar\'an por orden uno a uno seg\'un el tiempo que se le asign\'o cuando se hizo el evento.
  
