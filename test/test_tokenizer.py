@@ -8,7 +8,7 @@ def test_1():
 
     tokens = Tokenizer()(case1)
 
-    assert len(tokens) == 4
+    assert len(tokens) == 5
 
     assert tokens[3].lexeme == "3.34"
 
@@ -17,5 +17,5 @@ def test_2():
     
     tokens = Tokenizer()(case2)
     
-    assert len(tokens) == 36
+    assert len(tokens) == 34
 

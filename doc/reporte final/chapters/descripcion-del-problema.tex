@@ -1,14 +1,13 @@
-\section{La Simulación}
+\section{Core, centro de procesamiento de la simulación de enfrentamientos bélico}
 
-Como planteamos en el capítulo anterior, se quiere desarrollar un programa que permita la simulación de enfrentamientos bélicos entre dos o más bandos.
+Como se plantea en el capítulo anterior, se quiere desarrollar un programa que permita la simulación de enfrentamientos bélicos entre dos o más bandos en un terreno determinado.
 
-Para esto se tienen pensado los siguientes aspectos que van a ser fijos en cada una de las simulaciones:
+Se fijaron las siguientes reglas para cada una de las simulaciones:
 
 \begin{enumerate}
-	\item La existencia de un mapa o terreno donde se producirá el enfrentamiento. Este tendrá propiedades que se serán modificables como las dimensiones, el relieve, la hidrografía, etc. La idea es que este se represente por una matriz bidimensional.
+	\item La existencia de un mapa o terreno donde se produce el enfrentamiento. Este tendrá propiedades que se serán modificables como las dimensiones, el relieve, la hidrografía, etc. La representación más abstracta de un mapa o terreno es una matriz de alturas.
 	
-	\item Las acciones serán por turnos. Como tenemos dos bandos les llamaremos: bando A y bando B. En el turno del bando A cada una de las unidades de A realizará una y solo una acción (ya sea moverse hacia otra posición, atacar o mantener la posición). Luego de esto se pasará al turno del bando B, que al igual que A, podrá hacer una y solo una acción con cada una de sus unidades. Esta forma de implementación permite un comportamiento de acción-reacción entre los dos bandos, asemejándose a lo que ocurre en la vida real.
-	
+	\item Las acciones serán por turnos; si se tienen dos bandos denominados: \textit{bando A} y \textit{bando B}. En el turno del \textit{bando A} cada una de las unidades de A realizará una y solo una acción (ya sea moverse hacia otra posición, atacar o mantener la posición). Luego, se pasará al turno del \textit{bando B}, que al igual que A, podrá hacer una y solo una acción con cada una de sus unidades. Esta forma de implementación permite un comportamiento de acción-reacción entre los dos bandos, asemejándose a lo que ocurre en la vida real.
 \end{enumerate}
 
 \subsection{El mapa}
@@ -87,6 +86,19 @@ El proceso de mutación del individuo resultante de la mezcla es el siguiente:
 
 El algoritmo evolutivo en cuestión tiene ciertos parámetros que definen las condiciones de paradas. Se definió la cantidad de iteraciones en 100 iteraciones. Se definió un nivel de tolerancia al porciento de relieve de la restricción en 0.03, de forma que cuando exista un individuo cuyo valor \verb|fit| esté en el intervalo $[p - 0.03, p + 0.03]$, donde $p$ es el valor de la restricción, el algoritmo se detiene.
 
+A continuación se muestran el resultado del algoritmo:
+
+\begin{figure}
+	\centering
+	\includegraphics[width=8cm]{chapters/img/map80.png}
+	\caption{Mapa de alturas generado por el algoritmo evolutivo con porciento de relieve de 80\%}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\includegraphics[width=8cm]{chapters/img/map10.png}
+	\caption{Mapa de alturas generado por el algoritmo evolutivo con porciento de relieve de 10\%}
+\end{figure}
 \subsection{Los objetos}
 
 Un objeto es todo lo que se puede poner el mapa y cada objeto ocupa una y solo una casilla del mapa. Estos tienen propiedades como el id que s único para cada objeto, los puntos de vida que determinan el estado de un objeto y la defensa un parámetro que indica cuan resistente es un objeto a los daños que puede sufrir durante la simulación. Todos estos parámetros son números de 1 a 10. Cuando la vida de un objeto llegue a 0, este se destruye desapareciendo del mapa. Los objetos se clasifican en dos tipos: unidades y objetos estáticos. Los objetos además tienen definidas dos funciones \verb|put_in_cell| cuya función es colocar al objeto en alguna posición de un mapa. Si se intenta poner un objeto en una posición diferente a su tipo este automáticamente se destruye. La otra función \verb|take_damage|, a partir de un ataque sufrido indica como se reducen los puntos de vida del objeto.
