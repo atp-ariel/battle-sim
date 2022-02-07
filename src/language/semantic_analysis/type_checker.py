@@ -44,8 +44,12 @@ class Type_Checker:
                 returns_types.add(i.computed_type)
         if len(returns_types) == 1:
             node.computed_type = list(returns_types)[0]
+
         else:
             logging.error("More than one return type in the function")
+
+        if node.return_type!=node.computed_type:
+            logging.error("Type mismatch...")
 
     @visitor(If)
     def visit(self, node: If):
@@ -191,18 +195,18 @@ class Type_Checker:
 
     @visitor(Variable)
     def visit(self, node: Variable):
-        if self.context.var_is_definied(node.name):
+        if self.context.check_var(node.name):
             node.computed_type = self.context.get_type(node.name)
 
-        else:
-            for t in self.context._type_context:
-                attr = self.context.get_type_object(t).attributes
-                print(attr)
-                for a in attr:
-                    if node.name == a:
-                        node.computed_type = self.context.get_type_object(t).get_type(a)
-                        return
-            logging.error(f"name {node.name} is not defined")
+        else: 
+            _type=""
+            self.context.get_attr_type_children(node.name,_type)
+
+            if _type == "":
+                logging.error(f"name {node.name} is not defined")
+
+            else:
+                node.computed_type=_type
 
     @visitor(Number)
     def visit(self, node: Number):

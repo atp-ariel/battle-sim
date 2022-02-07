@@ -53,7 +53,8 @@ class Type:
 
 
 class Context:
-    def __init__(self, father=None):
+    def __init__(self,name,father=None):
+        self.name=name
         self.father = father
         self.children = {}
         self._var_context = {}
@@ -123,7 +124,7 @@ class Context:
             return self.father.get_type(var)
 
     def define_var(self, var, _type, value=None):
-        print(self.is_type_defined(_type))
+        #print(self.is_type_defined(_type))
         if not var in self._var_context and self.is_type_defined(_type):
             self._var_context[var] = [_type, value]
 
@@ -134,7 +135,7 @@ class Context:
             raise Exception("Type Error")
 
     def define_func(self, func, _type, args, _type_args):
-        if _type in self._type_context:
+        if self.is_type_defined(_type):
             self.create_child_context(func)
 
             if func in self._var_context:
@@ -145,7 +146,7 @@ class Context:
             data = [_type, [0]*len(args), [0]*len(args)]
             # [tipo de retorno,tipo de argumento,nombre de argumento]
             for i in range(len(args)):
-                if _type_args[i] in self._type_context:
+                if self.is_type_defined(_type_args[i]):
                     data[2][i] = args[i]
                     data[1][i] = _type_args[i]
 
@@ -158,7 +159,7 @@ class Context:
             raise Exception("Type Error")
 
     def create_child_context(self, name):
-        child = Context(self)
+        child = Context(name,self)
         self.children[name] = child
         return child
 
@@ -170,9 +171,6 @@ class Context:
         t = Type(child, name, _parent)
         self._type_context[name] = t
         return t
-
-    def var_is_defined(self, name):
-        return self.check_var(name)
 
     def get_return_type(self, func):
 
@@ -215,4 +213,17 @@ class Context:
 
             else:
                 return self.father.is_type_defined(name)
+    
+    def get_attr_type_children(self,name,_type):
+        if len(self.children)==0:
+            if name in self._var_context:
+                _type=self._var_context[name][0]
+                return
+
+        for child in self.children:
+            if name in self._var_context:
+                return self._var_context[name][0]
+
+            self.children[child].get_attr_type_children(name,_type)
+
     # def define_symbol(symbol,type)
