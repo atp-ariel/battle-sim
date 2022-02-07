@@ -8,9 +8,11 @@ import logging
 class Type_Checker:
     def __init__(self, context):
         self.context = context
+        self.current_context=context
 
     @visitor(BsFile)
     def visit(self, node: BsFile):
+        self.current_context=self.context
         for c in node.classes:
             self.visit(c)
 
@@ -19,6 +21,11 @@ class Type_Checker:
 
     @visitor(ClassDef)
     def visit(self, node: ClassDef):
+        context=""
+        self.context.get_context(node.name,context)
+        if context != "":
+            self.current_context=context
+
         for a in node.attributes:
             self.visit(a)
 
@@ -42,6 +49,7 @@ class Type_Checker:
             self.visit(i)
             if isinstance(i, Return):
                 returns_types.add(i.computed_type)
+                
         if len(returns_types) == 1:
             node.computed_type = list(returns_types)[0]
 
@@ -50,6 +58,14 @@ class Type_Checker:
 
         if node.return_type!=node.computed_type:
             logging.error("Type mismatch...")
+
+        if not self.current_context.check_func(node.name):
+            self.current_context.define_func(node.name,node.return_type,node.arg_names,node.arg_types)
+
+        context=""
+        self.context.get_context(node.name,context)
+        if context != "":
+            self.current_context=context
 
     @visitor(If)
     def visit(self, node: If):
@@ -88,6 +104,7 @@ class Type_Checker:
     def visit(self, node: Decl):
         self.visit(node.expression)
         if self.context.check_var_type(node.name, node.type) and node.expression.computed_type == node.type:
+            self.current_context.define_var(node.name,node.type,node.expression)
             node.computed_type = None
 
         else:
@@ -98,6 +115,7 @@ class Type_Checker:
     def visit(self, node: Assign):
         self.visit(node.expression)
         if self.context.check_var_type(node.name, node.expression.computed_type):
+            self.current_context.define_var(node.name,node.type,node.expression)
             node.computed_type = None
 
         else:

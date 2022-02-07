@@ -222,8 +222,19 @@ class Context:
 
         for child in self.children:
             if name in self._var_context:
-                return self._var_context[name][0]
+                _type=self._var_context[name][0]
+                return
 
             self.children[child].get_attr_type_children(name,_type)
 
+    def context.get_context(self,name,context):
+        if len(self.children)==0:
+                return
+
+        for child in self.children:
+            if name==child:
+                context=self.children[name]
+                return
+                
+            self.children[child].get_context(self,name,context)
     # def define_symbol(symbol,type)
