@@ -25,12 +25,9 @@ class Type_Builder:
 
     @visitor(AttrDef)
     def visit(self, node: AttrDef):
-        attr_type = self.context.create_type(node.type)
-        self.current_type.define_attribute(node.name, attr_type)
+        self.current_type.define_attribute(node.name, node.type)
 
     @visitor(FuncDef)
     def visit(self, node: FuncDef):
-        return_type = self.context.create_type(node.return_type)
-        arg_types = [self.context.create_type(t) for t in node.arg_types]
         self.current_type.define_method(
-            node.name, return_type, node.arg_names, arg_types)
+            node.name, node.return_type, node.arg_names, node.arg_types)

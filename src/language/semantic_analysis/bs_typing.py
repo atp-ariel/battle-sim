@@ -15,6 +15,9 @@ class battle_sim_typing:
         self.context=context
 
     def __call__(self):
+        self.context.create_type("number")
+        self.context.create_type("bool")
+        self.context.create_type("list")
         self.collecting()
         self.building()
         self.checking()

@@ -32,17 +32,25 @@ class Type_Checker:
         self.visit(node.init)
         node.computed_type = node.init.computed_type
 
+        if node.type != node.computed_type:
+            logging.error("The type of the variable is different from the defined type")
+
     @visitor(FuncDef)
     def visit(self, node: FuncDef):
+        returns_types = set()
         for i in node.body:
             self.visit(i)
-
-        node.computed_type = node.return_type
+            if isinstance(i, Return):
+                returns_types.add(i.computed_type)
+        if len(returns_types) == 1:
+            node.computed_type = list(returns_types)[0]
+        else:
+            logging.error("More than one return type in the function")
 
     @visitor(If)
     def visit(self, node: If):
         self.visit(node.condition)
-
+        
         for i in node.body:
             self.visit(i)
 
@@ -91,7 +99,7 @@ class Type_Checker:
     def visit(self, node: Return):
         self.visit(node.expression)
 
-        node.computed_type = None
+        node.computed_type = node.expression.computed_type
 
     @visitor(Break)
     def visit(self, node: Break):
