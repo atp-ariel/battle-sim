@@ -55,6 +55,9 @@ class Type_Checker:
     def visit(self, node: If):
         self.visit(node.condition)
         
+        if node.codition.computed_type != "bool":
+            logging.error("Condition in if statements must be a bool")
+
         for i in node.body:
             self.visit(i)
 
@@ -73,7 +76,9 @@ class Type_Checker:
     @visitor(WhileDef)
     def visit(self, node: WhileDef):
         self.visit(node.condition)
-
+        if node.condition.computed_type != "bool":
+            logging.error("Condition in while statements must be a bool")
+            
         for i in node.body:
             self.visit(i)
 
