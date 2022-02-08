@@ -217,7 +217,7 @@ class Type_Checker:
 
         else: 
             if self.current_context.check_var:
-                node.computed_type=self.current_context.get_type_children(node.name)
+                node.computed_type=self.current_context.get_type(node.name)
 
             else:
                 logging.error(f"name {node.name} is not defined")
