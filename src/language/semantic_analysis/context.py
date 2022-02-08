@@ -231,13 +231,11 @@ class Context:
         print(name)
         if len(self.children)==0:
                 if self.name==name:
-                    context=self
-                    return
+                    return self
 
         for child in self.children:
             if name==child:
-                context=self.children[name]
-                return 
+                return self.children[name]
                 
             self.children[child].context_get_context(name, context)
     # def define_symbol(symbol,type)
