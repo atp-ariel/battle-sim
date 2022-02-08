@@ -216,14 +216,12 @@ class Type_Checker:
             node.computed_type = self.current_context.get_type(node.name)
 
         else: 
-            _type=""
-            self.context.get_attr_type_children(node.name,_type)
-
-            if _type == "":
-                logging.error(f"name {node.name} is not defined")
+            if self.current_context.check_var:
+                node.computed_type=self.current_context.get_type_children(node.name)
 
             else:
-                node.computed_type=_type
+                logging.error(f"name {node.name} is not defined")
+
 
     @visitor(Number)
     def visit(self, node: Number):
