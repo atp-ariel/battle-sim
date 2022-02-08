@@ -1,3 +1,7 @@
+from ast import arg
+from multiprocessing import context
+
+
 class Type:
     def __init__(self, context, name, parent=None):
         self.name = name
@@ -119,7 +123,11 @@ class Context:
 
     def get_type(self, var):
         if self.father is None:
-            return self._var_context[var][0]
+            if var in self._var_context:
+                return self._var_context[var][0]
+            
+            else:
+                raise Exception(f"name {var} is not defined")
 
         else:
             if var in self._var_context:
@@ -127,7 +135,7 @@ class Context:
 
             return self.father.get_type(var)
 
-    def define_var(self, var, _type, value=None):
+    def define_var(self, var, _type, value=""):
         #print(self.is_type_defined(_type))
         if not var in self._var_context and self.is_type_defined(_type):
             self._var_context[var] = [_type, value]
@@ -145,7 +153,7 @@ class Context:
                 raise Exception(f"{func} is already defined")
 
             self._type_context[func] = ["function", None]
-
+            _context=self.create_child_context(func)
             data = [_type, [0]*len(args), [0]*len(args)]
             # [tipo de retorno,tipo de argumento,nombre de argumento]
             for i in range(len(args)):
@@ -161,7 +169,10 @@ class Context:
         else:
             raise Exception("Type Error")
 
-        return self.create_child_context(func)
+        for i in range(len(args)):
+            _context.define_var(args[i],_type_args[i])
+            
+        return _context
 
     def create_child_context(self, name):
         child = Context(name,self)

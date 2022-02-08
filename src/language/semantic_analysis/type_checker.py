@@ -1,3 +1,4 @@
+from multiprocessing import context
 from .context import *
 from typing import List
 from ...utils.visitor import *
@@ -13,6 +14,7 @@ class Type_Checker:
     @visitor(BsFile)
     def visit(self, node: BsFile):
         self.current_context=self.context
+        print(self.context.children)
         for c in node.classes:
             self.visit(c)
 
@@ -41,6 +43,11 @@ class Type_Checker:
 
     @visitor(FuncDef)
     def visit(self, node: FuncDef):
+        if not self.current_context.check_func(node.name):
+            self.current_context.define_func(node.name,node.return_type,node.arg_names,node.arg_types)
+
+        self.current_context=node.my_context
+        
         returns_types = set()
         for i in node.body:
             self.visit(i)
@@ -58,10 +65,7 @@ class Type_Checker:
             print(node.name)
             logging.error("Type mismatch...")
 
-        if not self.current_context.check_func(node.name):
-            self.current_context.define_func(node.name,node.return_type,node.arg_names,node.arg_types)
-
-        self.current_context=node.my_context
+        
 
     @visitor(If)
     def visit(self, node: If):
@@ -113,7 +117,7 @@ class Type_Checker:
     @visitor(Assign)
     def visit(self, node: Assign):
         self.visit(node.expression)
-        if self.context.check_var_type(node.name, node.expression.computed_type):
+        if self.current_context.check_var_type(node.name, node.expression.computed_type):
             self.current_context.define_var(node.name,node.type,node.expression)
             node.computed_type = None
 
@@ -164,7 +168,7 @@ class Type_Checker:
             if node.left.computed_type == "Var":
                 node.computed_type = node.left.computed_type
                 var = self.var.pop()
-                self.context.define_var(var, node.computed_type)
+                self.current_context.define_var(var, node.computed_type)
 
             else:
                 print("aritmetic")
@@ -202,7 +206,7 @@ class Type_Checker:
         self.visit(node.expression)
 
         if node.args is None:
-            _type = self.context.get_type_object(node.expression.computed_type)
+            _type = self.current_context.get_type_object(node.expression.computed_type)
 
             if _type.is_method(node.name):
                 node.computed_type = _type.get_method(node.name)[0]
@@ -219,16 +223,16 @@ class Type_Checker:
                     args[i] = node.args[i].computed_type
 
                 name = node.expression.name
-                if self.context.check_func_args(name, args):
-                    self.context.get_return_type(name)
+                if self.current_context.check_func_args(name, args):
+                    self.current_context.get_return_type(name)
 
     @visitor(Variable)
     def visit(self, node: Variable):
-        if self.context.check_var(node.name):
+        if self.current_context.check_var(node.name):
             node.computed_type = self.current_context.get_type(node.name)
 
         else: 
-            if self.current_context.check_var:
+            if self.current_context.check_var(node.name):
                 node.computed_type=self.current_context.get_type(node.name)
 
             else:
