@@ -229,7 +229,9 @@ class Context:
 
     def context_get_context(self,name,context):
         if len(self.children)==0:
-                return
+                if self.name==name:
+                    context=self
+                    return
 
         for child in self.children:
             if name==child:
