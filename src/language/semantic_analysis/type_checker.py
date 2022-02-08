@@ -21,10 +21,7 @@ class Type_Checker:
 
     @visitor(ClassDef)
     def visit(self, node: ClassDef):
-        context = ""
-        context = self.context.context_get_context(node.name,context)
-        if context != "":
-            self.current_context=context
+        self.current_context=node.my_context
 
         for a in node.attributes:
             self.visit(a)
@@ -62,10 +59,7 @@ class Type_Checker:
         if not self.current_context.check_func(node.name):
             self.current_context.define_func(node.name,node.return_type,node.arg_names,node.arg_types)
 
-        context=""
-        self.context.get_context(node.name,context)
-        if context != "":
-            self.current_context=context
+        self.current_context=node.my_context
 
     @visitor(If)
     def visit(self, node: If):
@@ -219,7 +213,7 @@ class Type_Checker:
     @visitor(Variable)
     def visit(self, node: Variable):
         if self.context.check_var(node.name):
-            node.computed_type = self.context.get_type(node.name)
+            node.computed_type = self.current_context.get_type(node.name)
 
         else: 
             _type=""
