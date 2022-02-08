@@ -54,6 +54,8 @@ class Type_Checker:
             logging.error("More than one return type in the function")
 
         if node.return_type!=node.computed_type:
+            print("func")
+            print(node.name)
             logging.error("Type mismatch...")
 
         if not self.current_context.check_func(node.name):
@@ -97,11 +99,14 @@ class Type_Checker:
     @visitor(Decl)
     def visit(self, node: Decl):
         self.visit(node.expression)
-        if self.context.check_var_type(node.name, node.type) and node.expression.computed_type == node.type:
+        print(node.expression.computed_type) #Node,type es list y debe ser myList
+        if (not (self.current_context.check_var(node.name)) or self.current_context.check_var_type(node.name,node.type)) and node.expression.computed_type == node.type:
             self.current_context.define_var(node.name,node.type,node.expression)
             node.computed_type = None
 
         else:
+            print("decl")
+            print(node.name)
             logging.error("Type mismatch...")
             node.computed_type = None
 
@@ -113,6 +118,8 @@ class Type_Checker:
             node.computed_type = None
 
         else:
+            print("assign")
+            print(node.name)
             logging.error("Type mismatch...")
             node.computed_type = None
 
@@ -140,6 +147,8 @@ class Type_Checker:
         node.computed_type = node.right.computed_type
 
         if node.left.computed_type != node.right.computed_type:
+            print("bin")
+            print(f"{node.left} {node.right}")
             logging.error("Type mismatch...")
             node.computed_type = None
 
@@ -158,11 +167,13 @@ class Type_Checker:
                 self.context.define_var(var, node.computed_type)
 
             else:
+                print("aritmetic")
+                print(f"{node.left} {node.right}")
                 logging.error("Type mismatch...")
                 node.computed_type = None
 
         if node.left.computed_type == node.right.computed_type:
-            if node.left.computed_type == "Number":
+            if node.left.computed_type == "number":
                 node.computed_type = node.left.computed_type
 
     @visitor(TernaryExpression)
@@ -172,6 +183,7 @@ class Type_Checker:
         self.visit(node.left)
 
         if node.right.computed_type == node.left.computed_type:
+            print("Ternary")
             logging.error("Type mismatch...")
             node.computed_type = None
 
@@ -182,8 +194,8 @@ class Type_Checker:
     @visitor(Inversion)
     def visit(self, node: Inversion):
         self.visit(node.expression)
-        if node.expression.computed_type == "Bool":
-            node.computed_type = "Bool"
+        if node.expression.computed_type == "bool":
+            node.computed_type = "bool"
 
     @visitor(Primary)
     def visit(self, node: Primary):
@@ -225,11 +237,11 @@ class Type_Checker:
 
     @visitor(Number)
     def visit(self, node: Number):
-        node.computed_type = "Number"
+        node.computed_type = "number"
 
     @visitor(Bool)
     def visit(self, node: Bool):
-        node.computed_type = "Bool"
+        node.computed_type = "bool"
 
     @visitor(MyNone)
     def visit(self, node: MyNone):
@@ -237,4 +249,4 @@ class Type_Checker:
 
     @visitor(MyList)
     def visit(self, node: MyList):
-        node.computed_type = "MyList"
+        node.computed_type = "List"

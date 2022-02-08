@@ -73,14 +73,15 @@ class Context:
             return self.father.check_var(var)
 
     def check_var_type(self, var, _type):
-        if self.father == None:
-            return var in self._var_context and self._var_context[var][0] == _type
-
-        else:
-            if var in self._var_context:
+        if self.check_var(var):
+            if self.get_type(var)==_type:
                 return True
-
-            return self.father.check_var(var)
+            
+            else:
+                return False
+            
+        else:
+            raise Exception(f"{var} is not defined")
 
     def check_func(self, func):
         if self.father == None:
@@ -121,6 +122,9 @@ class Context:
             return self._var_context[var][0]
 
         else:
+            if var in self._var_context:
+                return self._var_context[var][0]
+
             return self.father.get_type(var)
 
     def define_var(self, var, _type, value=None):
