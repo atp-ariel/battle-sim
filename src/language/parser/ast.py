@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import List
 
+
 @dataclass
 class Node(ABC):
     pass
@@ -24,6 +25,8 @@ class FuncDef(Statement):
     arg_names: List[str]
     arg_types: List[str]
     body: List[Statement]
+    context: Context
+    my_context: Context
 
 
 @dataclass
@@ -31,6 +34,7 @@ class AttrDef(Node):
     name: str
     type: str
     init: Expression
+    context: Context
 
 
 @dataclass
@@ -41,6 +45,8 @@ class ClassDef(Node):
     arg_types: List[str]
     attributes: List[AttrDef]
     methods: List[FuncDef]
+    context: Context
+    my_context: Context
 
 
 @dataclass
@@ -72,12 +78,14 @@ class Decl(Statement):
     type: str
     name: str
     expression: Expression
+    context: Context
 
 
 @dataclass
 class Assign(Statement):
     name: str
     expression: Expression
+    context: Context
 
 
 @dataclass
@@ -135,6 +143,7 @@ class Primary(Expression):
 @dataclass
 class Variable(Expression):
     name: str
+    context: Context
 
 
 @dataclass

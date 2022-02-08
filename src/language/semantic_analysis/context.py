@@ -42,7 +42,7 @@ class Type:
     def define_method(self, name, return_type, arguments, argument_types):
         self.methods[name] = [return_type, arguments, argument_types]
         self.attributes[name] = [name, "func"]
-        self.context.define_func(name, return_type, arguments, argument_types)
+        return self.context.define_func(name, return_type, arguments, argument_types)
         # Se guarda en diccionario el tipo de retorno, los argumentos y el tipo de los argumentos
 
     def is_attribute(self, name):
@@ -136,7 +136,6 @@ class Context:
 
     def define_func(self, func, _type, args, _type_args):
         if self.is_type_defined(_type):
-            self.create_child_context(func)
 
             if func in self._var_context:
                 raise Exception(f"{func} is already defined")
@@ -158,6 +157,8 @@ class Context:
         else:
             raise Exception("Type Error")
 
+        return self.create_child_context(func)
+
     def create_child_context(self, name):
         child = Context(name,self)
         self.children[name] = child
@@ -170,7 +171,7 @@ class Context:
         child = self.create_child_context(name)
         t = Type(child, name, _parent)
         self._type_context[name] = t
-        return t
+        return [t,child]
 
     def get_return_type(self, func):
 
@@ -227,16 +228,4 @@ class Context:
 
             self.children[child].get_attr_type_children(name,_type)
 
-    def context_get_context(self,name,context):
-        if len(self.children)==0:
-                if self.name==name:
-                    context=self
-                    return
-
-        for child in self.children:
-            if name==child:
-                context=self.children[name]
-                return
-                
-            self.children[child].get_context(self,name,context)
     # def define_symbol(symbol,type)
