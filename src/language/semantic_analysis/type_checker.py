@@ -213,7 +213,7 @@ class Type_Checker:
     @visitor(Variable)
     def visit(self, node: Variable):
         if self.context.check_var(node.name):
-            node.computed_type = self.context.get_type(node.name)
+            node.computed_type = self.current_context.get_type(node.name)
 
         else: 
             _type=""

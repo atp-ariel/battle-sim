@@ -36,9 +36,9 @@ class Compiler:
         program_ast = self.parser.parse(tokens)
 
         # Semantic analysis
-        # context = Context()
-        # bst = battle_sim_typing(program_ast, Type_Collector(context), Type_Builder(context), Type_Checker(context), context)
-        # bst()
+        context = Context("Global")
+        bst = battle_sim_typing(program_ast, Type_Collector(context), Type_Builder(context), Type_Checker(context), context)
+        bst()
 
         # Code Generate
         code_program = CodeGenerate().visit(program_ast)
