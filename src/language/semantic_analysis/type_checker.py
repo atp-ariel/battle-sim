@@ -21,8 +21,8 @@ class Type_Checker:
 
     @visitor(ClassDef)
     def visit(self, node: ClassDef):
-        context=""
-        self.context.get_context(node.name,context)
+        context = ""
+        self.context.context_get_context(node.name,context)
         if context != "":
             self.current_context=context
 
