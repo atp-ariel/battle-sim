@@ -17,6 +17,11 @@ class Type_Collector:
 
     @visitor(ClassDef)
     def visit(self, node: ClassDef):
-        node.my_context=self.context.create_type(node.name)[1]
+        node.my_context=self.context.create_type(node.name,parent=node.parent)[1]
         node.context=self.current_context
+
         
+
+
+        
+    

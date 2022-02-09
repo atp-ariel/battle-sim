@@ -30,7 +30,7 @@ Side STwo = Side(2, [aOne, sTwo]);
 sOne.put_in_cell(map, 0, 0);
 aTwo.put_in_cell(map, 0, 1);
 
-aOne.put_in_cell(map, 4,4 );
+aOne.put_in_cell(map, 4, 4);
 sTwo.put_in_cell(map, 4, 3);
 
 aTwo.plus_id();

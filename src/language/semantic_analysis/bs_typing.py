@@ -18,12 +18,22 @@ class battle_sim_typing:
         self.context.create_type("number")
         self.context.create_type("bool")
         self.context.create_type("List")
+        self.context.create_type("LandUnit")
+        self.context.create_type("LandMap")
+        self.context.create_type("Side")
+        self.context.create_type("MyNone")
+        self.context.create_type("Simulator",["map","Sides","arg1", "arg2"],["LandMap","List","number","number"])
+        self.context.define_func("build_random_map", "LandMap", ["map","arg2","arg3"], ["LandMap","number","number"])
+        self.context.get_type_object("LandUnit").define_method("put_in_cell", "MyNone", ["arg1","arg2","arg3"], ["number","number","number"])
+        self.context.get_type_object("Simulator").define_method("start", "MyNone", [], [])
+        
         self.collecting()
         self.building()
         self.checking()
 
     def collecting(self):
-        self.collector.visit(self.program)
+      self.collector.visit(self.program)
+        
 
     def building(self):
         self.builder.visit(self.program)
