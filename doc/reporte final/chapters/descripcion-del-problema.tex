@@ -174,8 +174,9 @@ Si la celda que se est\'a estudiando es una celda en la que nuestra unidad tendr
 A continuaci\'on se hace una breve explicaci\'on de las funciones implementadas a las unidades. Adem\'as de las  ya mencionadas, implementadas en ``BSObject'', un agente ``BSUnit'' tiene implementadas las siguientes funciones:
 
 \begin{itemize}
-	\item \verb|calculate_distance(self, cell1, cell2) -> int| con la que el agente calcula la distancia entre dos celda. La distancia se calcula como la cantidad m\'inima de celdas que tiene recorrer el agente para ir de una celda a otra.
-	\item \verb|nearby_friend(self, cell) -> bool| con la que el agente determina si movi\'endose a la celda de entrada estar\'a cerca de un compa\~{n}ero. 
+	\item \verb|calculate_distance(self, cell1, cell2) -> int| con la que la unidad calcula la distancia entre dos celdas. La distancia se calcula como la cantidad m\'inima de celdas que tiene recorrer la unidad para ir de una celda a otra.
+	\item \verb|nearby_friend(self, cell) -> bool| con la que la unidad determina si movi\'endose a la celda de entrada estar\'a cerca de un compa\~{n}ero.
+	\item \verb|enemy_in_range(self, cell)| con la que la unidad determina si al moverse a esa celda, tiene alg\'un enemigo al alcance.
 \end{itemize}
 
 \subsection{El simulador}
