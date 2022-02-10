@@ -1,5 +1,6 @@
 from ast import arg
 from multiprocessing import context
+from random import paretovariate
 
 
 class Type:
@@ -11,6 +12,17 @@ class Type:
         self.context = context
 
         if parent is not None:
+            parent_context=parent.context
+            
+            for v in parent_context._var_context:
+                self.context._var_context[v]=parent_context._var_context[v]
+
+            for f in parent_context._func_context:
+                self.context._func_context[f]=parent_context._func_context[f]
+                
+            for t in parent_context._type_context:
+                self.context._type_context[t]=parent_context._type_context[t]
+                
             for m in parent.methods:
                 self.methods[m] = parent.methods[m]
 
@@ -64,6 +76,9 @@ class Context:
         self._var_context = {}
         self._func_context = {}
         self._type_context = {}
+        self.If=0
+        self.Else=0
+        self.While=0
         # self._symbol_context={}
 
     def check_var(self, var):
@@ -124,27 +139,32 @@ class Context:
     def get_type(self, var):
         if self.father is None:
             if var in self._var_context:
-                return self._var_context[var][0]
+                return [self._var_context[var][0],self._var_context[var][1]]
             
             else:
                 raise Exception(f"name {var} is not defined")
 
         else:
             if var in self._var_context:
-                return self._var_context[var][0]
+                return [self._var_context[var][0],self._var_context[var][1]]
 
             return self.father.get_type(var)
 
     def define_var(self, var, _type, value=""):
         #print(self.is_type_defined(_type))
-        if not var in self._var_context and self.is_type_defined(_type):
-            self._var_context[var] = [_type, value]
+        
+        type=_type
+        if isinstance(_type,list):
+            type=_type[1]
+        
+        if not var in self._var_context and self.is_type_defined(type):
+            self._var_context[var] = ["var", type, value]
 
-        elif self._var_context[var][0] == _type:
-            self._var_context[var][1] = value
+        elif self._var_context[var][1] == type:
+            self._var_context[var][2] = value
 
         else:
-            raise Exception("Type Error")
+            raise Exception(f"Type {type} is not defined")
 
     def define_func(self, func, _type, args, _type_args):
         if self.is_type_defined(_type):
@@ -152,7 +172,7 @@ class Context:
             if func in self._var_context:
                 raise Exception(f"{func} is already defined")
 
-            self._type_context[func] = ["function", None]
+            self._var_context[func] = ["function",None, None]
             _context=self.create_child_context(func)
             data = [_type, [0]*len(args), [0]*len(args)]
             # [tipo de retorno,tipo de argumento,nombre de argumento]
@@ -161,14 +181,15 @@ class Context:
                     data[2][i] = args[i]
                     data[1][i] = _type_args[i]
 
-                    self._func_context[func] = data
 
                 else:
                     raise Exception("Type Error")
+                
 
         else:
             raise Exception("Type Error")
-
+        
+        self._func_context[func] = data
         for i in range(len(args)):
             _context.define_var(args[i],_type_args[i])
             
@@ -179,13 +200,16 @@ class Context:
         self.children[name] = child
         return child
 
-    def create_type(self, name, parent=None):
+    def create_type(self, name,args=[],type_args=[],parent=None):
         _parent = None
         if parent is not None:
             _parent = self.get_type_object(parent)
+            
+            
         child = self.create_child_context(name)
         t = Type(child, name, _parent)
         self._type_context[name] = t
+        self.define_func(name,name,args,type_args)
         return [t,child]
 
     def get_return_type(self, func):
@@ -195,7 +219,7 @@ class Context:
                 return self._func_context[func][0]
 
             else:
-                raise Exception("func '{func}' is not defined")
+                raise Exception(f"func '{func}' is not defined")
 
         else:
             if func in self._type_context:
@@ -204,13 +228,16 @@ class Context:
             else:
                 return self.father.get_return_type(func)
 
-    def get_type_object(self, name):
+    def get_type_object(self, name_type):
+        name=name_type
+        if isinstance(name,list):
+            name=name_type[1]
         if self.father is None:
             if name in self._type_context:
                 return self._type_context[name]
 
             else:
-                raise Exception("Type '{name}' is not defined")
+                raise Exception(f"Type '{name}' is not defined")
 
         else:
             if name in self._type_context:
@@ -229,7 +256,30 @@ class Context:
 
             else:
                 return self.father.is_type_defined(name)
-    
+    def is_context_father(self,name):
+        if self.father is None:
+            return self.name==name
+        
+        else:
+            if self.father.name==name:
+                return True
+            
+            return self.father.is_context_father
+        
+        
+    def get_context_father(self,name):
+        if self.father is None and self.name==name:
+            return self
+        
+        else:
+            if self.father.name==name:
+                return self.father
+            
+            return self.father.get_context_father
+        
+                
+            
+            
     def get_attr_type_children(self,name,_type):
         if len(self.children)==0:
             if name in self._var_context:
