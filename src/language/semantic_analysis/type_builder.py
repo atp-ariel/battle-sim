@@ -75,10 +75,11 @@ class Type_Builder:
             self.visit(i)
             self.current_context=node.context
 
-        for e in node.else_body:
-            self.current_context=node.my_context
-            self.visit(e)
-            self.current_context=node.context
+        if not node.else_body is None:
+            for e in node.else_body:
+                self.current_context=node.my_context
+                self.visit(e)
+                self.current_context=node.context
            
     @visitor(WhileDef)
     def visit(self,node:WhileDef):
