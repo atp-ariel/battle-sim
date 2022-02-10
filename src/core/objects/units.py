@@ -15,6 +15,8 @@ class BSUnit(BSObject):
             raise Exception('radio invalido')
         if vision < max_range:
             raise Exception('La vision no puede ser menor que el rango maximo')
+        if max_range < min_range:
+            raise Exception('El rango maximo no puede ser menor que el rango minimo')
         self.side = None
         self.moral = moral
         self.attack = attack
@@ -297,10 +299,7 @@ class BSUnit(BSObject):
 
         precision = random.uniform(0, 1)
 
-        range_enemy = max(abs(enemy.cell.row-self.cell.row),
-                          abs(enemy.cell.col-self.cell.col))
-
-        miss_distance = (range_enemy-self.min_range) / \
+        miss_distance = (enemy_distance-self.min_range) / \
             (self.max_range-self.min_range+0.1)/10
 
         positions = [(-1, 1), (-1, 0), (-1, 1), (0, -1),
@@ -308,7 +307,7 @@ class BSUnit(BSObject):
 
         if precision < len(block_objects)/10:
 
-            bs_object = block_objects[int(precision)]
+            bs_object = block_objects[int(precision*10)]
             bs_object.take_damage(damage)
 
             if self.radio > 1:

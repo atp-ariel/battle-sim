@@ -111,7 +111,7 @@ Los objetos estáticos se definen como objetos propios del ambiente. Estos no pe
 
 \subsubsection{Unidades}
 
-Las unidades son los agentes de la simulación. El objetivo de cada una de las unidades es destruir a las unidades enemigas (las que no pertenecen a su mismo bando), y para ello podrá analizar parte del ambiente en el que se encuentra y tomar la decisión que sea más conveniente según sean las circunstancias. 
+Las unidades son los agentes de la simulación. Esta se dividen en dos tipos fundamentalmente: unidades terrestres (\verb|LandUnit|) y unidades navales (\verb|NavalUnit|). El objetivo de cada una de las unidades es destruir a las unidades enemigas (las que no pertenecen a su mismo bando), y para ello cada unidad podrá analizar parte del ambiente en el que se encuentra y tomar la decisión que sea más conveniente según sean las circunstancias. 
 
 Dado que el ambiente cambia constantemente, las unidades serán agentes casi puramente reactivos. Un agente puramente reactivo es un sistema computacional situado en un ambiente, el cual es capaz de percibir y responder de modo oportuno a los cambios que ocurran en el mismo con  acciones autónomas y sin tomar en cuenta el pasado para lograr sus objetivos. En este caso las unidades son agentes casi puramente reactivos pues para el movimiento de las mismas a través del mapa se tiene en cuenta si una unidad ya estuvo en una posición, con el fin de estimular la exploración del mapa por parte de las unidades.
 
@@ -159,11 +159,11 @@ Luego de haber analizado todos los enemigos, el seleccionado por la unidad para 
  
 Si la unidad no realiza un ataque, entonces, en caso de que se móvil, chequea si se puede mover a alguna casilla adyacente a la que se encuentra. Esto se hace de la siguiente forma:
  
-Se fija un costo en infinito. Luego por cada una de las celdas que la rodean en todos los puntos cardinales posibles (NW, N, NE, W, E, SW, S y SE)ase calcula el costo de moverse a dicha celda, y nos quedamos con la celda cuyo co es el menor. Luego si el menor costo detectado es menor a infinito la unidad se mueve a dicha celda en caso contrario la unidad mantiene su posición. 
+Se fija un costo en infinito. Luego por cada una de las celdas que la rodean en todos los puntos cardinales posibles (NW, N, NE, W, E, SW, S y SE) se calcula el costo de moverse a dicha celda, y nos quedamos con la celda cuyo co es el menor. Luego si el menor costo detectado es menor a infinito la unidad se mueve a dicha celda en caso contrario la unidad mantiene su posición. 
  
 Ahora, ¿cómo calcular el costo que tiene para una unidad moverse de una celda a otra?
  
-Si la celda nueva es intransitable (tiene el parámetro \verb|passable| en 0), el tipo de la celda es diferente al tipo de la unidad o si en la celda hay algún objeto se devuelve infinito. Estos son todos los casos en los que la unidad no puede moverse a dicha celda. Para las unidades terrestres siola diferencia de alturas entre dosla ltas es muy grande (mayor a 0.3), tampoco pueden avanzar a dicha celda, retornándose infinito. 
+Si la celda nueva es intransitable (tiene el parámetro \verb|passable| en 0), el tipo de la celda es diferente al tipo de la unidad o si en la celda hay algún objeto se devuelve infinito. Estos son todos los casos en los que la unidad no puede moverse a dicha celda. Para las unidades terrestres si la diferencia de alturas entre las dos celdas es muy grande (mayor a 0.3), tampoco pueden avanzar a dicha celda, retornándose infinito. 
  
 Entonces en un primer momento se fija el costo en 10 - \verb|passable|/2, de esta manera se premia ir a celdas más transitables. A continuación se comprueba si esa celda está entre las que la unidad recuerda como ya visitadas. Si así es, el coste se incrementará en \verb|passable|/3. Así logramos incentivar que las unidades visiten celdas no visitadas con anterioridad  
   
@@ -171,13 +171,29 @@ Ahora se comprueba si la celda se encuentra en zona ``amiga'', es decir, si esa 
 
 Si la celda que se est\'a estudiando es una celda en la que nuestra unidad tendr\'a al alcance un enemigo, su coste se reducir\'a en el valor del par\'ametro \verb|ofensive|  multiplicado por la inversa de la ra\'iz cuadrada de la distancia m\'inima hasta el enemigo. Adem\'as la unidad observa las celdas cercanas a la celda que se est\'a estudiando que est\'en dentro de su rango de visi\'on. Si detecta que al moverse a dicha celda se encontrar\'a en rango de alg\'un enemigo el costo se aumenta en 1.1 por cada enemigo que pudiera atacar a la unidad. De esta manera se est\'a diciendo que, cuanto m\'as ofensiva sea nuestra unidad, m\'as se aproximar\'a al enemigo, aunque con cierta precauci\'on.  
 
-A continuaci\'on se hace una breve explicaci\'on de las funciones implementadas a las unidades. Adem\'as de las  ya mencionadas, implementadas en ``BSObject'', un agente ``BSUnit'' tiene implementadas las siguientes funciones:
+\subsection{M\'etodos de las unidades}
+A continuaci\'on se hace una breve explicaci\'on de las funciones implementadas a las unidades. Adem\'as de las  ya mencionadas, implementadas en \verb|BSObject|, un agente \verb|BSUnit| tiene implementadas las siguientes funciones:
 
 \begin{itemize}
 	\item \verb|calculate_distance(self, cell1, cell2) -> int| con la que la unidad calcula la distancia entre dos celdas. La distancia se calcula como la cantidad m\'inima de celdas que tiene recorrer la unidad para ir de una celda a otra.
 	\item \verb|nearby_friend(self, cell) -> bool| con la que la unidad determina si movi\'endose a la celda de entrada estar\'a cerca de un compa\~{n}ero.
 	\item \verb|enemy_in_range(self, cell)| con la que la unidad determina si al moverse a esa celda, tiene alg\'un enemigo al alcance.
+	\item \verb|in_range_of_enemy(self, cell) -> int| con la que la unidad determina la cantidad de enemigos, de los que puede ver, la cantidad que pudieran atacarla.
+	\item \verb|move_cost_calculate(self, cell, type) -> float| con la que la unidad determina el costo de moverse a una determinada celda.
+	\item \verb|enemy_cost_calculate(self, enemy) -> float| con la que el unidad calcula el costo de atacar a un enemigo determinado.
+	\item \verb|friend_in_danger(self, cell) -> bool| con la que la unidad detecta si atacando a una celda determinada, pone en peligro a una unidad aliada.
+	\item \verb|enemy_to_attack(self)| con la que la unidad determina, de ser posible, cual es el mejor enemigo para atacar.
+	\item \verb|take_damage(self, damage)| que se redefine el m\'etodo de la clase \verb|BSOBject| para tener  en cuenta la moral de las unidades.
+	\item \verb|attack_enemy(self, enemy)| que es la acci\'on de atacar a un enemigo. Para darle mayor realismo a la simulaci\'on, se simula que las unidades adem\'as puedan fallar los ataques. En la precisi\'on de un ataque influyen  factores como la distancia entre la unidad que ataca y la unidad atacada y los objetos adyacentes a la unidad atacada que se interpongan entre ambas unidades.
+	\item \verb|move_to_cell(self, cell)| que es la acci\'on de moverse a una determinada celda.
+	\item \verb|turn(self, type)| que es la funci\'on que permite a la unidad realizar un turno.
 \end{itemize}
+
+Las funciones \verb|put_in_cell| y \verb|turn| se redefinen en las clase \verb|LandUnit| haciendo un llamado a la respectiva funci\'on de la clase padre tal que el valor del par\'ametro \verb|type| es ``earth''. De igual forma ocurre con las unidades navales (\verb|NavalUnit|), pero el valor del par\'ametro \verb|type| es ``water''.
+
+\subsubsection{Ejemplos}
+
+Si por ejemplo se quisiera definir una clase \verb|Soldier| que es una unidad terrestre, simplemente a la hora de la definici\'on de la misma se hace heredar a esta clase de la clase \verb|LandUnit|. Si se quiere por ejemplo definir una unidad naval, por ejemplo \verb|Boat|, se hace heredar a la misma de la clase \verb|NavalUnit|.  
 
 \subsection{El simulador}
 
