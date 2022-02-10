@@ -11,6 +11,7 @@ import logging
 class Type_Checker:
     def __init__(self, context):
         self.context = context
+        self.bool_ops
 
     @visitor(BsFile)
     def visit(self, node: BsFile):
@@ -48,7 +49,12 @@ class Type_Checker:
     @visitor(FuncDef)
     def visit(self, node: FuncDef):
         if not node.context.check_func(node.name):
-            node.context.define_func(node.name,node.return_type,node.arg_names,node.arg_types)
+            if node.arg_types[0]==node.context.name:
+                node.context.define_func(node.name,node.return_type,node.arg_names[1:],node.arg_types[1:])
+            
+            else:
+                node.context.define_func(node.name,node.return_type,node.arg_names,node.arg_types)
+                
 
         
         returns_types = set()
@@ -67,8 +73,6 @@ class Type_Checker:
             #print(f"func {node.name}")
             logging.error("Type mismatch...")
 
-        
-
     @visitor(If)
     def visit(self, node: If):
         self.visit(node.condition)
@@ -86,8 +90,9 @@ class Type_Checker:
         for i in node.ifs:
             self.visit(i)
 
-        for e in node.else_body:
-            self.visit(e)
+        if not node.else_body is None:
+            for e in node.else_body:
+                self.visit(e)
 
         node.computed_type = None
 
@@ -168,10 +173,16 @@ class Type_Checker:
                 logging.error("Type mismatch...")
                 node.computed_type = None
 
-        if node.left.computed_type == node.right.computed_type:
+        else:
             if node.left.computed_type == "number":
                 node.computed_type = node.left.computed_type
-
+                
+                if node.op in self.bool_ops:
+                    node.computed_type="bool"
+                
+            else:
+                logging.error("Invalid operation")
+                
     @visitor(TernaryExpression)
     def visit(self, node: TernaryExpression):
         self.visit(node.condition)
@@ -180,8 +191,13 @@ class Type_Checker:
 
         if node.right.computed_type == node.left.computed_type:
             #print("Ternary")
-            logging.error("Type mismatch...")
-            node.computed_type = None
+            if node.condition.computed_type=="bool":
+                node.computed_type = None
+                
+            else:
+                logging.error("Condition most be a bool")
+                
+                
 
         else:
             logging.error("Type mismatch...")
@@ -208,7 +224,7 @@ class Type_Checker:
             elif _type.is_attribute(node.name):
                 node.computed_type = _type.get_attribute(node.name)[0]
                 
-            if isinstance(node.expression.computed_type, list) and node.expression.computed_type[0]== 'var':
+            elif isinstance(node.expression.computed_type, list) and node.expression.computed_type[0]== 'var':
                 #print(f"node {node.name}: {node.expression.computed_type}")
                 #print(f"{node.expression.computed_type[1]} {node.expression.computed_type[1] in node.context.children}")
                 
@@ -225,7 +241,12 @@ class Type_Checker:
                         
                     else:
                         node.computed_type=node.context.children[node.expression.computed_type[1]].get_return_type(node.name)
+                        
+                else:
+                    logging.error(f"Name {node.name} is not defined")
                     
+            else:
+                    logging.error(f"Name {node.name} is not a var")       
 
         else:
             if isinstance(node.expression.computed_type, list) and node.expression.computed_type[0]== 'function':
@@ -236,7 +257,12 @@ class Type_Checker:
                     args[i] = node.args[i].computed_type
 
                 name = node.expression.name
-                node.computed_type=node.context.get_return_type(name)
+                if node.context.check_func_args(name,args):
+                    node.computed_type=node.context.get_return_type(name)
+                
+                else:
+                    logging.error(f"Some types are incorrect for function {name}")
+                    
                 
             elif (((node.expression.computed_type[1] in node.context.children) and (node.context.children[node.expression.computed_type[1]].check_var(node.name)))or ((node.context.is_context_father(node.expression.computed_type[1])) and (node.context.get_context_father(node.expression.computed_type[1]).check_var(node.name)))):
                 if node.expression.computed_type[1] in node.context.children:
@@ -251,9 +277,9 @@ class Type_Checker:
                 else:
                     node.computed_type=node.context.children[node.expression.computed_type[1]].get_return_type(node.name)
                     
-    
-                    
-
+            else:
+                logging.error(f"Name {node.name} is not a var")
+                
     @visitor(Variable)
     def visit(self, node: Variable):
         #print(f"name {node.name}")
@@ -266,11 +292,10 @@ class Type_Checker:
         else: 
             for c in node.context.children:
                 if node.context.children[c].check_var(node.name):
-                    node.computed_type=self.node.context.get_type(node.name)
+                    node.computed_type=node.context.get_type(node.name)
                     return
 
             logging.error(f"name {node.name} is not defined")
-
 
     @visitor(Number)
     def visit(self, node: Number):

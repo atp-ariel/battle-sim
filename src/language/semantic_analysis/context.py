@@ -93,6 +93,9 @@ class Context:
 
     def check_var_type(self, var, _type):
         if self.check_var(var):
+            type=self.get_type(var)
+            if isinstance(type,list):
+                type=type[1]
             if self.get_type(var)==_type:
                 return True
             
