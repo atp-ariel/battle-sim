@@ -11,7 +11,7 @@ import logging
 class Type_Checker:
     def __init__(self, context):
         self.context = context
-        self.bool_ops
+        self.bool_ops = set(["eq","neq","lte","lt","gte","gt"])
 
     @visitor(BsFile)
     def visit(self, node: BsFile):
@@ -34,7 +34,7 @@ class Type_Checker:
         node.computed_type = "Class"
 
     @visitor(AttrDef)
-    def visit(self, node: AttrDef):
+    def visit(self, node: AttrDef): 
         self.visit(node.init)
         
         node.computed_type = node.init.computed_type
