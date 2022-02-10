@@ -380,7 +380,7 @@ class BSUnit(BSObject):
             self.attack_enemy(enemy)
             self.turns_recharging = self.recharge_turns
             print(
-                f"Unidad {self.id} ataca a la Unidad {enemy.id} de la celda {enemy.cell}")
+                f"Unit {self.id} attacks Unit {enemy.id} in cell {enemy.cell}")
         elif self.movil:
             cost = float("inf")
             cell = self.cell
@@ -401,7 +401,8 @@ class BSUnit(BSObject):
             if cost < float("inf"):
                 self.move_to_cell(cell)
                 self.visited_cells.add(cell)
-                print(f"Unidad {self.id} moviendose para la celda {cell}")
+                print(f"Unit {self.id} moving to cell {cell}")
+            
 
 class LandUnit(BSUnit):
     def __init__(self, id, life_points, defense, attack, moral, ofensive,min_range, max_range, radio, vision, intelligence, recharge_turns, solidarity, movil):

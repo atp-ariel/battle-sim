@@ -1,6 +1,7 @@
 from typing import List
 from scipy import stats
 from .sides import Side
+from tabulate import tabulate
 
 class Simulator:
     def __init__(self,earth_map, sides: List, turns: int, interval: int, time_beg=0):
@@ -33,8 +34,9 @@ class Simulator:
                 if self.event_is_pos(unit):
                     events[unit]=0
 
-        print("Puntos de vida")
-        print(list(map(lambda x: x.life_points, self.units)))
+        print("Life points")
+        print(tabulate([list(map(lambda x: x.life_points, self.units))], headers=[f"Unit {u.id}" for u in self.units]))
+        print("Time - Action")
 
         for event in events:
             var_time=stats.beta.rvs(1, 3, loc=moment, scale=1, size=1, random_state=None)
@@ -61,24 +63,24 @@ class Simulator:
         for event in events:
             if event[1]>time_beg and event[1]<time_end:
                 if self.event_is_pos(event[0]):
-                    print(f"{event[1]}", end=" ")
+                    print(f"{event[1]}", end=" - ")
                     event[0].turn()
-						                       
+        print()
     def simulating_k_turns(self):
         beg=self.time_beg
         k=self.turns
         while(k>0):
             end=int(beg+self.interval)
             if self.no_enemies:
-                print("Simulación Finalizada")
-                print("|\tBandos\t|\tBajas amigas\t|\tBajas enemigas\t|")
-                for side in self.sides:
-                    print(f"|\tBando {side.id}\t|\t{side.no_own_units_defeated}\t|\t{side.no_enemy_units_defeated}\t|")
+                print("Simulation Finished!")
+                result = [[f"Side {side.id}", side.no_own_units_defeated, side.no_enemy_units_defeated] for side in self.sides]
+                print(tabulate(result, headers=["Sides", "Allies Dead", "Enemies Killed"]))
+
                 return
 
             k-=1
             
-            print(f"Turno {self.turns - k}")
+            print(f"Turn {self.turns - k}:")
             self.simulator_by_turns(beg,end)
             beg=end
 
