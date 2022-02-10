@@ -17,7 +17,7 @@ LandMap map = build_random_map(1, 5, 5);
 List wone = [];
 List wtwo = [];
 
-number c=3;
+number c = 3;
 
 while c neq 0 -> {
     Soldier s = Soldier(4-c,5);
@@ -32,5 +32,5 @@ while c neq 0 -> {
 Side SOne = Side(1, wone);
 Side STwo = Side(2, wtwo);
 
-Simulator sim = Simulator(map, [SOne, STwo], 20, 1);
+Simulator sim = Simulator(map, [SOne, STwo], 50, 1);
 sim.start();
