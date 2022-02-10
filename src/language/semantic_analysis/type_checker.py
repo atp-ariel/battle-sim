@@ -126,7 +126,7 @@ class Type_Checker:
 
         else:
             #print(f"assign {node.name}")
-            raise Exception("Type mismatch...")
+            raise Exception(f"the expected type for the variable {node.name} is not the one received ")
             node.computed_type = None
 
     @visitor(Return)
