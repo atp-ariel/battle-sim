@@ -5,3 +5,5 @@ class Soldier is LandUnit -> {
 }; 
 & 
 List a = [ 1, 2, 3, [1,2] ];
+
+Soldier s = Soldier(a);

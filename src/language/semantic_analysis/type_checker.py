@@ -1,11 +1,8 @@
-from multiprocessing import context
-
 from numpy import isin
 from .context import *
 from typing import List
 from ...utils.visitor import *
 from ..parser.ast import *
-import logging
 
 
 class Type_Checker:
@@ -42,7 +39,7 @@ class Type_Checker:
             node.computed_type=node.computed_type[1]
             
         if node.type != node.computed_type:
-            logging.error(f"The type of the variable {node.name} is different from the defined type. Expected {node.type}, Recived {node.computed_type}")
+            raise Exception(f"The type of the variable {node.name} is different from the defined type. Expected {node.type}, Recived {node.computed_type}")
 
         node._class.define_attribute(node.name,node.computed_type,node.init)
         
@@ -67,18 +64,18 @@ class Type_Checker:
             node.computed_type = list(returns_types)[0]
 
         else:
-            logging.error("More than one return type in the function")
+            raise Exception("More than one return type in the function")
 
         if node.return_type!=node.computed_type:
             #print(f"func {node.name}")
-            logging.error("Type mismatch...")
+            raise Exception("Type mismatch...")
 
     @visitor(If)
     def visit(self, node: If):
         self.visit(node.condition)
         
         if node.codition.computed_type != "bool":
-            logging.error("Condition in if statements must be a bool")
+            raise Exception("Condition in if statements must be a bool")
 
         for i in node.body:
             self.visit(i)
@@ -100,7 +97,7 @@ class Type_Checker:
     def visit(self, node: WhileDef):
         self.visit(node.condition)
         if node.condition.computed_type != "bool":
-            logging.error("Condition in while statements must be a bool")
+            raise Exception("Condition in while statements must be a bool")
             
         for i in node.body:
             self.visit(i)
@@ -117,7 +114,7 @@ class Type_Checker:
 
         else:
             #print(f"decl {node.name}")
-            logging.error("Type mismatch...")
+            raise Exception("Type mismatch...")
             node.computed_type = None
 
     @visitor(Assign)
@@ -129,7 +126,7 @@ class Type_Checker:
 
         else:
             #print(f"assign {node.name}")
-            logging.error("Type mismatch...")
+            raise Exception("Type mismatch...")
             node.computed_type = None
 
     @visitor(Return)
@@ -157,7 +154,7 @@ class Type_Checker:
 
         if node.left.computed_type != node.right.computed_type:
             #print(f"bin {node.left} {node.right}")
-            logging.error("Type mismatch...")
+            raise Exception("Type mismatch...")
             node.computed_type = None
 
         else:
@@ -170,7 +167,7 @@ class Type_Checker:
 
         if node.left.computed_type != node.right.computed_type:
                 #print(f"aritmetic {node.left} {node.right}")
-                logging.error("Type mismatch...")
+                raise Exception("Type mismatch...")
                 node.computed_type = None
 
         else:
@@ -181,7 +178,7 @@ class Type_Checker:
                     node.computed_type="bool"
                 
             else:
-                logging.error("Invalid operation")
+                raise Exception("Invalid operation")
                 
     @visitor(TernaryExpression)
     def visit(self, node: TernaryExpression):
@@ -195,12 +192,12 @@ class Type_Checker:
                 node.computed_type = None
                 
             else:
-                logging.error("Condition most be a bool")
+                raise Exception("Condition most be a bool")
                 
                 
 
         else:
-            logging.error("Type mismatch...")
+            raise Exception("Type mismatch...")
             node.computed_type = None
 
     @visitor(Inversion)
@@ -243,10 +240,10 @@ class Type_Checker:
                         node.computed_type=node.context.children[node.expression.computed_type[1]].get_return_type(node.name)
                         
                 else:
-                    logging.error(f"Name {node.name} is not defined")
+                    raise Exception(f"Name {node.name} is not defined")
                     
             else:
-                    logging.error(f"Name {node.name} is not a var")       
+                    raise Exception(f"Name {node.name} is not a var")       
 
         else:
             if isinstance(node.expression.computed_type, list) and node.expression.computed_type[0]== 'function':
@@ -261,7 +258,7 @@ class Type_Checker:
                     node.computed_type=node.context.get_return_type(name)
                 
                 else:
-                    logging.error(f"Some types are incorrect for function {name}")
+                    raise Exception(f"Some types are incorrect for function {name}")
                     
                 
             elif (((node.expression.computed_type[1] in node.context.children) and (node.context.children[node.expression.computed_type[1]].check_var(node.name)))or ((node.context.is_context_father(node.expression.computed_type[1])) and (node.context.get_context_father(node.expression.computed_type[1]).check_var(node.name)))):
@@ -278,7 +275,7 @@ class Type_Checker:
                     node.computed_type=node.context.children[node.expression.computed_type[1]].get_return_type(node.name)
                     
             else:
-                logging.error(f"Name {node.name} is not a var")
+                raise Exception(f"Name {node.name} is not a var")
                 
     @visitor(Variable)
     def visit(self, node: Variable):
@@ -295,7 +292,7 @@ class Type_Checker:
                     node.computed_type=node.context.get_type(node.name)
                     return
 
-            logging.error(f"name {node.name} is not defined")
+            raise Exception(f"name {node.name} is not defined")
 
     @visitor(Number)
     def visit(self, node: Number):
