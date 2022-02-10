@@ -252,6 +252,8 @@ class Type_Checker:
                 for i in range(len(node.args)):
                     self.visit(node.args[i])
                     args[i] = node.args[i].computed_type
+                    if isinstance(args[i],list):
+                        args[i]=args[i][1]
 
                 name = node.expression.name
                 if node.context.check_func_args(name,args):
