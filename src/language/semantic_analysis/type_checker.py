@@ -149,8 +149,11 @@ class Type_Checker:
         self.visit(node.left)
         self.visit(node.right)
 
-        node.computed_type = node.left.computed_type
-        node.computed_type = node.right.computed_type
+        if isinstance(node.left.computed_type,list):
+            node.left.computed_type=node.left.computed_type [1]
+            
+        if isinstance(node.right.computed_type,list):
+            node.right.computed_type=node.left.computed_type [1]
 
         if node.left.computed_type != node.right.computed_type:
             #print(f"bin {node.left} {node.right}")
@@ -165,10 +168,16 @@ class Type_Checker:
         self.visit(node.left)
         self.visit(node.right)
 
+        if isinstance(node.left.computed_type,list):
+            node.left.computed_type=node.left.computed_type [1]
+            
+        if isinstance(node.right.computed_type,list):
+            node.right.computed_type=node.left.computed_type [1]
+            
         if node.left.computed_type != node.right.computed_type:
                 #print(f"aritmetic {node.left} {node.right}")
+                print(f"{node.left}: {node.left.computed_type}")
                 raise Exception("Type mismatch for aritmetic expression")
-                node.computed_type = None
 
         else:
             if node.left.computed_type == "number":
