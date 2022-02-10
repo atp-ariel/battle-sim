@@ -43,4 +43,4 @@ if __name__ == "__main__":
     # run(compile)
 
     # # ! Uncomment for debug
-    compile("./test/examples/ex6.bs", run=True)
+    compile("./test/examples/ex8.bs", run=True)

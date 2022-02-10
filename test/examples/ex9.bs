@@ -26,7 +26,7 @@ while c neq 0 -> {
     a.put_in_cell(map,4,c);
     wone.append(s);
     wtwo.append(a);
-    c=c-1;
+    c = c - 1;
 };
 
 Side SOne = Side(1, wone);
