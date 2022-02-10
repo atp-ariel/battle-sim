@@ -10,6 +10,13 @@ class Archer is LandUnit -> {
     }; 
 }; 
 & 
-number a = 3;
 
-Soldier s=Soldier(a);
+if 3 lt 2->
+{
+    number i = 4;
+};
+
+bool a = True;
+number d = 2;
+
+Soldier s=Soldier(d);

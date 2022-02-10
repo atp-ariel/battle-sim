@@ -4,6 +4,12 @@ class Soldier is LandUnit -> {
     }; 
 }; 
 & 
-List a = [ 1, 2, 3, [1,2] ];
 
-Soldier s = Soldier(a);
+function number W(number a) -> { 
+    while True -> {
+        number b = a + 1;
+    }; 
+    return a;
+};
+
+W(2);

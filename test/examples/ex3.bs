@@ -2,13 +2,12 @@ class Soldier is LandUnit -> {
     constructor(number id) -> { 
         number self.id = id; 
     };
-    function number W(number a) -> { 
+    function number W(Soldier s, number a) -> { 
         return a + 2; 
     };
 }; 
 & 
-number a = 3; 
-while 5 eq 1 -> 
-{ 
-    a = -1 * a;  
-};
+
+Soldier s = Soldier(1);
+
+number b = s.W(3);
