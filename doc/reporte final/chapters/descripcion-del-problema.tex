@@ -7,7 +7,7 @@ Se fijaron las siguientes reglas para cada una de las simulaciones:
 \begin{enumerate}
 	\item La existencia de un mapa o terreno donde se produce el enfrentamiento. Este tendrá propiedades que se serán modificables como las dimensiones, el relieve, la hidrografía, etc. La representación más abstracta de un mapa o terreno es una matriz de alturas.
 	
-	\item La simulación ocurre por turnos. Durante un turno determinado cada unidad hace una y solo una acción ya sea atacar, moverse o mantener la posición. El objetivo de las unidades de un bando es destruir las unidades de los bandos enemigos. Cada unidad funciona de manera independiente. 
+	\item La simulación ocurre por turnos. Durante un turno cada unidad hace una y solo una acción ya sea atacar, moverse o mantener la posición. El objetivo de las unidades de un bando es destruir las unidades de los bandos enemigos. Cada unidad funciona de manera independiente. 
 \end{enumerate}
 
 \subsection{El mapa}
@@ -15,21 +15,21 @@ Se fijaron las siguientes reglas para cada una de las simulaciones:
 El mapa consiste en una matriz bidimensional de $m$ filas y $n$ columnas. Cada objeto de la matriz es un objeto \verb|Cell|. Un objeto \verb|Cell| representa cada una de las casillas que conforman el mapa y tiene los siguientes atributos:
 
 \begin{itemize}
-	\item \verb|passable|: Valor entre 0 y 10 que indica cuan accesible es una celda. Las unidades tienden a buscar las celdas que tengan este parámetro lo más alto posible, pues mientras mayor sea este valor, pueden hacer ataques más poderosos.
+	\item \verb|passable|: Valor entre 0 y 10 que indica cuan accesible es una celda. Las unidades tienden a buscar las celdas que tengan este parámetro lo más alto posible, pues mientras mayor sea este valor, pueden hacer ataques más poderosos. Una interpretaci\'on de esta par\'ametro es cuan estrat\'egica es una determinada posici\'on.
 	\item \verb|row|: Este parámetro es un número entero que indica la fila en la que se encuentra la celda.
-	\item \verb|col|: Este parámetro es un número entero que indica la columna en que se encuentra la celda
-	\item \verb|height|: Este parámetro es un número entre 0 y 1 que indica la altura de la casilla. En dependencia de este parámetro la casilla será terrestre o marina.
+	\item \verb|col|: Este parámetro es un número entero que indica la columna en que se encuentra la celda.
+	\item \verb|height|: Este parámetro es un número entre 0 y 1 que indica la altura de la casilla. En dependencia de este parámetro la casilla será terrestre o naval.
 	\item \verb|bs_object|: Este parámetro hace referencia al objeto que se encuentra en la casilla. Si en la casilla no se encuentra ningún objeto entonces este parámetro es \verb|None|.
 \end{itemize}
 
 El mapa para una simulación se crea instanciando una clase \verb|LandMap| con los siguientes argumentos:
 
 \begin{itemize}
-	\item Número de filas $m$
-	\item Número de columnas $n$
-	\item Un array bidimensional de $m$ filas por $n$ columnas tal que cada posición $i,j$ del array es un número entre 0 y 10 que indica cuan accesible es la celda $i,j$
+	\item Número de filas $m$.
+	\item Número de columnas $n$.
+	\item Un array bidimensional de $m$ filas por $n$ columnas tal que cada posición $i,j$ del array es un número entre 0 y 10 que indica cuan accesible es la celda $i,j$.
 	\item Un array bidimensional de $m$ filas por $n$ columnas tal que cada posición $i,j$ del array es un número entre 0 y 1 que indica la altura de celda $i,j$
-	\item Un número entre 0 y 1 que indica el nivel del mar. Todas las celdas cuya altura sea menor a este número serán consideradas como celdas marinas y todas las celdas superior a este número serán consideradas terrestres.
+	\item Un número entre 0 y 1 que indica el nivel del mar. Todas las celdas cuya altura sea menor a este número serán consideradas como celdas navales y todas las celdas superior a este número serán consideradas terrestres.
 \end{itemize}
 
 \subsubsection{Generación aleatoria de mapas}
@@ -47,7 +47,7 @@ Luego de una consulta bibliográfica, se encontraron algunos procedimientos para
 \begin{itemize}
 	\item \textbf{Algoritmo de Perlin Noise:} debe su nombre a su creador, Ken Perlin, que durante el rodaje de la película Tron creó el algoritmo con el fin de crear texturas procedimentales para los efectos generados por el ordenador. La idea tras el algoritmo es generar una nueva matriz de dimensión menor a la requerida y superponerla a la requerida escalando de forma que encajen perfectamente. A cada esquina de cada celda de la nueva matriz se le asigna un vector gradiente pseudoaleatorio. Además se determinan los valores offset que representan la posición de cada punto de la matriz original dentro de la celda de la nueva matriz. Luego, para cada esquina de la celda que encierra un punto se determina el vector que va desde ella hasta el punto y se hace el producto escalar de ese vector con el vector gradiente. Se realiza una interpolación lineal entre todos los resultados de los productos escalares y este es el valor del punto. El comportamiento de este algoritmo no puede ser modificado pero aún así fue de gran significación en la época y hoy día.
 	\item \textbf{Algoritmo Voronoi:} consiste en dividir el espacio en diagramas de Voronoi, que son, simplemente, particiones de un plano en regiones basadas en la 	distancia a ciertos puntos específicos del plano. Ese conjunto específico de puntos 	se denomina ``semillas, sitios o generadores''. Se suelen especificar de antemano y 	para cada uno de estos sitios se genera una región del plano que consiste en todos 	los puntos que están más cerca de este sitio que de ningún otro. 
-	\item \textbf{Algoritmo de cortes:} tiene un comportamiento poco intuito pero interesante, se selecciona un corte en la matriz, se define como corte una linea recta que divida el plano o terreno en dos mitades, luego se decide elevar  una de las mitades y bajar o no modificar las otras. Este mismo proceso se repite miles de veces y se obtienen resultados aceptables. El algoritmo es ineficiente, por la cantidad de iteraciones necesarias para obtener buenos resultados.
+	\item \textbf{Algoritmo de cortes:} tiene un comportamiento poco intuitivo pero interesante, se selecciona un corte en la matriz, se define como corte una linea recta que divida el plano o terreno en dos mitades, luego se decide elevar  una de las mitades y bajar o no modificar las otras. Este mismo proceso se repite miles de veces y se obtienen resultados aceptables. El algoritmo es ineficiente, por la cantidad de iteraciones necesarias para obtener buenos resultados.
 	\item \textbf{Algoritmos de erosión térmica e hídrica:} algoritmos que simulan los procesos naturales de erosión térmica e hídrica. En el caso de la térmica se fija un valor $T$ que representa el valor a partir del cual se va a erosionar, y se recorre la matriz buscando los puntos que cumplen que la diferencia de altura con sus vecinos es superior a $T$. En dichos puntos el algoritmo resta valor de altura a sus vecinos cuya distancia sea mayor que $T$ de forma que todas las distancias queden menor que $T$. En el caso de la erosión hídrica se define una matriz de agua y una matriz de sedimentos la cual representa un porciento de material que puede ser movido por la erosión. Y se realiza un procedimiento parecido a la erosión térmica.
 \end{itemize}
 
@@ -55,7 +55,7 @@ Ahora, estos algoritmos generan mapas de alturas con apariencia realista, pero n
 
 Los algoritmos evolutivos son estrategias de optimización y búsqueda de soluciones que toman como inspiración la evolución en distintos sistemas biológicos. La idea fundamental de estos algoritmos es mantener un conjunto de individuos que representan posibles soluciones del problema. Estos individuos se mezclan y compiten entre sí, siguiendo el principio de selección natural por el cual sólo los mejores adaptados sobreviven al paso del tiempo. Esto redunda en una evolución hacia soluciones cada vez más aptas. 
 
-El algoritmo evolutivo en cuestión inicia con una población de individuos generados utilizando el algoritmo de Perlin Noise implementado en la biblioteca de Python bajo el nombre \verb|perlin-noise|.	Luego se realizan un cantidad de iteraciones seleccionando los individuos más adaptados, mezclándolos y mutándolos.  Se considera individuo mejor adaptado aquel cuyo valor \verb|fit| sea mayor. Este valor se calcula como sigue:
+El algoritmo evolutivo en cuestión inicia con una población de individuos generados utilizando el algoritmo de Perlin Noise implementado en la biblioteca de Python bajo el nombre \verb|perlin-noise|.	Luego se realizan una cantidad de iteraciones seleccionando los individuos más adaptados, mezclándolos y mutándolos.  Se considera individuo mejor adaptado aquel cuyo valor \verb|fit| sea mayor. Este valor se calcula como sigue:
 
 \begin{verbatim}
 def fit_func(self, heightmap: HeightMap):
@@ -101,7 +101,7 @@ El algoritmo evolutivo en cuestión tiene ciertos parámetros que definen las co
 
 \subsection{Los objetos}
 
-Un objeto es toda entidad que se puede poner en el mapa; cada objeto ocupa una y solo una casilla del mapa. Estos tienen propiedades como el \verb|id| que es el identificador único para cada objeto, los puntos de vida \verb|life_points| que determinan el estado de un objeto y la defensa \verb|defense| un parámetro que indica cuan resistente es un objeto a los daños que puede sufrir durante la simulación. Todos estos parámetros son números en el intervalo de números enteros $[1,10]$. Cuando la vida de un objeto llegue a 0, este se destruye desapareciendo del mapa. 
+Un objeto es toda entidad que se puede poner en el mapa; cada objeto ocupa una y solo una casilla del mapa. Estos tienen propiedades como el \verb|id| que es el identificador único para cada objeto, los puntos de vida (\verb|life_points|) que determinan el estado de un objeto y la defensa (\verb|defense|) un parámetro que indica cuan resistente es un objeto a los daños que puede sufrir durante la simulación. Todos estos parámetros son números en el intervalo de números enteros $[1,10]$. Cuando la vida de un objeto llegue a 0, este se destruye desapareciendo del mapa. 
 
 Los objetos se clasifican en dos tipos: unidades y objetos estáticos. Los objetos además tienen definidas dos funciones \verb|put_in_cell| cuya función es colocar al objeto en alguna posición de un mapa. Si se intenta poner un objeto en una posición diferente a su tipo este automáticamente se destruye. La otra función \verb|take_damage|, a partir de un ataque sufrido indica como se reducen los puntos de vida del objeto.
 
@@ -133,10 +133,10 @@ Las unidades además de las descritas anteriormente que tienen todos los objetos
 	\item \verb|attack|: Valor entre 1 y 10 que marca la capacidad de causar daños a sus oponentes.
 	\item \verb|moral|: Valor entre 1 y 10 que marca la moral con la unidad encara la batalla. Cuanto mayor es ese valor más efectivos son sus ataques y sus defensas.
 	\item \verb|ofensive|: Valor entre 1 y 10 que indica cuan ofensiva es una unidad. Un valor alto la hace más ofensiva y un valor bajo la hace más defensiva.
-	\item \verb|min_range|: Valor entero entre 0 y 10 que indica el rango mínimo al que se debe encontrar un enemigo para que la unidad pueda atacarlo.
-	\item \verb|max_range|: Valor entero entre 0 y 10 que indica el rango máximo al que se debe encontrar un enemigo para que la unidad pueda atacarlo.
-	\item \verb|radio|: Valor entero entre 1 y 9 que indica el número de casillas que son afectadas por un ataque de la unidad. Si es 1 se afecta solo a la casilla seleccionada para el ataque. Si es 9 se afectan la casilla seleccionada y las 8 adyacentes a esta. Si es 1 $<$ \verb|radio| $<$ 9, entonces se toman como casillas afectadas la seleccionada y $\verb|radio|-1$ casillas adyacentes a esta.
-	\item \verb|vision| : Valor entre 1 y 10 que indica la cantidad de celdas en una determinada dirección, que la unidad puede ``ver'' (saber que objetos están en dicha celda).   
+	\item \verb|min_range|: Valor entero entre 1 y 10 que indica el rango mínimo al que se debe encontrar un enemigo para que la unidad pueda atacarlo.
+	\item \verb|max_range|: Valor entero entre 1 y 10 que indica el rango máximo al que se debe encontrar un enemigo para que la unidad pueda atacarlo. L\'ogicamente el rango m\'aximo debe ser mayor o igual que el rango m\'inimo. 
+	\item \verb|radio|: Valor entero entre 1 y 9 que indica el número de casillas que son afectadas por un ataque de la unidad. Si es 1 se afecta solo a la casilla seleccionada para el ataque. Si es 9 se afectan la casilla seleccionada y las 8 adyacentes a esta. Si es 1 $<$ \verb|radio| $<$ 9, entonces se toman como casillas afectadas la seleccionada y $\verb|radio|-1$ casillas aleatorias adyacentes a esta.
+	\item \verb|vision| : Valor entre 1 y 10 que indica la cantidad de celdas en una determinada dirección, que la unidad puede ``ver'' (saber que objetos están en dicha celda). La visi\'on debe ser mayor o igual que el rango m\'aximo pues una unidad no deber\'ia ser capaz de atacar una unidad que no pueda ver.  
 	\item \verb|intelligence|: Valor entre 0 y 10 que indica la inteligencia de la unidad. Mientras más inteligente sea una unidad con mayor precisión puede calcular los atributos de sus enemigos.
 	\item \verb|recharge_turns|: Turnos que demora la unidad en recargar después de hacer un ataque. Mientras esté recargando la unidad no podrá atacar pero si puede moverse.
 	\item \verb|solidarity|: Valor booleano que indica si la unidad es solidaria o no.
@@ -147,13 +147,13 @@ Las unidades además de las descritas anteriormente que tienen todos los objetos
 
 A continuación se explicará el sistema experto implementado que actúa como función del agente la cual describe el comportamiento del agente durante un turno.
 
-Lo primero que la función hace es buscar si se existe un enemigo al que se pueda atacar. Para eso primero se comprueba si la unidad no está recargando, si lo está se reduce en uno los turnos que debe esperar para atacar, si no lo está se busca el mejor enemigo para atacar. 
+Lo primero que la función hace es buscar si existe un enemigo al que se pueda atacar. Para eso primero se comprueba si la unidad no está recargando, si lo está se reduce en uno los turnos que debe esperar para atacar, si no lo está se busca el mejor enemigo para atacar. 
  
 El mejor enemigo para atacar se determina de la siguiente forma:
  
 Por cada casilla atacable (casilla que se encuentra a una distancia de la unidad entre su rango mínimo y su rango máximo), se chequea si en la casilla hay un enemigo. Si el radio de ataque es mayor que 1 y hay una unidad amiga cerca del enemigo que pudiera verse afectada por el ataque, se ignora este enemigo. Esto se definió así para evitar el daño ocasionado por fuego amigo.
  
-Entonces si el enemigo no es ignorado debido a lo anterior, se calcula el costo de atacar al enemigo. Para dicho cálculo la unidad estima la vida y la defensa del enemigo y con estas estimaciones calcula cuantos turnos podría tomarle destruir a dicho enemigo. Mientras mayor sea la inteligencia de la unidad más precisas serán las estimaciones.
+Entonces si el enemigo no es ignorado debido a lo anterior, se calcula el costo de atacar al enemigo. Para dicho cálculo la unidad estima la vida y la defensa del enemigo y con estas estimaciones, y teniendo en cuenta el propio da\~{n}o que le puede causar al enemigo, calcula cuantos turnos podría tomarle destruir a dicho enemigo. Mientras mayor sea la inteligencia de la unidad más precisas serán las estimaciones.
 
 Luego de haber analizado todos los enemigos, el seleccionado por la unidad para atacarlo es aquel cuyo costo es menor. Si no se detecta ningún posible enemigo a atacar entonces la unidad no realiza un ataque en el turno.
  
