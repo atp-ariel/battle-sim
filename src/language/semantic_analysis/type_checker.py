@@ -68,13 +68,13 @@ class Type_Checker:
 
         if node.return_type!=node.computed_type:
             #print(f"func {node.name}")
-            raise Exception("Type mismatch...")
+            raise Exception("The return type is not the one specified for the function {node.name}")
 
     @visitor(If)
     def visit(self, node: If):
         self.visit(node.condition)
         
-        if node.codition.computed_type != "bool":
+        if node.condition.computed_type != "bool":
             raise Exception("Condition in if statements must be a bool")
 
         for i in node.body:
@@ -114,7 +114,7 @@ class Type_Checker:
 
         else:
             #print(f"decl {node.name}")
-            raise Exception("Type mismatch...")
+            raise Exception(f"Type mismatch for for the declaration of the variable {node.name}")
             node.computed_type = None
 
     @visitor(Assign)
@@ -154,7 +154,7 @@ class Type_Checker:
 
         if node.left.computed_type != node.right.computed_type:
             #print(f"bin {node.left} {node.right}")
-            raise Exception("Type mismatch...")
+            raise Exception("Type mismatch binary expression")
             node.computed_type = None
 
         else:
@@ -167,7 +167,7 @@ class Type_Checker:
 
         if node.left.computed_type != node.right.computed_type:
                 #print(f"aritmetic {node.left} {node.right}")
-                raise Exception("Type mismatch...")
+                raise Exception("Type mismatch for aritmetic expression")
                 node.computed_type = None
 
         else:
@@ -197,7 +197,7 @@ class Type_Checker:
                 
 
         else:
-            raise Exception("Type mismatch...")
+            raise Exception("Type mismatch for Ternary expression")
             node.computed_type = None
 
     @visitor(Inversion)
