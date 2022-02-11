@@ -19,7 +19,7 @@ def compile(bs: str, py: str = "", run: bool = True):
             python_code = str()
             with open(bs, "r") as fbs:
                 # # ! Uncomment for debug
-                # python_code = compiler(fbs.read())
+                #python_code = compiler(fbs.read())
 
                 # ! Comment for debug
                 try:
@@ -43,4 +43,4 @@ if __name__ == "__main__":
     run(compile)
 
     # # ! Uncomment for debug
-    # compile("./test/examples/ex6.bs", run=False)
+    #compile("./test/examples/ex6.bs", run=True)

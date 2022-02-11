@@ -1,0 +1,25 @@
+class Soldier is LandUnit -> {
+    constructor(number id, number attack) -> {
+        number self.id = id;
+        number self.attack = attack;
+    };
+};
+&
+LandMap map = LandMap(2, 2, [ [1, 4], [3,5] ], [ [0.5, 0.5], [0.5, 0.5] ], 0.45);
+
+Soldier sOne = Soldier(1, 3);
+Soldier sTwo = Soldier(2, 4);
+Soldier sThree = Soldier(3, 5);
+
+sOne.put_in_cell(map, 0,0);
+sTwo.put_in_cell(map, 0, 1);
+sThree.put_in_cell(map, 1, 1);
+
+
+Side SO = Side(1, [sOne]);
+Side ST = Side(2, [sTwo]);
+Side St = Side(3, [sThree]);
+
+Simulator sim = Simulator(map, [SO, ST, St], 50, 1);
+sim.start();
+

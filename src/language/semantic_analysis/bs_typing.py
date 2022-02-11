@@ -15,15 +15,56 @@ class battle_sim_typing:
         self.context=context
 
     def __call__(self):
+        self.context.create_type("Type")
         self.context.create_type("number")
         self.context.create_type("bool")
-        self.context.create_type("list")
+        self.context.create_type("MyNone")
+
+        self.context.create_type("List")
+        t = self.context.get_type_object("List")
+        t.define_method("append", "MyNone", ["x"], ["Type"])
+        t.define_method("remove", "MyNone", ["x"], ["Type"])
+        
+        self.context.create_type("BSObject")
+        self.context.define_func("super", "BSObject", [],[])
+
+        self.context.create_type("BSUnit", parent="BSObject")
+
+        self.context.create_type("StaticObject", parent="BSObject")
+        t = self.context.get_type_object("StaticObject")
+        self.context.create_type("LandMap")
+        t.define_method("put_in_cell", "MyNone", ["self", "arg1","arg2","arg3"], ["StaticObject","LandMap","number","number"])
+
+        self.context.create_type("LandUnit", parent="BSUnit")
+        self.context.get_type_object("LandUnit").define_method("put_in_cell", "MyNone", ["self", "arg1","arg2","arg3"], ["LandUnit","LandMap","number","number"])
+        
+        self.context.create_type("NavalUnit", parent="BSUnit")
+        self.context.get_type_object("NavalUnit").define_method("put_in_cell", "MyNone", ["self", "arg1","arg2","arg3"], ["NavalUnit", "LandMap","number","number"])
+        
+        
+        self.context.create_type("Side", ["id", "units"], ["number", "List"])
+
+        t = self.context.get_type_object("Side")
+        t.define_attribute("id", "number")
+        t.define_attribute("units", "List")
+        t.define_attribute("no_own_units_defeated", "number")
+        t.define_attribute("no_enemy_units_defeated", "number")
+        t.define_method("add_unit", "MyNone", ["self", "unit"], ["Side", "BSUnit"])
+        t.define_method("remove_unit", "MyNone", ["self", "unit"], ["Side", "BSUnit"])
+
+        
+        self.context.create_type("Simulator",["map","Sides","arg1", "arg2"],["LandMap","List","number","number"])
+        self.context.get_type_object("Simulator").define_method("start", "MyNone", [], [])
+        
+        self.context.define_func("build_random_map", "LandMap", ["arg1","arg2","arg3"], ["number","number","number"])
+        
         self.collecting()
         self.building()
         self.checking()
 
     def collecting(self):
-        self.collector.visit(self.program)
+      self.collector.visit(self.program)
+        
 
     def building(self):
         self.builder.visit(self.program)

@@ -93,7 +93,10 @@ class CodeGenerate:
 
         self.count_tabs += 1
         for statement in node.body:
-            self.visit(statement)
+            if isinstance(statement, Expression):
+                self.write(self.visit(statement) + "\n")
+            else:
+                self.visit(statement)
         self.count_tabs -= 1
 
     @visitor(Branch)
@@ -106,7 +109,10 @@ class CodeGenerate:
         self.count_tabs += 1
 
         for statement in initial.body:
-            self.visit(statement)
+            if isinstance(statement, Expression):
+                self.write(self.visit(statement) + "\n")
+            else:
+                self.visit(statement)
 
         self.count_tabs -= 1
 
@@ -120,7 +126,11 @@ class CodeGenerate:
             self.write("else:\n")
             self.count_tabs += 1
             for statement in node.else_body:
-                self.visit(statement)
+                if isinstance(statement, Expression):
+                    self.write(self.visit(statement) + "\n")
+                else:
+                    self.visit(statement)
+
             self.count_tabs -= 1
 
     @visitor(If)
@@ -131,8 +141,10 @@ class CodeGenerate:
         self.count_tabs += 1
 
         for statement in node.body:
-            self.visit(statement)
-
+            if isinstance(statement, Expression):
+                self.write(self.visit(statement) + "\n")
+            else:
+                self.visit(statement)
         self.count_tabs -= 1
 
     @visitor(WhileDef)
@@ -143,8 +155,10 @@ class CodeGenerate:
         self.count_tabs += 1
 
         for statement in node.body:
-            self.visit(statement)
-
+            if isinstance(statement, Expression):
+                self.write(self.visit(statement) + "\n")
+            else:
+                self.visit(statement)
         self.count_tabs -= 1
 
     @visitor(Decl)

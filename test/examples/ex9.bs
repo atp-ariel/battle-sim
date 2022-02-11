@@ -1,0 +1,36 @@
+class Soldier is LandUnit -> {
+    constructor(number id, number attack) -> {
+        number self.id = id;
+        number self.attack = attack;
+    };
+};
+class Archer is LandUnit -> {
+    constructor(number id, number max_range) -> {
+        number self.id = id;
+        number self.max_range = max_range;
+    };
+};
+&
+
+LandMap map = build_random_map(1, 5, 5);
+
+List wone = [];
+List wtwo = [];
+
+number c = 3;
+
+while c neq 0 -> {
+    Soldier s = Soldier(4-c,5);
+    Archer a = Archer(3+c,3);
+    s.put_in_cell(map,0,c);
+    a.put_in_cell(map,4,c);
+    wone.append(s);
+    wtwo.append(a);
+    c = c - 1;
+};
+
+Side SOne = Side(1, wone);
+Side STwo = Side(2, wtwo);
+
+Simulator sim = Simulator(map, [SOne, STwo], 50, 1);
+sim.start();

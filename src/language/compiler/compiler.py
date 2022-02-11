@@ -36,7 +36,7 @@ class Compiler:
         program_ast = self.parser.parse(tokens)
 
         # Semantic analysis
-        # context = Context()
+        # context = Context("Global")
         # bst = battle_sim_typing(program_ast, Type_Collector(context), Type_Builder(context), Type_Checker(context), context)
         # bst()
 

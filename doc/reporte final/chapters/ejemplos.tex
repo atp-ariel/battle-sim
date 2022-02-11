@@ -2,7 +2,7 @@
 
 A continuación se muestran algunos ejemplos de uso del compilador y de ejecución de la simulación.
 
-El primer ejemplo que se define a continuación es la creación de la clase Soldier que es un LandUnit. En este caso solo se define el constructor de la clase, que recibe el parámetro \verb|id| que representa el identificador de la unidad en la simulación.
+El primer ejemplo que se define a continuación es la creación de la clase Soldier que es un LandUnit. En este caso solo se define el constructor de la clase, que recibe el parámetro \verb|id| que representa el identificador de la unidad en la simulación y el par\'ametro \verb|attack| que es el valor de ataque de la unidad.
 
 \begin{verbatim}
 class Soldier is LandUnit -> {  
@@ -13,7 +13,7 @@ class Soldier is LandUnit -> {
 }; 
 \end{verbatim}
 
-Note que tras cualquier instrucción en el lenguaje Battle Script se necesita poner un punto y coma (;) para especificar el fin de la instrucción. En este caso solo se indica el par\'ametro id de entrada. Por tanto el resto de par\'ametros de la unidad tomar\'as los valores por defecto. Dentro de una clase se pueden definir funciones como se muestra en el siguiente ejemplo:
+Note que tras cualquier instrucción en el lenguaje Battle Script se necesita poner un punto y coma (;) para especificar el fin de la instrucción. En este caso solo se indican los par\'ametros \verb|id| y \verb|attack|. Por tanto el resto de par\'ametros de la unidad tomar\'a los valores por defecto. Dentro de una clase se pueden definir funciones como se muestra en el siguiente ejemplo:
 
 \begin{verbatim}
 class Archer is LandUnit -> {
@@ -30,7 +30,7 @@ class Archer is LandUnit -> {
 
 Una funci\'on, definida dentro de una clase, debe definirse con al menos un par\'ametro cuyo tipo debe coincidir con el tipo de la clase pues este hace referencia a la instancia de la clase.
 
-Las definiciones de clases deben ir todas al inicio del programa y cuando se terminen definir todas se debe poner el car\'acter '\&' para indicar que ya se termin\'o la definici\'on de las clases y ahora se van a comenzar escribir las instrucciones.
+Las definiciones de clases deben ir todas al inicio del programa y cuando se terminen definir todas se debe poner el caracter '\&' para indicar que ya se termin\'o la definici\'on de las clases y ahora se van a comenzar escribir las instrucciones.
 
 Para generar un mapa aleatorio se hace de la siguiente forma:
 

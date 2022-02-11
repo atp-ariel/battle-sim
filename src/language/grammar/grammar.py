@@ -130,7 +130,6 @@ class Grammar:
 
     def __init__(self, start: NonTerminal = None):
         self._s_ = start
-        self.exp_dict: Dict[str, NonTerminal] = {}
         self.T: List[Terminal] = []
         self.N: List[NonTerminal] = []
         self.P: List[Production] = []

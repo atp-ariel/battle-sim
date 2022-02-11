@@ -11,3 +11,5 @@ function number W(number a) -> {
     }; 
     return a;
 };
+
+W(2);

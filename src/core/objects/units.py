@@ -15,6 +15,8 @@ class BSUnit(BSObject):
             raise Exception('radio invalido')
         if vision < max_range:
             raise Exception('La vision no puede ser menor que el rango maximo')
+        if max_range < min_range:
+            raise Exception('El rango maximo no puede ser menor que el rango minimo')
         self.side = None
         self.moral = moral
         self.attack = attack
@@ -297,10 +299,7 @@ class BSUnit(BSObject):
 
         precision = random.uniform(0, 1)
 
-        range_enemy = max(abs(enemy.cell.row-self.cell.row),
-                          abs(enemy.cell.col-self.cell.col))
-
-        miss_distance = (range_enemy-self.min_range) / \
+        miss_distance = (enemy_distance-self.min_range) / \
             (self.max_range-self.min_range+0.1)/10
 
         positions = [(-1, 1), (-1, 0), (-1, 1), (0, -1),
@@ -308,7 +307,7 @@ class BSUnit(BSObject):
 
         if precision < len(block_objects)/10:
 
-            bs_object = block_objects[int(precision)]
+            bs_object = block_objects[int(precision*10)]
             bs_object.take_damage(damage)
 
             if self.radio > 1:
@@ -380,7 +379,7 @@ class BSUnit(BSObject):
             self.attack_enemy(enemy)
             self.turns_recharging = self.recharge_turns
             print(
-                f"Unidad {self.id} ataca a la Unidad {enemy.id} de la celda {enemy.cell}")
+                f"Unit {self.id} attacks Unit {enemy.id} in cell {enemy.cell}")
         elif self.movil:
             cost = float("inf")
             cell = self.cell
@@ -401,7 +400,12 @@ class BSUnit(BSObject):
             if cost < float("inf"):
                 self.move_to_cell(cell)
                 self.visited_cells.add(cell)
-                print(f"Unidad {self.id} moviendose para la celda {cell}")
+                print(f"Unit {self.id} moving to cell {cell}")
+            else:
+                print(f"Unit {self.id} hold position")
+        else:
+            print(f"Unit {self.id} hold position")
+            
 
 class LandUnit(BSUnit):
     def __init__(self, id, life_points, defense, attack, moral, ofensive,min_range, max_range, radio, vision, intelligence, recharge_turns, solidarity, movil):

@@ -10,8 +10,12 @@ class Archer is LandUnit -> {
         number self.max_range = max_range;
     };
 
-    function number plus_id(Archer arch) -> {
-        return arch.id + 1;
+    function number turn(Archer arch) -> {
+        number a=2;
+        if a lte 1 -> {
+            LandUnit.turn(arch);
+        };
+        return a;
     };
 };
 &
@@ -30,9 +34,8 @@ Side STwo = Side(2, [aOne, sTwo]);
 sOne.put_in_cell(map, 0, 0);
 aTwo.put_in_cell(map, 0, 1);
 
-aOne.put_in_cell(map, 4, 4);
+aOne.put_in_cell(map, 4,4 );
 sTwo.put_in_cell(map, 4, 3);
 
-aTwo.plus_id();
 Simulator sim = Simulator(map, [SOne, STwo], 20, 1);
 sim.start();

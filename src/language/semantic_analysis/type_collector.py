@@ -7,6 +7,7 @@ from ..parser.ast import *
 class Type_Collector:
     def __init__(self, context):
         self.context = context
+        self.current_context=context
 
     @visitor(BsFile)
     def visit(self, node: BsFile):
@@ -16,5 +17,11 @@ class Type_Collector:
 
     @visitor(ClassDef)
     def visit(self, node: ClassDef):
-        self.context.create_type(node.name)
+        node.my_context=self.context.create_type(node.name,node.arg_names,node.arg_types,node.parent)[1]
+        node.context=self.current_context
+
         
+
+
+        
+    
