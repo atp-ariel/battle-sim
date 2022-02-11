@@ -257,6 +257,11 @@ class Type_Checker:
                     raise Exception(f"Name {node.name} is not a var")       
 
         else:
+            expr_type=node.expression.computed_type
+            
+            if isinstance(node.expression.computed_type,list):
+                expr_type=expr_type[1]
+                
             if isinstance(node.expression.computed_type, list) and node.expression.computed_type[0]== 'function':
                 args = [0]*len(node.args)
 
@@ -277,9 +282,9 @@ class Type_Checker:
                     raise Exception(f"Some types are incorrect for function {name}")
                     
                 
-            elif (((node.expression.computed_type[1] in node.context.children) and (node.context.children[node.expression.computed_type[1]].check_var(node.name)))or ((node.context.is_context_father(node.expression.computed_type[1])) and (node.context.get_context_father(node.expression.computed_type[1]).check_var(node.name)))):
-                if node.expression.computed_type[1] in node.context.children:
-                    exp_type=node.context.children[node.expression.computed_type[1]].get_type(node.name)
+            elif (((expr_type in node.context.children) and (node.context.children[expr_type].check_var(node.name)))or ((node.context.is_context_father(expr_type)) and (node.context.get_context_father(expr_type).check_var(node.name)))):
+                if expr_type in node.context.children:
+                    exp_type=node.context.children[expr_type].get_type(node.name)
                     
                 else:
                     exp_type=node.context.get_context_father(node.expression.computed_type[1]).get_type(node.name)

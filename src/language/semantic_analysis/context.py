@@ -143,6 +143,8 @@ class Context:
     def get_type(self, var):
         if self.father is None:
             if var in self._var_context:
+                if var=="sOne":
+                    print(f"Hey {[self._var_context[var][0],self._var_context[var][1]]}")
                 return [self._var_context[var][0],self._var_context[var][1]]
             
             else:
@@ -150,6 +152,9 @@ class Context:
 
         else:
             if var in self._var_context:
+                if var=="sOne":
+                    print(f"Hey {[self._var_context[var][0],self._var_context[var][1]]}")
+                    print(self._var_context[var])
                 return [self._var_context[var][0],self._var_context[var][1]]
 
             else:
