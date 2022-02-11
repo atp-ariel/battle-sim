@@ -14,6 +14,7 @@ El usuario final del proyecto necesita un medio para específicar las condicione
 	\item Una funci\'on se define con un tipo de retorno, un nombre, una serie de argumentos con sus respectivos tipos y un cuerpo que es una serie de instrucciones.
 	\item Un ciclo while se define con una condici\'on y una secuencia de instrucciones.
 	\item Las instrucciones if y elif se definen con una condici\'on y una secuencia de instrucciones, y adem\'as pueden tener a continuaci\'on una instrucci\'on elif o una instrucci\'on else. La instrucci\'on else se define con una secuencia de instrucciones; y tanto esta como la instrucci\'on elif deben ir precedidas de una instrucci\'on if o elif.
+	\item Las declaraciones se definen con un tipo, un nombre y una expresi\'on.
 	\item Las asignaciones se definen igual que las declaraciones lo que sin especificar un tipo.
 	\item La definici\'on de atributo es muy parecida a la declaraci\'on, pero solo se puede hacer en el constructor de una clase y adem\'as se usa la palabra clave self.
 	\item Las expresiones pueden ser de varios tipos:
@@ -28,14 +29,12 @@ El usuario final del proyecto necesita un medio para específicar las condicione
 
 \textbf{Reglas sem\'anticas:}
 \begin{itemize}
-	\item Dos argumentos en una funci\'on no deben tener el mismo tipo
-	\item Toda funci\'on y variable deben haber sido definidas antes de ser usadas y todos los tipos de estas (en el caso de la funci\'on el tipo de retorno y de los argumentos) deben haber sido creados anteriormente. (Salvo las funciones y tipos pre-definidos)
-	\item Una vez definida una funci\'on no se puede definir otra vez
-	\item Una funci\'on no puede tener distintas definiciones
-	\item Los argumentos de una funci\'on pueden ser variables definidas globalmente siempre que los tipos coincidan
-	\item Las declaraciones se definen con un tipo, un nombre y una expresi\'on.
-	\item Las funciones y las variables no pueden compartir nombre
-	\item Una variable puede ser declarada tantas veces como se desee, siempre que no cambie el tipo que se le atribuyó la primera vez
+	\item Dos argumentos en una funci\'on no pueden tener el mismo nombre
+	\item Toda funci\'on y variable deben haber sido definidas antes de ser usadas; y todos los tipos de estas (en el caso de la funci\'on el tipo de retorno y de los argumentos) deben haber sido creados. anteriormente (Salvo las funciones y tipos pre-definidos).
+	\item Una vez definida una funci\'on no se puede definir otra vez en el mismo contexto.
+	\item Los argumentos de una funci\'on pueden ser variables definidas globalmente siempre que los tipos coincidan.
+	\item Las funciones y las variables no pueden compartir nombre en el mismo contexto.
+	\item Una variable puede ser asignada tantas veces como se desee, siempre que la asignaci\'on tenga el mismo tipo con que se declar\'o.
 \end{itemize}
 
 \subsection{Gramática}
