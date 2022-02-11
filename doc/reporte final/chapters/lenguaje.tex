@@ -513,6 +513,12 @@ Para implementar nuevos tipos en el lenguaje se implement\'o una clase \verb|Typ
   \item \verb|attributes|: Atributos de la clase.
   
   \item  \verb|methods|: M\'etodos de la clase
+  
+  \item \verb|parent|: Tipo inmediato del cuál hereda este tipo
+  
+  \item \verb|context|: Contexto en que se encuentran todos los atributos y métodos de este tipo. 
+  
+  \item \verb|def_context|: Contexto en el que se encuentra este tipo
   \end{itemize}
   
   \item M\'etodos
@@ -527,7 +533,13 @@ Para implementar nuevos tipos en el lenguaje se implement\'o una clase \verb|Typ
   
   \item \verb|is_attribute|: Revisa si el atributo existe.
   
+  \item \verb|get_type|:Recive un atributo y devuelve su tipo
+  
   \item \verb|is_method|: Revisa si el m\'etodo existe.
+  
+  \item \verb|is_attribute|: Revisa si el nombre dado se encuentra entre los atributos de la clase
+  
+  \item \verb|is_method|: Revisa si el nombre dado se encuentra entre los m\'etodos de la clase
   \end{itemize}
   \end{itemize}
 
@@ -536,6 +548,8 @@ Para definir el contexto en el que se escribe un programa con el lenguaje, se im
 \begin{itemize}
 \item Atributos
 \begin{itemize}
+\item \verb|Name|:Nombre del contexto 
+
 \item \verb|father|: Contexto padre de este contexto
 
 \item \verb|children|: Contextos hijos de este contexto
@@ -545,6 +559,12 @@ Para definir el contexto en el que se escribe un programa con el lenguaje, se im
 \item \verb|_func_context|: Funciones del contexto
 
 \item \verb|_type_context|: Tipos definidos en el contexto
+
+\item \verb|If|: Cantidad de sentencias \verb|If| definidas en el contexto
+
+\item \verb|Else|: Cantidad de sentencias \verb|Else| definidas en el contexto
+
+\item \verb|While|: Cantidad de sentencias \verb|While| definidas en el contexto
 \end{itemize}
 
 \item M\'etodos
@@ -570,6 +590,13 @@ Para definir el contexto en el que se escribe un programa con el lenguaje, se im
 	\item \verb|get_return_type|: Dvuelve el tipo de retorno de una funci\'on si esta est\'a definida en el contexto
 	
 	\item \verb|get_type_object|: Devuelve la clase a la que pertenece objeto dado 
+	
+	\item \verb|is_type_defined|: Analiza si el tipo est\'a definido
+	
+	\item \verb|is_context_father|: Revisa si el contexto dado es ancestro de este contexto
+	
+	\item \verb|get_context_father|: Devuelve el contexto dado si es ancestro de este contexto
+	
 \end{itemize}
 
 \end{itemize}
@@ -579,7 +606,7 @@ Para verificar la correcci\'on de la sem\'antica se implement\'o el patr\'on \ve
 \begin{itemize}
 \item \verb|Type_Collector|: Es la primera pasada con el patr\'on \verb|Visitor| en este se recogen todos los tipos que se van a definir, para crearlos en el contexto
 
-\item \verb|Type_Builder|: Es la segunda pasada con el patr\'on, se toman todos los tipos que se definieron anteriormente y se definen sus m\'etodos y atributos.
+\item \verb|Type_Builder|: Es la segunda pasada con el patr\'on, se toman todos los tipos que se definieron anteriormente y se definen sus m\'etodos y atributos. Adem\'as, se visita cada nodo para definir en qu\'e contexto est\'a y en caso de definir alg\'un contexto, qu\'e contexto define
 
 \item \verb|Type_Checker|: Es la tercera pasada con el patr\'on, en esta se revisan que los tipos de cada expresi\'on no entren en contradicci\'on
 \end{itemize}

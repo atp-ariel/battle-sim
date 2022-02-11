@@ -4,12 +4,13 @@ from random import paretovariate
 
 
 class Type:
-    def __init__(self, context, name, parent=None):
+    def __init__(self, context, name, def_context, parent=None):
         self.name = name
         self.attributes = {}
         self.methods = {}
         self.parent = parent
         self.context = context
+        self.def_context=def_context
 
         if parent is not None:
             parent_context=parent.context
@@ -210,7 +211,7 @@ class Context:
             
             
         child = self.create_child_context(name)
-        t = Type(child, name, _parent)
+        t = Type(child, name,self, _parent)
         self._type_context[name] = t
         self.define_func(name,name,args,type_args)
         return [t,child]
@@ -259,6 +260,7 @@ class Context:
 
             else:
                 return self.father.is_type_defined(name)
+ 
     def is_context_father(self,name):
         if self.father is None:
             return self.name==name
@@ -268,8 +270,7 @@ class Context:
                 return True
             
             return self.father.is_context_father
-        
-        
+              
     def get_context_father(self,name):
         if self.father is None and self.name==name:
             return self
@@ -279,20 +280,4 @@ class Context:
                 return self.father
             
             return self.father.get_context_father
-        
-                
-            
-            
-    def get_attr_type_children(self,name,_type):
-        if len(self.children)==0:
-            if name in self._var_context:
-                _type=self._var_context[name][0]
-                return
-
-        for child in self.children:
-            if name in self._var_context:
-                _type=self._var_context[name][0]
-                return
-
-            self.children[child].get_attr_type_children(name,_type)
-
+                      

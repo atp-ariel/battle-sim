@@ -58,6 +58,8 @@ class Type_Checker:
         for i in node.body:
             self.visit(i)
             if isinstance(i, Return):
+                if isinstance(i.computed_type,list):
+                    i.computed_type=i.computed_type[1]
                 returns_types.add(i.computed_type)
                 
         if len(returns_types) == 1:
