@@ -222,15 +222,15 @@ class Type_Checker:
         self.visit(node.expression)
         
         if node.args is None:
-            #print(f"Type {node.expression.computed_type}")
+            print(f"{node.expression} {node.expression.computed_type}")
             _type = node.context.get_type_object(node.expression.computed_type)
 
             if _type.is_method(node.name):
-                node.computed_type = _type.get_method(node.name)[0]
+                node.computed_type = _type.get_method(node.name)
 
            
             elif _type.is_attribute(node.name):
-                node.computed_type = _type.get_attribute(node.name)[0]
+                node.computed_type = _type.get_attribute(node.name)
                 
             elif isinstance(node.expression.computed_type, list) and node.expression.computed_type[0]== 'var':
                 #print(f"node {node.name}: {node.expression.computed_type}")
@@ -265,8 +265,11 @@ class Type_Checker:
                     args[i] = node.args[i].computed_type
                     if isinstance(args[i],list):
                         args[i]=args[i][1]
-
+                        
                 name = node.expression.name
+                if(name=="build_random_map"):
+                    print(node.context.name)
+
                 if node.context.check_func_args(name,args):
                     node.computed_type=node.context.get_return_type(name)
                 

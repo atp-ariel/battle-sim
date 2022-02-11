@@ -56,7 +56,7 @@ class battle_sim_typing:
         self.context.create_type("Simulator",["map","Sides","arg1", "arg2"],["LandMap","List","number","number"])
         self.context.get_type_object("Simulator").define_method("start", "MyNone", [], [])
         
-        self.context.define_func("build_random_map", "LandMap", ["map","arg2","arg3"], ["LandMap","number","number"])
+        self.context.define_func("build_random_map", "LandMap", ["arg1","arg2","arg3"], ["number","number","number"])
         
         self.collecting()
         self.building()
