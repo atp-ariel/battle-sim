@@ -153,13 +153,13 @@ El mejor enemigo para atacar se determina de la siguiente forma:
  
 Por cada casilla atacable (casilla que se encuentra a una distancia de la unidad entre su rango mínimo y su rango máximo), se chequea si en la casilla hay un enemigo. Si el radio de ataque es mayor que 1 y hay una unidad amiga cerca del enemigo que pudiera verse afectada por el ataque, se ignora este enemigo. Esto se definió así para evitar el daño ocasionado por fuego amigo.
  
-Entonces si el enemigo no es ignorado debido a lo anterior, se calcula el costo de atacar al enemigo. Para dicho cálculo la unidad estima la vida y la defensa del enemigo y con estas estimaciones, y teniendo en cuenta el propio da\~{n}o que le puede causar al enemigo, calcula cuantos turnos podría tomarle destruir a dicho enemigo. Mientras mayor sea la inteligencia de la unidad más precisas serán las estimaciones.
+Entonces si el enemigo no es ignorado debido a lo anterior, se calcula el costo de atacar al enemigo. Para dicho cálculo la unidad estima la vida y la defensa del enemigo y con estas estimaciones, y teniendo en cuenta el da\~{n}o que le puede causar al enemigo, calcula cuantos turnos podría tomarle destruir a dicho enemigo. Mientras mayor sea la inteligencia de la unidad más precisas serán las estimaciones.
 
 Luego de haber analizado todos los enemigos, el seleccionado por la unidad para atacarlo es aquel cuyo costo es menor. Si no se detecta ningún posible enemigo a atacar entonces la unidad no realiza un ataque en el turno.
  
-Si la unidad no realiza un ataque, entonces, en caso de que se móvil, chequea si se puede mover a alguna casilla adyacente a la que se encuentra. Esto se hace de la siguiente forma:
+Si la unidad no realiza un ataque, entonces, en caso de que sea móvil, chequea si se puede mover a alguna casilla adyacente a la que se encuentra. Esto se hace de la siguiente forma:
  
-Se fija un costo en infinito. Luego por cada una de las celdas que la rodean en todos los puntos cardinales posibles (NW, N, NE, W, E, SW, S y SE) se calcula el costo de moverse a dicha celda, y nos quedamos con la celda cuyo co es el menor. Luego si el menor costo detectado es menor a infinito la unidad se mueve a dicha celda en caso contrario la unidad mantiene su posición. 
+Se fija un costo en infinito. Luego por cada una de las celdas que la rodean en todos los puntos cardinales posibles (NW, N, NE, W, E, SW, S y SE), la unidad calcula el costo de moverse a dicha celda, y se queda con la celda cuyo costo es el menor. Luego si el menor costo detectado es menor a infinito la unidad se mueve a dicha celda en caso contrario la unidad mantiene su posición. 
  
 Ahora, ¿cómo calcular el costo que tiene para una unidad moverse de una celda a otra?
  
@@ -171,19 +171,20 @@ Ahora se comprueba si la celda se encuentra en zona ``amiga'', es decir, si esa 
 
 Si la celda que se est\'a estudiando es una celda en la que nuestra unidad tendr\'a al alcance un enemigo, su coste se reducir\'a en el valor del par\'ametro \verb|ofensive|  multiplicado por la inversa de la ra\'iz cuadrada de la distancia m\'inima hasta el enemigo. Adem\'as la unidad observa las celdas cercanas a la celda que se est\'a estudiando que est\'en dentro de su rango de visi\'on. Si detecta que al moverse a dicha celda se encontrar\'a en rango de alg\'un enemigo el costo se aumenta en 1.1 por cada enemigo que pudiera atacar a la unidad. De esta manera se est\'a diciendo que, cuanto m\'as ofensiva sea nuestra unidad, m\'as se aproximar\'a al enemigo, aunque con cierta precauci\'on.  
 
-\subsection{M\'etodos de las unidades}
+\textbf{M\'etodos de las unidades}
+
 A continuaci\'on se hace una breve explicaci\'on de las funciones implementadas a las unidades. Adem\'as de las  ya mencionadas, implementadas en \verb|BSObject|, un agente \verb|BSUnit| tiene implementadas las siguientes funciones:
 
 \begin{itemize}
 	\item \verb|calculate_distance(self, cell1, cell2) -> int| con la que la unidad calcula la distancia entre dos celdas. La distancia se calcula como la cantidad m\'inima de celdas que tiene recorrer la unidad para ir de una celda a otra.
 	\item \verb|nearby_friend(self, cell) -> bool| con la que la unidad determina si movi\'endose a la celda de entrada estar\'a cerca de un compa\~{n}ero.
 	\item \verb|enemy_in_range(self, cell)| con la que la unidad determina si al moverse a esa celda, tiene alg\'un enemigo al alcance.
-	\item \verb|in_range_of_enemy(self, cell) -> int| con la que la unidad determina la cantidad de enemigos, de los que puede ver, la cantidad que pudieran atacarla.
+	\item \verb|in_range_of_enemy(self, cell) -> int| con la que la unidad determina la cantidad de enemigos que pudieran atacarla, de los que puede ver.
 	\item \verb|move_cost_calculate(self, cell, type) -> float| con la que la unidad determina el costo de moverse a una determinada celda.
 	\item \verb|enemy_cost_calculate(self, enemy) -> float| con la que el unidad calcula el costo de atacar a un enemigo determinado.
 	\item \verb|friend_in_danger(self, cell) -> bool| con la que la unidad detecta si atacando a una celda determinada, pone en peligro a una unidad aliada.
 	\item \verb|enemy_to_attack(self)| con la que la unidad determina, de ser posible, cual es el mejor enemigo para atacar.
-	\item \verb|take_damage(self, damage)| que se redefine el m\'etodo de la clase \verb|BSOBject| para tener  en cuenta la moral de las unidades.
+	\item \verb|take_damage(self, damage)| se redefine el m\'etodo de la clase \verb|BSOBject| para tener  en cuenta la moral de la unidad.
 	\item \verb|attack_enemy(self, enemy)| que es la acci\'on de atacar a un enemigo. Para darle mayor realismo a la simulaci\'on, se simula que las unidades adem\'as puedan fallar los ataques. En la precisi\'on de un ataque influyen  factores como la distancia entre la unidad que ataca y la unidad atacada y los objetos adyacentes a la unidad atacada que se interpongan entre ambas unidades.
 	\item \verb|move_to_cell(self, cell)| que es la acci\'on de moverse a una determinada celda.
 	\item \verb|turn(self, type)| que es la funci\'on que permite a la unidad realizar un turno.
@@ -207,23 +208,23 @@ Para este proceso se implement\'o la clase \verb|Side| que consta de los siguien
 \begin{itemize}
 \item \verb|id|: Valor num\'erico \'unico que se le asocia al bando, se utiliza entre otras cosas para hallar el Hash
 
-\item \verb|name|: Nombre que se le dio al bando
+\item \verb|name|: Nombre del bando
 
 \item \verb|units|: Unidades que se encuentran en el bando
 
-\item \verb|no_own_units_defeated|: Cantidad de unidades del bando que fueron derrotadas
+\item \verb|no_own_units_defeated|: Cantidad de unidades del bando que han sido derrotadas.
 
-\item \verb|no_enemy_units_defeated|: Cantidad de unidades enemigas que han sido derrotadas
+\item \verb|no_enemy_units_defeated|: Cantidad de unidades enemigas que han sido derrotadas por unidades del bando.
 
 \end{itemize}
 
 \item M\'etodos 
 \begin{itemize}
-\item \verb|add_unit|: Este m\'etodo permite agregar una unidad al bando. Esta acci\'on no tendr\'a efecto hasta el turno siguiente despu\'es de realizarse.
+\item \verb|add_unit|: Este m\'etodo permite agregar una unidad al bando.
 
-\item \verb|remove_unit|: Este m\'etod posibilita quitar una unidad del bando. Esta acci\'on no tendr\'a efecto hasta el turno siguiente despu\'es de realizarse.
+\item \verb|remove_unit|: Este m\'etodo posibilita quitar una unidad del bando.
 
-\item \verb|get_units|: Devuelve todas las unidades actuales en la simulaci\'on, aunque estas de momento no realicen turno porque se añadieron recientemente.
+\item \verb|get_units|: Devuelve todas las unidades del bando.
 
 \item \verb|__iter__|: Para iterar las unidades
 
