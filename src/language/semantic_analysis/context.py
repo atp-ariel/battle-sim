@@ -92,26 +92,16 @@ class Context:
             return self.father.check_var(var)
 
     def check_var_type(self, var, _type):
-<<<<<<< Updated upstream
-        if self.check_var(var):
-            type=self.get_type(var)
-            if isinstance(type,list):
-                type=type[1]
-            if self.get_type(var)==_type:
-=======
         if self.father == None:
             return var in self._var_context and (self._var_context[var][1] == _type or self._var_context[var][1]=="Type")
 
         else:
             if var in self._var_context:
->>>>>>> Stashed changes
                 return True
             
             else:
                 return False
             
-        else:
-            raise Exception(f"{var} is not defined")
 
     def check_func(self, func):
         if self.father == None:
@@ -211,11 +201,7 @@ class Context:
         self.children[name] = child
         return child
 
-<<<<<<< Updated upstream
     def create_type(self, name,args=[],type_args=[],parent=None):
-=======
-    def create_type(self, name, parent="Type"):
->>>>>>> Stashed changes
         _parent = None
         if parent is not None:
             _parent = self.get_type_object(parent)
