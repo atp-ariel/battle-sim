@@ -92,11 +92,19 @@ class Context:
             return self.father.check_var(var)
 
     def check_var_type(self, var, _type):
+<<<<<<< Updated upstream
         if self.check_var(var):
             type=self.get_type(var)
             if isinstance(type,list):
                 type=type[1]
             if self.get_type(var)==_type:
+=======
+        if self.father == None:
+            return var in self._var_context and (self._var_context[var][1] == _type or self._var_context[var][1]=="Type")
+
+        else:
+            if var in self._var_context:
+>>>>>>> Stashed changes
                 return True
             
             else:
@@ -121,7 +129,7 @@ class Context:
                 if len(args) == len(self._func_context[func][1]):
                     for i in range(len(args)):
                         # print(self._func_context[func])
-                        if args[i] != self._func_context[func][1][i]:
+                        if args[i] != self._func_context[func][1][i] and self._func_context[func][1][i]!="Type":
                             return False
 
                     return True
@@ -203,7 +211,11 @@ class Context:
         self.children[name] = child
         return child
 
+<<<<<<< Updated upstream
     def create_type(self, name,args=[],type_args=[],parent=None):
+=======
+    def create_type(self, name, parent="Type"):
+>>>>>>> Stashed changes
         _parent = None
         if parent is not None:
             _parent = self.get_type_object(parent)
