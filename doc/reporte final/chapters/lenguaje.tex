@@ -28,6 +28,15 @@ El usuario final del proyecto necesita un medio para específicar las condicione
 
 \subsection{Gramática}
 
+Una gramática libre del contexto es una tupla $G = \langle T, N, S, P \rangle$ donde:
+
+\begin{itemize}
+        \item $T$ es un conjunto de símbolos terminales (el vocabulario).
+        \item $N$ es un conjunto de símbolos no terminales.
+        \item $S \in N$ es el símbolo inicial.
+        \item $P$ es un conjunto de producciones de la forma $A \rightarrow \alpha$  donde $A \in N$ y $\alpha \in \{T \times N\}^+$ o $\alpha = \epsilon$.
+\end{itemize}
+
 Se diseñó la siguiente gramática para el lenguaje:
 
 \begin{verbatim}
@@ -159,6 +168,18 @@ atom -> NAME
 list -> '[' expressions ']'             
     |   '[' ']'                         
 \end{verbatim}
+
+Se creó un submódulo de Python para implementar gramáticas de forma más fácil en las secciones siguientes del compilador. Se implementó la jerarquía de clases siguiente:
+
+\begin{figure}
+        \centering
+        \includegraphics[width=13cm]{./chapters/img/grammar.jpeg}
+        \caption{Diagrama de clases del módulo grammar}
+\end{figure}
+
+Para inicializar una gramática es necesario tener creado todos los \verb|NonTerminal| con sus producciones agregadas, y se le pasa el \verb|NonTerminal| inicial al constructor de \verb|Grammar|.
+
+Luego de crear dicho submódulo se implementó la gramática en el archivo \verb|bs_grammar.py| de forma que esté accesible para todo el compilador en la variable \verb|GRAMMAR|.
 
 \subsection{Compilador}
 
