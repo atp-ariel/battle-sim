@@ -152,7 +152,8 @@ class Context:
             if var in self._var_context:
                 return [self._var_context[var][0],self._var_context[var][1]]
 
-            return self.father.get_type(var)
+            else:
+                return self.father.get_type(var)
 
     def define_var(self, var, _type, value=""):
         #print(self.is_type_defined(_type))
@@ -161,10 +162,10 @@ class Context:
         if isinstance(_type,list):
             type=_type[1]
         
-        if not var in self._var_context and self.is_type_defined(type):
+        if not self.check_var(var) and self.is_type_defined(type):
             self._var_context[var] = ["var", type, value]
 
-        elif self._var_context[var][1] == type:
+        elif var in self._var_context and self._var_context[var][1] == type:
             self._var_context[var][2] = value
 
         else:

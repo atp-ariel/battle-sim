@@ -6,6 +6,7 @@ El usuario final del proyecto necesita un medio para específicar las condicione
 
 \textbf{Reglas sint\'acticas:}
 
+
 \begin{itemize}
 	\item Un programa escrito en Battle Script es una secuencia de clases y a continuaci\'on una secuencia de instrucciones.
 	\item Una clase se define con un nombre y el nombre de la clase de la que hereda (herencia simple), un costructor donde se definen los atributos de la clase y una secuencia o no de funciones.
@@ -14,8 +15,16 @@ El usuario final del proyecto necesita un medio para específicar las condicione
 	\item Un ciclo while se define con una condici\'on y una secuencia de instrucciones.
 	\item Las instrucciones if y elif se definen con una condici\'on y una secuencia de instrucciones, y adem\'as pueden tener a continuaci\'on una instrucci\'on elif o una instrucci\'on else. La instrucci\'on else se define con una secuencia de instrucciones; y tanto esta como la instrucci\'on elif deben ir precedidas de una instrucci\'on if o elif.
 	\item Las declaraciones se definen con un tipo, un nombre y una expresi\'on.
+	\item Las funciones y las variables no pueden compartir nombre
+	\item Una variable puede ser declarada tantas veces como se desee, siempre que no cambie el tipo que se le atribuyó la primera vez
 	\item Las asignaciones se definen igual que las declaraciones lo que sin especificar un tipo.
 	\item La definici\'on de atributo es muy parecida a la declaraci\'on, pero solo se puede hacer en el constructor de una clase y adem\'as se usa la palabra clave self.
+	\item Una vez definida una funci\'on no se puede definir otra vez
+	\item Una funci\'on no puede tener distintas definiciones
+	\item Toda funci\'on y variable deben haber sido definidas antes de ser usadas y todos los tipos de estas (en el caso de la funci\'on el tipo de retorno y de los argumentos) deben haber sido creados anteriormente. (Salvo las funciones y tipos pre-definidos)
+	\item Los argumentos de una funci\'on pueden ser variables definidas globalmente siempre que los tipos coincidan
+	\item Dos argumentos en una funci\'on no deben tener el mismo tipo
+	\item Los m\'etodos de la clase deben tener como primer argumento un miembro de la clase
 	\item Las expresiones pueden ser de varios tipos:
 	\begin{itemize}
 		\item Expresiones at\'omicas como variables, n\'umeros, llamado a funciones, etc.
