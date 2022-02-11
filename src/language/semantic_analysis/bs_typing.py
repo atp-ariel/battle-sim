@@ -25,7 +25,7 @@ class battle_sim_typing:
         t.define_method("append", "MyNone", ["x"], ["Type"])
         t.define_method("remove", "MyNone", ["x"], ["Type"])
         
-        self.context.create_func("super", "BSObject", [],[])
+        self.context.define_func("super", "BSObject", [],[])
 
         self.context.create_type("BSObject")
         self.context.create_type("BSUnit", parent="BSObject")

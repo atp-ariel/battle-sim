@@ -203,11 +203,7 @@ class Context:
         self.children[name] = child
         return child
 
-<<<<<<< Updated upstream
     def create_type(self, name,args=[],type_args=[],parent=None):
-=======
-    def create_type(self, name, parent="Type"):
->>>>>>> Stashed changes
         _parent = None
         if parent is not None:
             _parent = self.get_type_object(parent)
