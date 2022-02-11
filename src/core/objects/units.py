@@ -401,6 +401,10 @@ class BSUnit(BSObject):
                 self.move_to_cell(cell)
                 self.visited_cells.add(cell)
                 print(f"Unit {self.id} moving to cell {cell}")
+            else:
+                print(f"Unit {self.id} hold position")
+        else:
+            print(f"Unit {self.id} hold position")
             
 
 class LandUnit(BSUnit):
