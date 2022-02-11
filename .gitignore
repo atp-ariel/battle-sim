@@ -12,7 +12,6 @@
 # Local History for Visual Studio Code
 .history/
 
-*.pdf
 # Ignoring LaTex of Documentation
 
 ## Core latex/pdflatex auxiliary files:
