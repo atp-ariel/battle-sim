@@ -1,0 +1,40 @@
+class Soldier is LandUnit -> {
+    constructor(number id, number attack) -> {
+        number self.id = id;
+        number self.attack = attack;
+    };
+};
+class Tree is StaticObject -> {
+    constructor(number id, number life_points) -> {
+        number self.id=id;
+        number self.life_points=life_points;
+    };
+};
+
+&
+
+LandMap map = build_random_map(1, 5, 5);
+
+Soldier sOne = Soldier(1, 2);
+Soldier sTwo = Soldier(2, 4);
+
+Soldier sThree = Soldier(3, 2);
+Soldier sFour = Soldier(4, 3);
+
+Tree tOne = Tree(5,4);
+Tree tTwo = Tree(6,2);
+
+sOne.put_in_cell(map, 0,0);
+sTwo.put_in_cell(map, 0, 1);
+
+sThree.put_in_cell(map, 4,4 );
+sFour.put_in_cell(map, 4, 3);
+
+tOne.put_in_cell(map,2,2);
+tTwo.put_in_cell(map,3,3);
+
+Side SOne = Side(1, [sOne, sTwo]);
+Side STwo = Side(2, [sThree, sFour]);
+
+Simulator sim = Simulator(map, [SOne, STwo], 20, 1);
+sim.start();
