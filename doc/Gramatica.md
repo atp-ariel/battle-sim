@@ -118,6 +118,7 @@ primary ->  primary '.' NAME            build_primary1
         |   primary '(' expressions ')'        build_primary2
         |   primary '(' ')'             build_primary3
         |   atom
+        | '(' expression ')'            build_pexpression
 
 atom -> NAME                            build_Variable
     |   'True'                          build_Bool

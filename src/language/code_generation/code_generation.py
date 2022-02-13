@@ -240,3 +240,7 @@ class CodeGenerate:
     def visit(self, node: MyList):
         args = ', '.join(self.visit(e) for e in node.inner_list)
         return f'[{args}]'
+    
+    @visitor(PExpression)
+    def visit(self, node: PExpression):
+        return f'({self.visit(node.expression)})'

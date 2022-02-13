@@ -464,3 +464,7 @@ def build_classes2(tokens: List[str], nodes: List):
     class_def = nodes.pop()
     classes = Classes(class_def, None)
     nodes.append(classes)
+    
+def build_pexpression(tokens: List[str], nodes:List):
+    exp=nodes.pop()
+    nodes.append(PExpression(exp))

@@ -279,7 +279,7 @@ class BSUnit(BSObject):
     # atacar enemigo
     def attack_enemy(self, enemy):
 
-        damage = self.attack+(self.moral+self.cell.passable)
+        damage = self.attack+(self.moral+self.cell.passable)/2
 
         enemy_distance = self.calculate_distance(self.cell, enemy.cell)
         block_objects = []
