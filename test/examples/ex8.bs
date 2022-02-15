@@ -11,9 +11,9 @@ class Archer is LandUnit -> {
     };
 
     function number turn(Archer arch) -> {
-        number a=2;
+        number a=2*(-1);
         if a lte 1 -> {
-            LandUnit.turn(arch);
+            super().turn();
         };
         return a;
     };

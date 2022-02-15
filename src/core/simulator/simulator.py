@@ -28,11 +28,9 @@ class Simulator:
     def get_events(self,moment):
         events={}
 
-        for side in self.sides:
-            units=side.get_units()
-            for unit in units:
-                if self.event_is_pos(unit):
-                    events[unit]=0
+        for unit in self.units:
+            if self.event_is_pos(unit):
+                events[unit]=0
 
         print("Life points")
         print(tabulate([list(map(lambda x: x.life_points, self.units))], headers=[f"Unit {u.id}" for u in self.units]))
@@ -61,11 +59,11 @@ class Simulator:
             return
 
         for event in events:
-            if event[1]>time_beg and event[1]<time_end:
-                if self.event_is_pos(event[0]):
-                    print(f"{event[1]}", end=" - ")
-                    event[0].turn()
+            if self.event_is_pos(event[0]):
+                print(f"{event[1]}", end=" - ")
+                event[0].turn()
         print()
+
     def simulating_k_turns(self):
         beg=self.time_beg
         k=self.turns

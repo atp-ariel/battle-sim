@@ -139,6 +139,7 @@ class Automaton:
                 initial_items[nt].append(Item(prod, 0))
 
         i0 = State(initial_items[s])
+        i0.build(initial_items)
 
         states_list = [i0]
         states_dict = {i0: i0}
@@ -146,7 +147,6 @@ class Automaton:
 
         while len(q) != 0:
             state = q.popleft()
-            state.build(initial_items)
             for sym in state.expected_symbols:
                 state.go_to(sym, states_dict, states_list, q, initial_items)
 

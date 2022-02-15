@@ -27,6 +27,7 @@ class BSObject(ABC):
     def take_damage(self, attack: float):
         self.life_points -= attack / self.defense
         if self.life_points <= 0:
+            self.life_points = 0
             self.cell.bs_object = None
 
 

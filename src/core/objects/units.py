@@ -274,6 +274,7 @@ class BSUnit(BSObject):
     def take_damage(self, damage):
         self.life_points -= damage/(self.defense+self.moral)
         if self.life_points <= 0:
+            self.life_points=0
             self.cell.bs_object = None
 
     # atacar enemigo
