@@ -6,8 +6,6 @@ from random import paretovariate
 class Type:
     def __init__(self, context, name, def_context, parent=None):
         self.name = name
-        self.attributes = {}
-        self.methods = {}
         self.parent = parent
         self.context = context
         self.def_context=def_context
@@ -17,57 +15,30 @@ class Type:
             
             for v in parent_context._var_context:
                 self.context._var_context[v]=parent_context._var_context[v]
-
+                
+                if parent_context._var_context[v][0]=="function":
+                    self.context._var_context[v][1]=0
+                                   
             for f in parent_context._func_context:
                 self.context._func_context[f]=parent_context._func_context[f]
                 
             for t in parent_context._type_context:
                 self.context._type_context[t]=parent_context._type_context[t]
-                
-            for m in parent.methods:
-                self.methods[m] = parent.methods[m]
-
-            for a in parent.attributes:
-                self.attributes[a] = parent.attributes[a]
-
-    def get_attribute(self, attribute):
-        if attribute in self.attributes:
-            return self.attributes[attribute]
-
-    def get_method(self, method):
-        if method in self.methods:
-            return self.methods[method]
 
     def define_attribute(self, name, _type, attribute=None):
-        self.attributes[name] = [attribute, _type]
         self.context.define_var(name, _type, attribute)
         # Se guarda en diccionario el atributo y el tipo
-
-    def get_type(self, attribute):
-        if attribute in self.attributes:
-            _type = self.attributes[attribute]
-
-            if _type == "func":
-                _type = self.methods[attribute][0]
-
-            return _type
-
-        else:
-            raise Exception(
-                f"type object '{self.name}' has no attribute '{attribute}'")
-
+        
     def define_method(self, name, return_type, arguments, argument_types):
-        self.methods[name] = [return_type, arguments, argument_types]
-        self.attributes[name] = [name, "func"]
         return self.context.define_func(name, return_type, arguments, argument_types)
         # Se guarda en diccionario el tipo de retorno, los argumentos y el tipo de los argumentos
 
     def is_attribute(self, name):
-        return name in self.attributes
+        return name in self.context._var_context and self.context._var_context[name][0]=="var"
 
     def is_method(self, name):
-        return name in self.methods
-
+        return name in self.context._func_context
+        
 
 class Context:
     def __init__(self,name,father=None):
@@ -170,19 +141,38 @@ class Context:
         if not self.check_var(var) and self.is_type_defined(type):
             self._var_context[var] = ["var", type, value]
 
-        elif var in self._var_context and self._var_context[var][1] == type:
-            self._var_context[var][2] = value
-
-        else:
+        elif not self.is_type_defined(type):
             raise Exception(f"Type {type} is not defined")
+        
+        else:
+            raise Exception(f"Var {name} is already defined")
+
+    def assign_var(self,var,value=""):
+        if var in self._var_context and self._var_context[var][1] == type:
+            self._var_context[var][2] = value
+            
+        elif not var in self._var_context:
+            raise Exception(f"Var {name} is not defined")
+        
+        else:
+            if self.is_type_defined(type):
+                raise Exception(f"Type {type} is not defined")
+                
+            else:
+                raise Exception(f"Type {type} is not  the one defined for de variable {var} ")
 
     def define_func(self, func, _type, args, _type_args):
         if self.is_type_defined(_type):
 
             if func in self._var_context:
-                raise Exception(f"{func} is already defined")
-
-            self._var_context[func] = ["function",None, None]
+                if self._var_context[func][0]=="function" and self._var_context[func][1]:
+                    raise Exception(f"{func} is already defined")
+                
+                elif self._var_context[func][0]=="var":
+                    raise Exception(f"Name {func} is the name for a variable")
+                    
+           
+            self._var_context[func] = ["function",1, _type]
             _context=self.create_child_context(func)
             data = [_type, [0]*len(args), [0]*len(args)]
             # [tipo de retorno,tipo de argumento,nombre de argumento]
@@ -192,8 +182,8 @@ class Context:
                     data[1][i] = _type_args[i]
 
 
-                else:
-                    raise Exception("Type Error")
+                else:  
+                    raise TypeError(f"The type {_type_args[i]} for the argument number {i} is not defined")
                 
 
         else:
@@ -210,7 +200,7 @@ class Context:
         self.children[name] = child
         return child
 
-    def create_type(self, name,args=[],type_args=[],parent=None):
+    def create_type(self, name,args=[],type_args=[],parent=None,acces=True):
         _parent = None
         if parent is not None:
             _parent = self.get_type_object(parent)
@@ -219,8 +209,12 @@ class Context:
         child = self.create_child_context(name)
         t = Type(child, name,self, _parent)
         self._type_context[name] = t
-        self.define_func(name,name,args,type_args)
-        return [t,child]
+        
+        context_func=None
+        if acces:
+            context_func=self.define_func(name,name,args,type_args)
+            
+        return [t,child,context_func]
 
     def get_return_type(self, func):
 

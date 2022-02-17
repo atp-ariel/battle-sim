@@ -123,7 +123,7 @@ class Type_Checker:
     def visit(self, node: Assign):
         self.visit(node.expression)
         if node.context.check_var_type(node.name, node.expression.computed_type):
-            self.node.context.define_var(node.name,node.type,node.expression)
+            self.node.context.assign_var(node.name,node.expression)
             node.computed_type = None
 
         else:

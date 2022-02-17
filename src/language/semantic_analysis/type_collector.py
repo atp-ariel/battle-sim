@@ -17,8 +17,14 @@ class Type_Collector:
 
     @visitor(ClassDef)
     def visit(self, node: ClassDef):
-        node.my_context=self.context.create_type(node.name,node.arg_names,node.arg_types,node.parent)[1]
-        node.context=self.current_context
+        if node.parent=="LandUnit" or node.parent=="NavalUnit":
+            cont=self.context.create_type(node.name,node.arg_names,node.arg_types,node.parent)
+            node.my_context=cont[1]
+            node.context=self.current_context
+            node.constructor_context=cont[2]
+                
+        else:
+            raise Exception(f"Parent is not valid for class {node.name}")
 
         
 
