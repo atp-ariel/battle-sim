@@ -42,7 +42,7 @@ class Type_Context:
         
     @visitor(FuncDef)
     def visit(self, node: FuncDef):
-        #node.ctor_context=self.ctor_context
+        node.ctor_context=self.ctor_context
         self.current_context=node.my_context
         for s in node.body:
             self.current_context=node.my_context
@@ -199,4 +199,12 @@ class Type_Context:
     def visit(self,node:MyList):
         node.ctor_context=self.ctor_context
         node.context=self.current_context   
-                   
+            
+    @visitor(PExpression)
+    def visit(self,node:PExpression):
+        node.context=self.current_context
+        node.ctor_context=self.ctor_context
+        if not node.expression is None:
+            self.visit(node.expression)
+            self.current_context=node.context
+    

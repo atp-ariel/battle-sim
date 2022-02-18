@@ -37,7 +37,13 @@ class Type:
         return name in self.context._var_context and self.context._var_context[name][0]=="var"
 
     def is_method(self, name):
-        return name in self.context._func_context
+        return self.context.check_func_args(name)
+        
+    def check_method(self, func, args):
+        self.context.check_func_args(func, args)
+        
+    def assign_attribute(self,name,_type,attribute):
+        self.context.assign_var(var,_type,value)
         
 
 class Context:
@@ -88,8 +94,8 @@ class Context:
             return self.father.check_func(func)
 
     def check_func_args(self, func, args):
-        if self.father == None:
-            if func in self._func_context:
+        if self.check_func(func):
+            if self.father == None:
                 if len(args) == len(self._func_context[func][1]):
                     for i in range(len(args)):
                         # print(self._func_context[func])
@@ -98,10 +104,9 @@ class Context:
 
                     return True
 
-            return False
+                return False
 
-        else:
-            if func in self._func_context:
+            else:
                 if len(args) == len(self._func_context[func][1]):
                     for i in range(len(args)):
                         if not args[i] != self._func_context[func][1][i]:
@@ -110,6 +115,9 @@ class Context:
                     return True
 
             return self.father.check_func_args(func, args)
+        
+        else:
+            return False
 
     def get_type(self, var):
         if self.father is None:
@@ -147,7 +155,10 @@ class Context:
         else:
             raise Exception(f"Var {name} is already defined")
 
-    def assign_var(self,var,value=""):
+    def assign_var(self,var,_type,value=""):
+        type=_type
+        if isinstance(_type, list):
+            type=_type[1]
         if var in self._var_context and self._var_context[var][1] == type:
             self._var_context[var][2] = value
             
@@ -162,7 +173,7 @@ class Context:
                 raise Exception(f"Type {type} is not  the one defined for de variable {var} ")
 
     def define_func(self, func, _type, args, _type_args):
-        if self.is_type_defined(_type):
+        if self.is_type_defined(_type) or _type == "void":
 
             if func in self._var_context:
                 if self._var_context[func][0]=="function" and self._var_context[func][1]:
@@ -173,7 +184,7 @@ class Context:
                     
            
             self._var_context[func] = ["function",1, _type]
-            _context=self.create_child_context(func)
+            _context=self.create_child_context(f"function {func}")
             data = [_type, [0]*len(args), [0]*len(args)]
             # [tipo de retorno,tipo de argumento,nombre de argumento]
             for i in range(len(args)):
@@ -251,6 +262,9 @@ class Context:
                 return self.father.get_type_object(name)
 
     def is_type_defined(self, name):
+        if name=="None":
+            return True
+        
         if self.father is None:
             return name in self._type_context
 
@@ -281,3 +295,30 @@ class Context:
             
             return self.father.get_context_father
                       
+    def is_in_while_context(self):
+        if self.father is None:
+            return Name(self.name,"While")
+        
+        else:
+            if Name(self.father.name,"While"):
+                return True
+            
+            return self.father.is_in_while_context()
+        
+    def is_in_func_context(self):
+        if self.father is None:
+            return Name(self.name,"function")
+        
+        else:
+            if Name(self.father.name,"function"):
+                return True
+            
+            return self.father.is_in_while_context()
+        
+    def Name(name:str, type:str):
+        temp=name.split(' ')
+        return temp[1] == type
+        
+    
+        
+    
