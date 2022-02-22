@@ -10,8 +10,8 @@ class Archer is LandUnit -> {
         number self.max_range = max_range;
     };
 
-    function number plus_id(Archer arch) -> {
-        return arch.id + 1;
+    function number plus_id() -> {
+        return self.id + 1;
     };
 };
 &

@@ -26,7 +26,11 @@ class Type:
                 self.context._type_context[t]=parent_context._type_context[t]
 
     def define_attribute(self, name, _type, attribute=None):
-        self.context.define_var(name, _type, attribute)
+        if name in self.parent.context._var_context:
+            if not self.context.check_var_type(name, _type):
+                raise TypeError('The types did not match')
+        else:
+            self.context.define_var(name, _type, attribute)
         # Se guarda en diccionario el atributo y el tipo
         
     def define_method(self, name, return_type, arguments, argument_types):
@@ -42,8 +46,14 @@ class Type:
     def check_method(self, func, args):
         self.context.check_func_args(func, args)
         
-    def assign_attribute(self,name,_type,attribute):
-        self.context.assign_var(var,_type,value)
+    def is_child(self,type_parent):
+        if self.parent is None:
+            return False
+        
+        if self.parent.name==type_parent.name:
+            return True
+        
+        return self.parent.is_child(type_parent)
         
 
 class Context:
@@ -74,7 +84,7 @@ class Context:
             type=self.get_type(var)
             if isinstance(type,list):
                 type=type[1]
-            if self.get_type(var)==_type:
+            if self.check_type(type,_type):
                 return True
             
             else:
@@ -93,13 +103,14 @@ class Context:
 
             return self.father.check_func(func)
 
+    #arreglar este codigo
     def check_func_args(self, func, args):
         if self.check_func(func):
             if self.father == None:
                 if len(args) == len(self._func_context[func][1]):
                     for i in range(len(args)):
                         # print(self._func_context[func])
-                        if args[i] != self._func_context[func][1][i] and self._func_context[func][1][i]!="Type":
+                        if self.check_type(args[i],self._func_context[func][1][i]) and self._func_context[func][1][i]!="Type":
                             return False
 
                     return True
@@ -122,55 +133,32 @@ class Context:
     def get_type(self, var):
         if self.father is None:
             if var in self._var_context:
-                if var=="sOne":
-                    print(f"Hey {[self._var_context[var][0],self._var_context[var][1]]}")
-                return [self._var_context[var][0],self._var_context[var][1]]
+                return self._var_context[var]
             
             else:
                 raise Exception(f"name {var} is not defined")
 
         else:
             if var in self._var_context:
-                if var=="sOne":
-                    print(f"Hey {[self._var_context[var][0],self._var_context[var][1]]}")
-                    print(self._var_context[var])
-                return [self._var_context[var][0],self._var_context[var][1]]
+                return self._var_context[var]
 
             else:
                 return self.father.get_type(var)
 
-    def define_var(self, var, _type, value=""):
-        #print(self.is_type_defined(_type))
+    def define_var(self, var, _type):
         
         type=_type
         if isinstance(_type,list):
             type=_type[1]
         
-        if not self.check_var(var) and self.is_type_defined(type):
-            self._var_context[var] = ["var", type, value]
+        if not var in self._var_context and self.is_type_defined(type):
+            self._var_context[var] = ["var", type]
 
         elif not self.is_type_defined(type):
             raise Exception(f"Type {type} is not defined")
         
         else:
-            raise Exception(f"Var {name} is already defined")
-
-    def assign_var(self,var,_type,value=""):
-        type=_type
-        if isinstance(_type, list):
-            type=_type[1]
-        if var in self._var_context and self._var_context[var][1] == type:
-            self._var_context[var][2] = value
-            
-        elif not var in self._var_context:
-            raise Exception(f"Var {name} is not defined")
-        
-        else:
-            if self.is_type_defined(type):
-                raise Exception(f"Type {type} is not defined")
-                
-            else:
-                raise Exception(f"Type {type} is not  the one defined for de variable {var} ")
+            raise Exception(f"Var {var} is already defined")
 
     def define_func(self, func, _type, args, _type_args):
         if self.is_type_defined(_type) or _type == "void":
@@ -186,19 +174,21 @@ class Context:
             self._var_context[func] = ["function",1, _type]
             _context=self.create_child_context(f"function {func}")
             data = [_type, [0]*len(args), [0]*len(args)]
+            args_set=set()
             # [tipo de retorno,tipo de argumento,nombre de argumento]
             for i in range(len(args)):
                 if self.is_type_defined(_type_args[i]):
+                    if args[i] in args_set:
+                        raise Exception(f"Some arguments have the same name in {func}")
+                    args_set.add(args[i])
                     data[2][i] = args[i]
                     data[1][i] = _type_args[i]
-
-
                 else:  
-                    raise TypeError(f"The type {_type_args[i]} for the argument number {i} is not defined")
+                    raise TypeError(f"The type {_type_args[i]} for the argument number {i} is not defined in function {func}")
                 
 
         else:
-            raise Exception("Type Error")
+            raise TypeError("The return type is not defined")
         
         self._func_context[func] = data
         for i in range(len(args)):
@@ -315,6 +305,20 @@ class Context:
             
             return self.father.is_in_while_context()
         
+    def check_type(self, type1,type2):
+        #padre,hijo
+        if self.is_type_defined(type1): 
+            if type1==type2:
+                return True
+            
+            if self.is_type_defined(type2):
+                object1=self.get_type_object(type1)
+                object2=self.get_type_object(type2)
+                
+                return object2.is_child(object1)
+            
+        return False
+            
     def Name(name:str, type:str):
         temp=name.split(' ')
         return temp[1] == type

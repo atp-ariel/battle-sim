@@ -123,7 +123,7 @@ def build_func_def2(tokens: List[str], nodes: List):
     name = tokens[len(tokens)-7]
     block = nodes.pop()
     return_type = nodes.pop()
-    func_def = FuncDef(name, return_type, [], [],
+    func_def = FuncDef(name, return_type.type, [], [],
                        obtain_statements([], block))
     nodes.append(func_def)
 
@@ -331,6 +331,14 @@ def build_primary3(tokens: List[str], nodes: List):
     exp = nodes.pop()
 
     primary = Primary(exp, None, [])
+
+    nodes.append(primary)
+    
+def build_primary4(tokens:List[str], nodes:List):
+    exp = Variable('self')
+    name = tokens[len(tokens)-1]
+
+    primary = Primary(exp, name, None)
 
     nodes.append(primary)
 

@@ -10,7 +10,7 @@ class Archer is LandUnit -> {
         number self.max_range = max_range;
     };
 
-    function number turn(Archer arch) -> {
+    function number turn() -> {
         number a=2*(-1);
         if a lte 1 -> {
             super().turn();

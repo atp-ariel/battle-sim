@@ -211,6 +211,7 @@ _pow += Production([primary])
 primary += Production([primary, dot, name], build_primary1)
 primary += Production([primary, lparent, expressions, rparent], build_primary2)
 primary += Production([primary, lparent, rparent],  build_primary3)
+primary += Production([_self,dot,name],build_primary4)
 primary += Production([atom])
 primary += Production([lparent,expression,rparent],build_pexpression)
 
