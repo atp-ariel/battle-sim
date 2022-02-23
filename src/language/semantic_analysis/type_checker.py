@@ -55,6 +55,9 @@ class Type_Checker:
         elif node.return_type != "void" and self.no_return_type:
             raise Exception(f"There is not returning any value for the function {node.name} ")
       
+        self.return_type = ""
+        self.no_return_type=True
+        
     @visitor(If)
     def visit(self, node: If):
         self.visit(node.condition)
@@ -99,7 +102,8 @@ class Type_Checker:
     @visitor(Decl)
     def visit(self, node: Decl):
         self.visit(node.expression)
-        #print(node.expression.computed_type) 
+        if isinstance(node.expression.computed_type, list):
+            node.expression.computed_type=node.expression.computed_type[1]
         if (not node.context.check_var(node.name)) and (node.context.check_type(node.type,node.expression.computed_type) or node.expression.computed_type=="None"):
             node.context.define_var(node.name,node.type)
             node.computed_type = None
@@ -108,7 +112,6 @@ class Type_Checker:
             if node.context.check_var(node.name):
                 raise Exception(f"Var {node.name} is already defined")
                 
-            #print(f"decl {node.name}")
             raise Exception(f"Type mismatch for for the declaration of the variable {node.name}")
             node.computed_type = None
 
@@ -119,13 +122,12 @@ class Type_Checker:
             node.computed_type = None
 
         else:
-            #print(f"assign {node.name}")
             raise Exception(f"the expected type for the variable {node.name} is not the one received ")
             node.computed_type = None
 
     @visitor(Return)
     def visit(self, node: Return):
-        node.computed_type = "None"
+        node.computed_type = "Null"
         if not node.expression is None :
             self.visit(node.expression)
 
@@ -139,12 +141,11 @@ class Type_Checker:
                 
         self.no_return_type=False
             
-        if node.computed_type=="None":
+        if node.computed_type=="Null":
             self.no_return_type=True
             return
                 
-                
-        if not node.context.check_type(self.return_type,node.computed_type):
+        if not node.context.check_type(self.return_type,node.computed_type) and (node.computed_type == "None" and (self.return_type=="number" or self.return_type=="bool")):
             raise Exception("The return type does not match with the one specified")
 
     @visitor(Break)
@@ -174,7 +175,6 @@ class Type_Checker:
             node.right.computed_type=node.left.computed_type [1]
 
         if node.left.computed_type != node.right.computed_type and node.right.computed_type != "None":
-            #print(f"bin {node.left} {node.right}")
             raise Exception("Type mismatch binary expression")
             node.computed_type = None
 
@@ -193,8 +193,6 @@ class Type_Checker:
             node.right.computed_type=node.right.computed_type[1]
             
         if node.left.computed_type != node.right.computed_type and node.right.computed_type != "None":
-                #print(f"aritmetic {node.left} {node.right}")
-                print(f"{node.left}: {node.left.computed_type}")
                 raise Exception("Type mismatch for aritmetic expression")
 
         else:
@@ -217,7 +215,7 @@ class Type_Checker:
             node.left.computed_type=node.left.computed_type [1]
             
         if isinstance(node.right.computed_type,list):
-            node.right.computed_type=node.left.computed_type [1]
+            node.right.computed_type=node.right.computed_type [1]
             
             
         if isinstance(node.condition.computed_type, list):
@@ -225,7 +223,6 @@ class Type_Checker:
             
 
         if node.right.computed_type == node.left.computed_type:
-            #print("Ternary")
             if node.condition.computed_type=="bool":
                 node.computed_type = None
                 
@@ -317,14 +314,15 @@ class Type_Checker:
                        
     @visitor(Variable)
     def visit(self, node: Variable):
-        #print(f"name {node.name}")
-        #print(f"context {node.context.name}")
-        #print(self.context._var_context.keys())
         
         if node.context.check_var(node.name):
             node.computed_type = node.context.get_type(node.name)
             return
 
+        elif self.context.check_var(node.name):
+            node.computed_type = self.context.get_type(node.name)
+            return
+        
         raise Exception(f"Name {node.name} is not defined")
 
     @visitor(Number)

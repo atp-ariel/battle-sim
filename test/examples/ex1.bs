@@ -2,12 +2,23 @@ class Soldier is LandUnit -> {
     constructor(number id) -> { 
         number self.id = id; 
     }; 
+    function number Pe(Cell a, Cell b)->{
+        number e = a.row;
+        number i = b.col;
+        return self.id; 
+    };
 }; 
 & 
 
-function number W(number a) -> { 
-    while True -> {
-        number b = a + 1;
+List b = [];
+function number W(number a) -> {
+    b.append(1); 
+    while a lte 5 -> {
+        a = a + 1;
     }; 
     return a;
-};
+}; 
+
+
+
+BSUnit s=Soldier(1);

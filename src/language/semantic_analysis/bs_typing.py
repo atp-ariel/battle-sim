@@ -19,6 +19,8 @@ class battle_sim_typing:
         self.context.create_type("Type",acces=False)
         self.context.create_type("number",acces=False)
         self.context.create_type("bool",acces=False)
+        self.context.create_type("None",acces=False)
+        self.context.define_func("print", "void", ["x"], ["Type"])
         
         t=self.context.create_type("List",acces=False)[1]
         t.define_func("append", "void", ["x"], ["Type"])

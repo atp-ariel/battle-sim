@@ -135,10 +135,12 @@ class Context:
             if len(args) == len(_func[1]):
                 for i in range(len(args)):
                     if _func[1][i] != "Type" and not self.check_type(_func[1][i],args[i]):
-                        return False
+                        raise Exception(f"The type for the argument '{_func[2][i]}' is {_func[1][i]} and {args[i]} was given in the function {func} ")
 
                 return True
             
+            else:
+                raise Exception(f"Expected {len(_func[1])} arguments and {len(args)} were given in the function {func}")
         else:
             return False
 
@@ -148,7 +150,6 @@ class Context:
         
         else:
             raise Exception(f"name {var} is not defined")
-
 
     def define_var(self, var, _type):
         
@@ -237,7 +238,6 @@ class Context:
         else:
             raise Exception(f"func '{func}' is not defined")
 
-
     def get_type_object(self, name_type):
         name=name_type
         if isinstance(name,list):
@@ -299,7 +299,7 @@ class Context:
             return self.Name(self.name,"While")
         
         else:
-            if self.Name(self.father.name,"While"):
+            if self.Name(self.name,"While"):
                 return True
             
             return self.father.is_in_while_context()

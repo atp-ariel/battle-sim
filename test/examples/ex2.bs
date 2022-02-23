@@ -16,7 +16,11 @@ if 3 lt 2->
     number i = 4;
 };
 
+function number Q(bool a, number c)->{
+    return c;
+};
+
 bool a = True;
-number d = 2;
+number d = Q(a,4,1,2);
 
 Soldier s=Soldier(d);
