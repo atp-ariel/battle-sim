@@ -33,8 +33,6 @@ class battle_sim_typing:
         t.define_var("defense","number")
         t.define_func("take_damage","void",["damage"],["number"])
         t.define_func("put_in_cell", "void", ["map","row","col"], ["LandMap","number","number"])        
-         
-        self.context.define_func("super", "BSObject", [],[])
     
         t=self.context.create_type("Cell", args=["passable","row" , "column", "height"],type_args=["number","number","number","number"],acces=False)[1]
         t.define_var("row","number")

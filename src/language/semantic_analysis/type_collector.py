@@ -17,7 +17,7 @@ class Type_Collector:
 
     @visitor(ClassDef)
     def visit(self, node: ClassDef):
-        if node.parent=="LandUnit" or node.parent=="NavalUnit":
+        if node.parent=="LandUnit" or node.parent=="NavalUnit" or node.parent=="StaticObject":
             cont=self.context.create_type(node.name,node.arg_names,node.arg_types,node.parent)
             node.my_context=cont[1]
             node.context=self.current_context
