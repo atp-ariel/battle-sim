@@ -1,0 +1,51 @@
+class Soldier is LandUnit -> {
+    constructor(number id, number attack) -> {
+        number self.id = id;
+        number self.attack = attack;
+        bool self.papa = True;
+    };
+
+    function BSUnit pepe(number a)->{
+        number b = a;
+        if a lte 1 ->{
+            return None;
+        };
+        return self.enemy_to_attack();
+    };
+};
+class Archer is LandUnit -> {
+    constructor(number id, number max_range) -> {
+        number self.id = id;
+        number self.max_range = max_range;
+    };
+
+    function number calculate_distance(Cell a, Cell b)->{
+        return super().calculate_distance(a,b);
+    };
+
+    function number plus_id() -> {
+        return self.id + 1;
+    };
+};
+&
+LandMap map = build_random_map(1, 5, 5);
+
+Soldier sOne = Soldier(1, 10);
+Soldier sTwo = Soldier(2, 9);
+
+Archer aOne = Archer(3, 5);
+Archer aTwo = Archer(4, 5);
+
+Side SOne = Side(1, [sOne, aTwo]);
+Side STwo = Side(2, [aOne, sTwo]);
+
+
+sOne.put_in_cell(map, 0, 0);
+aTwo.put_in_cell(map, 0, 1);
+
+aOne.put_in_cell(map, 4, 4);
+sTwo.put_in_cell(map, 4, 3);
+
+aTwo.plus_id();
+Simulator sim = Simulator(map, [SOne, STwo], 20, 1);
+sim.start();
