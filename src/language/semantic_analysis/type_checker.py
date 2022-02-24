@@ -11,6 +11,7 @@ class Type_Checker:
         self.bool_ops = set(["eq","neq","lte","lt","gte","gt"])
         self.return_type = ""
         self.no_return_type=True
+        self.func_name = None
 
     @visitor(BsFile)
     def visit(self, node: BsFile):
@@ -45,6 +46,7 @@ class Type_Checker:
         
     @visitor(FuncDef)
     def visit(self, node: FuncDef):
+        self.func_name = node.name
         self.return_type=node.return_type
         for i in node.body:
             self.visit(i)
@@ -57,6 +59,7 @@ class Type_Checker:
       
         self.return_type = ""
         self.no_return_type=True
+        self.func_name = None
         
     @visitor(If)
     def visit(self, node: If):
@@ -141,12 +144,15 @@ class Type_Checker:
                 
         self.no_return_type=False
             
-        if node.computed_type=="Null":
+        if node.computed_type=="Null" or node.computed_type=="void":
             self.no_return_type=True
             return
+        
+        if node.computed_type == "None" and not (self.return_type=="number" or self.return_type=="bool"):
+            return
                 
-        if not node.context.check_type(self.return_type,node.computed_type) and (node.computed_type == "None" and (self.return_type=="number" or self.return_type=="bool")):
-            raise Exception("The return type does not match with the one specified")
+        if not node.context.check_type(self.return_type,node.computed_type):
+            raise Exception(f"The return type does not match with the one specified for the function {self.func_name} ")
 
     @visitor(Break)
     def visit(self, node: Break):
@@ -164,7 +170,6 @@ class Type_Checker:
 
     @visitor(BinaryExpression)
     def visit(self, node: BinaryExpression):
-        # Ver AritmeticBinaryExpression
         self.visit(node.left)
         self.visit(node.right)
 
@@ -176,7 +181,9 @@ class Type_Checker:
 
         if node.left.computed_type != node.right.computed_type and node.right.computed_type != "None":
             raise Exception("Type mismatch binary expression")
-            node.computed_type = None
+        
+        if (node.op == "and" or node.op=="or") and node.left.computed_type != "bool":
+            raise Exception(f"Boolean operators are for type bool")
 
         else:
             node.computed_type = node.left.computed_type
@@ -207,9 +214,9 @@ class Type_Checker:
                 
     @visitor(TernaryExpression)
     def visit(self, node: TernaryExpression):
+        self.visit(node.left)
         self.visit(node.condition)
         self.visit(node.right)
-        self.visit(node.left)
         
         if isinstance(node.left.computed_type,list):
             node.left.computed_type=node.left.computed_type [1]
@@ -224,7 +231,7 @@ class Type_Checker:
 
         if node.right.computed_type == node.left.computed_type:
             if node.condition.computed_type=="bool":
-                node.computed_type = None
+                node.computed_type = node.right.computed_type
                 
             else:
                 raise Exception("Condition most be a bool")
@@ -233,7 +240,6 @@ class Type_Checker:
 
         else:
             raise Exception("Type mismatch for Ternary expression")
-            node.computed_type = None
 
     @visitor(Inversion)
     def visit(self, node: Inversion):
@@ -244,6 +250,9 @@ class Type_Checker:
             
         if node.expression.computed_type == "bool":
             node.computed_type = "bool"
+            
+        else:
+            raise TypeError(f"Invalid expression for operator 'not'")
 
     @visitor(Primary)
     def visit(self, node: Primary):
@@ -299,18 +308,18 @@ class Type_Checker:
                 _type=node.expression.expression.computed_type
                         
                 if isinstance(_type, list):
-                    _type=_type[0]
+                    _type=_type[1]
                           
                 _type=node.context.get_type_object(_type)
                 if _type.is_attribute(expr_name):
                     node.computed_type=_type.context.get_type(expr_name)
                         
                 else:
-                    raise Exception(f"Variable {expr_name} is not a variable for the type {temp[0]} ")
+                    raise Exception(f"Variable {node.name} is not a variable for the type {_type.name} ")
                         
                 
             else:
-                raise Exception(f"Attribute {node.name} is not defined for type {_type} ")
+                raise Exception(f"Attribute {node.name} is not defined for type {_type.name} ")
                        
     @visitor(Variable)
     def visit(self, node: Variable):

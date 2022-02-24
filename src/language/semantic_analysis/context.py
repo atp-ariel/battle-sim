@@ -17,7 +17,7 @@ class Type:
                 self.context._var_context[v]=parent_context._var_context[v]
                 
                 if parent_context._var_context[v][0]=="function":
-                    self.context._var_context[v][1]=0
+                    self.context._var_context[v][2]=0
                                    
             for f in parent_context._func_context:
                 self.context._func_context[f]=parent_context._func_context[f]
@@ -28,9 +28,9 @@ class Type:
     def define_attribute(self, name, _type, attribute=None):
         if name in self.parent.context._var_context:
             if not self.context.check_var_type(name, _type):
-                raise TypeError('The types did not match')
+                raise TypeError(f'The declaration type did not match for the atribute {name}')
         else:
-            self.context.define_var(name, _type, attribute)
+            self.context.define_var(name, _type)
         # Se guarda en diccionario el atributo y el tipo
         
     def define_method(self, name, return_type, arguments, argument_types):
@@ -170,14 +170,14 @@ class Context:
         if self.is_type_defined(_type) or _type == "void":
 
             if func in self._var_context:
-                if self._var_context[func][0]=="function" and self._var_context[func][1]:
+                if self._var_context[func][0]=="function" and self._var_context[func][2]:
                     raise Exception(f"{func} is already defined")
                 
                 elif self._var_context[func][0]=="var":
                     raise Exception(f"Name {func} is the name for a variable")
                     
            
-            self._var_context[func] = ["function",1, _type]
+            self._var_context[func] = ["function",_type,1]
             _context=self.create_child_context(f"function {func}")
             data = [_type, [0]*len(args), [0]*len(args)]
             args_set=set()

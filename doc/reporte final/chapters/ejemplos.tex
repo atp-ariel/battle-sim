@@ -22,13 +22,13 @@ class Archer is LandUnit -> {
         number self.max_range = max_range;
     };
 		
-    function number plus_id(Archer arch) -> {
-        return arch.id + 1;
+    function number plus_id() -> {
+        return self.id + 1;
     };
 };
 \end{verbatim}
 
-Una funci\'on, definida dentro de una clase, debe definirse con al menos un par\'ametro cuyo tipo debe coincidir con el tipo de la clase pues este hace referencia a la instancia de la clase.
+En este caso se define una funci\'on que devuelve un n\'umero y no recibe par\'ametros. Obs\'ervese que para hacer referencia a los atributos de la clase se utiliza la palabra clave \verb|self|.
 
 Las definiciones de clases deben ir todas al inicio del programa y cuando se terminen definir todas se debe poner el caracter '\&' para indicar que ya se termin\'o la definici\'on de las clases y ahora se van a comenzar escribir las instrucciones.
 
@@ -38,7 +38,7 @@ Para generar un mapa aleatorio se hace de la siguiente forma:
 	LandMap map = build_random_map(1, 5, 5);
 \end{verbatim} 
 
-La funci\'on build\_random\_map es una funci\'on built-in que recibe como par\'ametros un n\'umero real entre 0 y 1 que indica el porcentaje de casillas de tierra que se desea tenga el mapa, y dos enteros que indican el n\'umero de filas y de columnas que se desea tenga el mapa.
+La funci\'on \verb|build\_random\_map| es una funci\'on built-in que recibe como par\'ametros un n\'umero real entre 0 y 1 que indica el porcentaje de casillas de tierra que se desea tenga el mapa, y dos enteros que indican el n\'umero de filas y de columnas que se desea tenga el mapa.
 
 Entonces pasemos a ver como crear las unidades:
 
@@ -138,7 +138,7 @@ function number W(number a) -> {
 };
 
 function number A(number a) -> { 
-    while True -> {
+    while a lte 5 -> {
         a = a + 1;
     }; 
     return a;

@@ -27,6 +27,7 @@ def compile(bs: str, py: str = "", run: bool = True):
                 except BaseException as e:
                     print(style("Error", fg=colors.RED, bold=True) + "\t" + str(exc_info()[1]))
                     Exit(code=1)
+                
             if not run:
                 with open(py, "w") as fpy:
                     fpy.write(python_code)
@@ -43,4 +44,4 @@ if __name__ == "__main__":
     run(compile)
 
     # ! Uncomment for debug
-    #compile("./test/examples/ex1.bs", run=True)
+    #compile("./test/examples/ex12.bs", run=True)

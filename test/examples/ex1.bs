@@ -19,6 +19,12 @@ function number W(number a) -> {
     return a;
 }; 
 
+number a = 2;
+if a lt 2 ->{
+    a=3;
+}
+else ->{
+    a=1;
+};
 
-
-BSUnit s=Soldier(1);
+print(a);
