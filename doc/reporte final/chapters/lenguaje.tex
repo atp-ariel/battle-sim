@@ -557,7 +557,7 @@ Para implementar nuevos tipos en el lenguaje se implement\'o una clase \verb|Typ
   	\item \verb|number|: Que engloba a los n\'umeros.
   	\item \verb|bool|: Que engloba a las expresiones booleanas
   	\item \verb|List|: Que engloba a las listas. Una lista cuenta con dos funciones: \verb|append| y \verb|remove| para a\~{n}adir y remover elementos de la misma respectivamente.
-  	\item Todos los tipos descritos durante en la explicaci\'on de la simulaci\'on con sus respectivos m\'etodos y atributos. Aqu\'i vale aclarar que de estos los \'unicos tipos instanciables son \verb|LandMap| y \verb|Simulator|.
+  	\item Todos los tipos descritos durante la explicaci\'on de la simulaci\'on con sus respectivos m\'etodos y atributos. Aqu\'i vale aclarar que de estos los \'unicos tipos instanciables son \verb|LandMap| y \verb|Simulator|.
   	\item Los nuevos tipos definidos por el usuario que se explican a continuaci\'on (que tambi\'en son instanciables).
   \end{itemize}
   
@@ -597,15 +597,15 @@ Para definir el contexto en el que se escribe un programa con el lenguaje, se im
 
 \item M\'etodos
 \begin{itemize}
-\item \verb|check_var|: Revisa si la variable est\'a definida en el contexto
+\item \verb|check_var|: Revisa si la variable est\'a definida en el contexto.
 
-	\item \verb|check_var_type|: Revisa que la variable est\'e definida en el contexto y el tipo corresponda con el tipo de la variable
+	\item \verb|check_var_type|: Revisa que la variable est\'e definida en el contexto y el tipo corresponda con el tipo de la variable.
 	
-	\item \verb|check_func|: Revisa que la funci\'on est\'e definida
+	\item \verb|check_func|: Revisa que la funci\'on est\'e definida.
 	
-	\item \verb|check_func_args|: Revisa si la funci\'on est\'a definida y los tipos de los argumentos coinciden con los tipos de la funci\'on
+	\item \verb|check_func_args|: Revisa si la funci\'on est\'a definida y los tipos de los argumentos coinciden con los tipos de la funci\'on.
 	
-	\item \verb|get_type|: Devuelve el tipo de una variable en el contexto
+	\item \verb|get_type|: Devuelve el tipo de una variable en el contexto.
 	
 	\item \verb|define_var|: Si la variable no existe en el contexto, la crea. 
 	
@@ -613,23 +613,23 @@ Para definir el contexto en el que se escribe un programa con el lenguaje, se im
 	
 	\item \verb|create_child_context|: Crea un contexto hijo.
 	
-	\item \verb|create_type|: Crea un nuevo tipo en el contexto. Una vez que se crea un tipo se define una función dentro del contexto donde se crea el tipo y con el mismo nombre de este, la cual será el constructor de la clase. Además, una clase también define un contexto, donde estarán todos sus atributos. Se tiene además una propiedad que dice si el tipo es accesible. Por defecto todos los tipos son accesibles. Si un tipo no es accesible no se podrá instanciar pues no tendrá definida una función constructor. Usualmente esta propiedad es para algunos tipos built-in, por ejemplo \verb|number|, pues no tendría sentido hacer: \verb|number a = number();|, por ejemplo.
+	\item \verb|create_type|: Crea un nuevo tipo en el contexto. Una vez que se crea un tipo se define una función dentro del contexto donde se crea el tipo y con el mismo nombre de este, la cual será el constructor de la clase. Además, una clase también define un contexto, donde estarán todos sus atributos. Se tiene además una propiedad que dice si el tipo es accesible. Por defecto todos los tipos son accesibles. Si un tipo no es accesible no se podrá instanciar pues no tendrá definida una función constructor. Usualmente esta propiedad es para algunos tipos built-in, por ejemplo \verb|number|, pues no tendría sentido hacer: \verb|number a = number();|.
 	
-	\item \verb|get_return_type|: Devuelve el tipo de retorno de una funci\'on si esta est\'a definida en el contexto
+	\item \verb|get_return_type|: Devuelve el tipo de retorno de una funci\'on si esta est\'a definida en el contexto.
 	
-	\item \verb|get_type_object|: Devuelve la clase a la que pertenece objeto dado 
+	\item \verb|get_type_object|: Devuelve la clase a la que pertenece un objeto dado. 
 	
-	\item \verb|is_type_defined|: Analiza si el tipo est\'a definido
+	\item \verb|is_type_defined|: Analiza si el tipo est\'a definido.
 	
-	\item \verb|is_context_father|: Revisa si el contexto dado es ancestro de este contexto
+	\item \verb|is_context_father|: Revisa si el contexto dado es ancestro de este contexto.
 	
-	\item \verb|get_context_father|: Devuelve el contexto dado si es ancestro de este contexto
+	\item \verb|get_context_father|: Devuelve el contexto dado si es ancestro de este contexto.
 	
 	\item \verb|is_in_while_context|: Revisa si el contexto actual está definido dentro de un contexto while. De esta forma \verb|break| y \verb|continue| no pueden ser usadas si no están dentro de un bucle.
 	
 	\item \verb|is_in_func_context|: Revisa si el contexto actual está definido dentro de un contexto función pues sería incorrecto usar una expresión de tipo \verb|return| fuera de un método. 
 	
-	\item \verb|check_type|: A este método se le pasan dos tipos y comprueba que el primero no sea ancestro del segundo.
+	\item \verb|check_type|: A este método se le pasan dos tipos y comprueba que el primero sea ancestro del segundo.
 
 	
 \end{itemize}
