@@ -24,3 +24,5 @@ bool a = True;
 number d = Q(a,4);
 
 Soldier s=Soldier(d);
+
+print(Q(a,3.2));

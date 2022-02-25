@@ -30,6 +30,19 @@ class Archer is LandUnit -> {
 
 En este caso se define una funci\'on que devuelve un n\'umero y no recibe par\'ametros. Obs\'ervese que para hacer referencia a los atributos de la clase se utiliza la palabra clave \verb|self|.
 
+Si se quisiera redefinir una funci\'on  de clase heredada del padre de la clase y en esta utilizar la funci\'on del padre, se puede hacer utilizando la funci\'on super() como se muestra en el siguiente ejemplo:
+
+\begin{verbatim}
+    function void turn() -> {
+        number a=2*(-1);
+        if a lte 1 -> {
+            super().turn();
+        };
+    };
+\end{verbatim}
+
+En este caso se ha redefinido la funci\'on \verb|turn|, utilizando adem\'as la funci\'on heredada del padre.
+
 Las definiciones de clases deben ir todas al inicio del programa y cuando se terminen definir todas se debe poner el caracter '\&' para indicar que ya se termin\'o la definici\'on de las clases y ahora se van a comenzar escribir las instrucciones.
 
 Para generar un mapa aleatorio se hace de la siguiente forma:
@@ -37,8 +50,6 @@ Para generar un mapa aleatorio se hace de la siguiente forma:
 \begin{verbatim}
 	LandMap map = build_random_map(1, 5, 5);
 \end{verbatim} 
-
-La funci\'on \verb|build\_random\_map| es una funci\'on built-in que recibe como par\'ametros un n\'umero real entre 0 y 1 que indica el porcentaje de casillas de tierra que se desea tenga el mapa, y dos enteros que indican el n\'umero de filas y de columnas que se desea tenga el mapa.
 
 Entonces pasemos a ver como crear las unidades:
 
@@ -145,4 +156,4 @@ function number A(number a) -> {
 };
 \end{verbatim} 
 
-
+M\'as ejemplos se pueden encontrar en el m\'odulo test/examples.

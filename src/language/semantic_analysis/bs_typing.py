@@ -41,6 +41,7 @@ class battle_sim_typing:
         t.define_var("col", "number")
         t.define_var("passable", "number")
         t.define_var("height", "number")
+        t.define_var("bs_object", "BSObject")
         
         self.context.create_type("StaticObject", args=["id","life_points","defense"], type_args=["number","number","number"],parent="BSObject",acces=False)
         
