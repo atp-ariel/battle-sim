@@ -521,10 +521,6 @@ Para implementar nuevos tipos en el lenguaje se implement\'o una clase \verb|Typ
   \begin{itemize}
   \item \verb|name|: Nombre de la clase o nuevo tipo
   
-  \item \verb|attributes|: Atributos de la clase.
-  
-  \item  \verb|methods|: M\'etodos de la clase
-  
   \item \verb|parent|: Tipo inmediato del cuál hereda este tipo
   
   \item \verb|context|: Contexto en que se encuentran todos los atributos y métodos de este tipo. 
@@ -533,26 +529,25 @@ Para implementar nuevos tipos en el lenguaje se implement\'o una clase \verb|Typ
   \end{itemize}
   
   \item M\'etodos
-  \begin{itemize}
-  \item \verb|get_attribute|:  Devuelve el atributo de la clase que se pide si este existe.
-  
-  \item \verb|get_method|: Devuelve el m\'etodo de la clase que se pide si este existe.
-  
+  \begin{itemize}  
   \item \verb|define_attribute|: Define el atributo de la clase.
   
   \item \verb|define_method|: Define el m\'etodo de la clase.
   
   \item \verb|is_attribute|: Revisa si el atributo existe.
   
-  \item \verb|get_type|:Recive un atributo y devuelve su tipo
+  \item \verb|check_method|:Revisa que el método esté bien definido a partir de los atributos
   
   \item \verb|is_method|: Revisa si el m\'etodo existe.
   
   \item \verb|is_attribute|: Revisa si el nombre dado se encuentra entre los atributos de la clase
   
-  \item \verb|is_method|: Revisa si el nombre dado se encuentra entre los m\'etodos de la clase
+  \item \verb|is_child|: Revisa si el nombre dado es padre del tipo.
   \end{itemize}
   \end{itemize}
+  Estos métodos en su mayoría se apoyan en funciones del contexto para definir y revisar atributos dentro del contexto del tipo creado.
+  
+  Lo primero que se hace una vez que se crea un tipo es revisar si este tiene un padre. En este lenguaje, menos los tipos built-in, todos los tipos van a heredar de \verb|LandUnit|, \verb|NavalUnit| o \verb|StaticObject| en caso contrario se lanzará una excepción. Una vez que se conoce cuál es la clase de la cuál se hereda, se procede a copiar los atributos y tipos definidos en la clase padre. Las funciones heredadas pueden ser modificadas una única vez durante la definición de la clase. Además cada función tiene en su contexto definida la función \verb|super()| que devuelve el tipo de la clase padre y de esta forma se puede llamar a la definición de la función en la clase padre directamente.
 
 \subsubsection{Context}
 Para definir el contexto en el que se escribe un programa con el lenguaje, se implement\'o la clase \verb|Context|, esta cuenta con los siguientes atributos y m\'etodos 
@@ -592,11 +587,11 @@ Para definir el contexto en el que se escribe un programa con el lenguaje, se im
 	
 	\item \verb|define_var|: Si la variable no existe en el contexto, la crea. En caso contrario le asigna el valor siempre que este corresponda con el tipo de la variable
 	
-	\item \verb|define_func|: Define la funci\'on si no existe en el contexto
+	\item \verb|define_func|: Define la funci\'on si no existe en el contexto. Una función solo puede definirse una vez. En caso de funciones heredadas estas pueden re-definirse una única vez. Cuando se crea una función se crea además un contexto, el contexto que ella define que viene a ser el cuerpo del método.
 	
-	\item \verb|create_child_context|: Crea un contexto hijo
+	\item \verb|create_child_context|: Crea un contexto hijo.
 	
-	\item \verb|create_type|: Crea un nuevo tipo en el contexto
+	\item \verb|create_type|: Crea un nuevo tipo en el contexto. Una vez que se crea un tipo se define una función dentro del contexto donde se crea el tipo y con el mismo nombre de este, la cual será el constructor de la clase. Además, una clase también define un contexto, donde estarán todos sus atributos. Se tiene además una propiedad que dice si el tipo es accesible. Por defecto todos los tipos son accesibles. Si un tipo no es accesible no se podrá instanciar pues no tendrá definida una función constructor. Usualmente esta propiedad es para algunos tipos built-in, por ejemplo \verb|number|, pues ni tendría sentido decir: \verb|number a = number();|, por ejemplo.
 	
 	\item \verb|get_return_type|: Dvuelve el tipo de retorno de una funci\'on si esta est\'a definida en el contexto
 	
@@ -608,18 +603,31 @@ Para definir el contexto en el que se escribe un programa con el lenguaje, se im
 	
 	\item \verb|get_context_father|: Devuelve el contexto dado si es ancestro de este contexto
 	
+	\item \verb|is_in_while_context|: Revisa si el contexto actual está definido dentro de un contexto while. De esta forma \verb|break| y \verb|continue| no pueden ser usadas si no están dentro de un bucle.
+	
+	\item \verb|is_in_func_context|: Revisa si el contexto actual está definido dentro de un contexto función pues sería incorrecto usar una exprsión de tipo \verb|return| en fuera de un método. 
+	
+	\item \verb|check_type|: A este método se le pasan dos tipos y comprueba que el primero no sea ancestro del segndo.
+
+	
 \end{itemize}
 
 \end{itemize}
+
+Se definió \verb|Type| como tipo genérico, que no viene a ser un tipo en sí, es más bien una palabra reservada que significa que puede ser sustituida por cualquier tipo existente.
 
 \subsubsection{Visitor}
-Para verificar la correcci\'on de la sem\'antica se implement\'o el patr\'on \verb|Visitor| que visitar\'a el \'arbol de sintaxis abstracta en tres pasadas distintas
+Para verificar la correcci\'on de la sem\'antica se implement\'o el patr\'on \verb|Visitor| que visitar\'a el \'arbol de sintaxis abstracta en cuatro pasadas distintas
 \begin{itemize}
-\item \verb|Type_Collector|: Es la primera pasada con el patr\'on \verb|Visitor| en este se recogen todos los tipos que se van a definir, para crearlos en el contexto
+\item \verb|Type_Collector|: Es la primera pasada con el patr\'on \verb|Visitor| en este se recogen todos los tipos que se van a definir, para crearlos en el contexto. Además se revisa que los tipos que se crearon sean hijos de  \verb|LandUnit|, \verb|NavalUnit| o \verb|StaticObject| en caso contrario lanza una excepción. Se guardarán además el contexto de que define la clase, el contexto donde se define la clase y el contexto que define el constructor de la misma.
 
-\item \verb|Type_Builder|: Es la segunda pasada con el patr\'on, se toman todos los tipos que se definieron anteriormente y se definen sus m\'etodos y atributos. Adem\'as, se visita cada nodo para definir en qu\'e contexto est\'a y en caso de definir alg\'un contexto, qu\'e contexto define
+\item \verb|Type_Builder|: Es la segunda pasada con el patr\'on, se toman todos los tipos que se definieron anteriormente y se definen sus m\'etodos y atributos. Se guarda además el contexto que define la función cuando se crea.
 
-\item \verb|Type_Checker|: Es la tercera pasada con el patr\'on, en esta se revisan que los tipos de cada expresi\'on no entren en contradicci\'on
+\item \verb|Type_Context|: Es la tercera pasada del visitor, se visita cada nodo para definir en qu\'e contexto est\'a. Para esto se usa el atributo \verb|current_context| en el cual se guarda el contexto que se está visitando actualmente, actualizándose cada vez que se pasa por un nodo que define un contexto (clases, funciones, condicionales o bucles) y volciendo al valor anterior una vez que se termina ese camino del \'arbol de sintaxis abstracta. 
+
+\item \verb|Type_Checker|: Es la tercera pasada con el patr\'on, en esta se revisan que los tipos de cada expresi\'on no entren en contradicci\'on. Para esto se revisa en los contextos donde se encuentran los nodos y se utilizan las funciones de la clase \verb|Context|. Se chequea adem\'as que expresiones de \verb|return| solo ocurran dentro de una función y expresiones como \verb|break| y \verb|continue| estén siempre dentro de un bucle.
+
+
 \end{itemize}
 
 \subsection{Generaci\'on de c\'odigo}

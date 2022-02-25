@@ -42,7 +42,7 @@ class CodeGenerate:
 
         self.write(f'class {node.name}({node.parent}):\n')
 
-        args = ', '.join(arg.name for arg in node.attributes)
+        args = ', '.join(name for name in node.arg_names)
 
         self.count_tabs += 1
 
@@ -245,3 +245,7 @@ class CodeGenerate:
     @visitor(PExpression)
     def visit(self, node: PExpression):
         return f'({self.visit(node.expression)})'
+    
+    @visitor(Inversion)
+    def visit(self, node: Inversion):
+        return f'not {self.visit(node.expression)}'
