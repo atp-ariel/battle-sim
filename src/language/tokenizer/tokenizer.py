@@ -1,10 +1,14 @@
 from typing import Iterable, List, Tuple
+
+from pytest_randomly import T
 from .token import Token, TokenType, TokenDefinition
 from ..regex import Match
 from queue import deque
 
 
 TOKENS: List[TokenDefinition] = [
+    TokenDefinition(TokenType.LeftBracket, 1),
+    TokenDefinition(TokenType.RightBracket, 1),
     TokenDefinition(TokenType.EOF, 1),
     TokenDefinition(TokenType.Comma, 1),
     TokenDefinition(TokenType.Number, 1),
@@ -50,8 +54,6 @@ TOKENS: List[TokenDefinition] = [
     TokenDefinition(TokenType.Self, 1),
     TokenDefinition(TokenType.OAnd, 1),
     TokenDefinition(TokenType.While, 1),
-    TokenDefinition(TokenType.LeftBracket, 1),
-    TokenDefinition(TokenType.RightBracket, 1),
     TokenDefinition(TokenType.Bool, 1),
     TokenDefinition(TokenType.List, 1)
 ]
@@ -88,4 +90,15 @@ class Tokenizer:
             i += 1
         tokens.append(Token(TokenType.EOF, "EOF",
                             tokens[-1].end + 1, tokens[-1].end + 4))
+        i = 0
+        while i < len(tokens):
+            if tokens[i].name == "NUMBER":
+                if i + 1 < len(tokens) and tokens[i+1].name == ".":
+                    t = Token(TokenType.Number, tokens[i].lexeme+tokens[i+1].lexeme, tokens[i].start, tokens[i].start+1)
+                    if i + 2 < len(tokens) and tokens[i+2].name == "NUMBER":
+                        t = Token(TokenType.Number, t.lexeme+tokens[i+2].lexeme, t.start, tokens[i+2].end)
+                        tokens.remove(tokens[i+2])
+                    tokens[i] = t
+                    tokens.remove(tokens[i+1])
+            i += 1
         return deque(tokens)

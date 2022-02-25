@@ -10,7 +10,7 @@ class Soldier is LandUnit -> {
 }; 
 & 
 
-List b = [];
+List b = [[1]];
 function number W(number a) -> {
     b.append(1); 
     while a lte 5 -> {
@@ -21,4 +21,4 @@ function number W(number a) -> {
 
 
 
-BSUnit s=Soldier(1);
+BSUnit s=Soldier(1.4);

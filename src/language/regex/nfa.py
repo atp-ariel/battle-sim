@@ -19,10 +19,11 @@ class Match:
 
 
 class NFA:
-    def __init__(self, start, end):
+    def __init__(self, start, end, rep: bool = False):
         self.start: State = start
         self.end: State = end  # start and end states
         end.is_end = True
+        self.rep = rep
 
     def addstate(self, state: State, state_set: Set[State]) -> None:
         # add state + recursively add epsilon transitions
@@ -68,7 +69,7 @@ class NFA:
                     tstate = s.transitions[c]
                     self.addstate(tstate, nstates)
                     if not matched:
-                        match = Match(i, i, c) if match is None else Match(
+                        match = Match(i, i, c) if match is None or not self.rep else Match(
                             match.start, match.end + 1, match.value + c)
                         matched = True
                 else:
@@ -82,6 +83,9 @@ class NFA:
             for s in states:
                 if s.is_end:
                     matches.append(match)
+                    states = set()
+                    self.addstate(self.start, states)
+                    break
 
         m = []
 
@@ -161,7 +165,7 @@ class Handler:
 
         n1.end.is_end = False
         n1.end.epsilon.append(n2.start)
-        nfa = NFA(n1.start, n2.end)
+        nfa = NFA(n1.start, n2.end, True)
         nfa_stack.append(nfa)
 
     def handle_alt(self, t, nfa_stack) -> None:
@@ -228,7 +232,7 @@ class Handler:
             s0.epsilon.append(s1)
         n1.end.epsilon.extend([s1, n1.start])
         n1.end.is_end = False
-        nfa = NFA(s0, s1)
+        nfa = NFA(s0, s1, True)
         nfa_stack.append(nfa)
 
     def handle_qmark(self, t, nfa_stack) -> None:
@@ -247,4 +251,5 @@ class Handler:
             raise ParseError("Unexpected '?")
 
         n1.start.epsilon.append(n1.end)
+        n1.rep = True
         nfa_stack.append(n1)

@@ -5,7 +5,7 @@ class Soldier is LandUnit -> {
     };
 };
 &
-LandMap map = LandMap(2, 2, [ [1, 4], [3,5] ], [ [0.5, 0.5], [0.5, 0.5] ], 0.45);
+LandMap map = LandMap(2, 2, [[1, 4], [3,5]], [[0.5, 0.5], [0.5, 0.5]], 0.45);
 
 Soldier sOne = Soldier(1, 3);
 Soldier sTwo = Soldier(2, 4);
