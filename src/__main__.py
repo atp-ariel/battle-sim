@@ -18,8 +18,8 @@ def compile(bs: str, py: str = "", run: bool = True):
             compiler = Compiler()
             python_code = str()
             with open(bs, "r") as fbs:
-                # # ! Uncomment for debug
-                #python_code = compiler(fbs.read())
+                # ! Uncomment for debug
+                # python_code = compiler(fbs.read())
 
                 # ! Comment for debug
                 try:
@@ -27,12 +27,13 @@ def compile(bs: str, py: str = "", run: bool = True):
                 except BaseException as e:
                     print(style("Error", fg=colors.RED, bold=True) + "\t" + str(exc_info()[1]))
                     Exit(code=1)
+                
             if not run:
                 with open(py, "w") as fpy:
                     fpy.write(python_code)
                 print(f"{style('Compiled!', fg=colors.BRIGHT_GREEN, bold=True)}\nResult file: {py}")
             else:
-                exec(python_code)
+                exec(python_code,globals())
             return
         raise ValueError(f"File {bs} dont exist")
     raise ValueError(f"File {bs} must be Battle Script type")
@@ -42,5 +43,5 @@ if __name__ == "__main__":
     # ! Comment for debug
     run(compile)
 
-    # # ! Uncomment for debug
-    #compile("./test/examples/ex6.bs", run=True)
+    # ! Uncomment for debug
+    #compile("./test/examples/ex12.bs", run=True)

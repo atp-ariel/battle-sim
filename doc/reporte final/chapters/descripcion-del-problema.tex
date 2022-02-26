@@ -1,11 +1,11 @@
-\section{Core, centro de procesamiento de la simulación de enfrentamientos bélico}
+\section{Core, centro de procesamiento de la simulación de enfrentamientos bélicos}
 
 Como se plantea en el capítulo anterior, se quiere desarrollar un programa que permita la simulación de enfrentamientos bélicos entre dos o más bandos en un terreno determinado.
 
 Se fijaron las siguientes reglas para cada una de las simulaciones:
 
 \begin{enumerate}
-	\item La existencia de un mapa o terreno donde se produce el enfrentamiento. Este tendrá propiedades que se serán modificables como las dimensiones, el relieve, la hidrografía, etc. La representación más abstracta de un mapa o terreno es una matriz de alturas.
+	\item La existencia de un mapa o terreno donde se produce el enfrentamiento. Este tendrá propiedades que serán modificables como las dimensiones, el relieve, la hidrografía, etc. La representación más abstracta de un mapa o terreno es una matriz de alturas.
 	
 	\item La simulación ocurre por turnos. Durante un turno cada unidad hace una y solo una acción ya sea atacar, moverse o mantener la posición. El objetivo de las unidades de un bando es destruir las unidades de los bandos enemigos. Cada unidad funciona de manera independiente. 
 \end{enumerate}
@@ -64,7 +64,7 @@ def fit_func(self, heightmap: HeightMap):
     return per if per < self.percentage else 0
 \end{verbatim}
 
-Esto es, se cuentan la cantidad de posiciones que su valor de altura supera el nivel del mar, y se calcula el porciento que representan estas del total, si este porciento es superior al porciento de la restricción del problema entonces se le asocia a dicho individo el valor 0.  Por tanto, el valor \verb|fit| máximo que puede tener cualquier individuo es el porciento de la restricción y el menor el 0.
+Esto es, se cuentan la cantidad de posiciones que su valor de altura supera el nivel del mar, y se calcula el porciento que representan estas del total, si este porciento es superior al porciento de la restricción del problema entonces se le asocia a dicho individuo el valor 0.  Por tanto, el valor \verb|fit| máximo que puede tener cualquier individuo es el porciento de la restricción y el menor el 0.
 
 Luego, el proceso de selección de individuos se realiza utilizando el procedimiento de Selección competitiva o por torneos, se seleccionan  4 individuos de la población de forma aleatoria, y se realiza una competencia 2 a 2 seleccionando el mejor en cada pareja y estos son los individuos mejor adaptados. El proceso de mezcla de los individuos seleccionados se realiza utilizando una suma ponderada, con valores 0.95 y 0.05 respectivamente. 
 
@@ -79,8 +79,8 @@ El proceso de mutación del individuo resultante de la mezcla es el siguiente:
 	\end{itemize}
 	\item Si el porciento de relieve de la restricción es inferior o igual a 0.4 entonces se realiza el siguiente procedimiento: 
 	\begin{itemize}
-		\item Se recorren todas las posiciones del individuo resultante de la mezcla y se mutan aquellas que están por encima del nivel mar. Se calcula el valor \verb|w| que representa la cuán por encima del nivel del mar está dicha posición.
-		\item A las posiciones que están por encima del nivel del mar se le resta el resultado de multiplicar el valor \verb|w| por el resultado de la suma de la posición en individuo mutado y  la posición en \verb|tmp|
+		\item Se recorren todas las posiciones del individuo resultante de la mezcla y se mutan aquellas que están por encima del nivel mar. Se calcula el valor \verb|w| que representa cuán por encima del nivel del mar está dicha posición.
+		\item A las posiciones que están por encima del nivel del mar se le resta el resultado de multiplicar el valor \verb|w| por el resultado de la suma de la posición en el individuo mutado y  la posición en \verb|tmp|
 	\end{itemize}
 \end{enumerate}
 
@@ -107,11 +107,11 @@ Los objetos se clasifican en dos tipos: unidades y objetos estáticos. Los objet
 
 \subsubsection{Objetos estáticos}
 
-Los objetos estáticos se definen como objetos propios del ambiente. Estos no pertenecen a ningún bando y no pueden realizar acciones pero si pueden ser afectados por las acciones que realicen las unidades. Estos solo pueden ser puestos en celdas terrestres. Ejemplos de estos objetos pueden ser árboles, rocas, muros, etc. Todos estos objetos son terrestres. 
+Los objetos estáticos se definen como objetos propios del ambiente. Estos no pertenecen a ningún bando y no pueden realizar acciones pero si pueden ser afectados por las acciones que realicen las unidades. Estos solo pueden ser puestos en celdas terrestres. Ejemplos de estos objetos pueden ser árboles, rocas, muros, etc.
 
 \subsubsection{Unidades}
 
-Las unidades son los agentes de la simulación. Esta se dividen en dos tipos fundamentalmente: unidades terrestres (\verb|LandUnit|) y unidades navales (\verb|NavalUnit|). El objetivo de cada una de las unidades es destruir a las unidades enemigas (las que no pertenecen a su mismo bando), y para ello cada unidad podrá analizar parte del ambiente en el que se encuentra y tomar la decisión que sea más conveniente según sean las circunstancias. 
+Las unidades son los agentes de la simulación. Estas se dividen en dos tipos fundamentalmente: unidades terrestres (\verb|LandUnit|) y unidades navales (\verb|NavalUnit|). El objetivo de cada una de las unidades es destruir a las unidades enemigas (las que no pertenecen a su mismo bando), y para ello cada unidad podrá analizar parte del ambiente en el que se encuentra y tomar la decisión que sea más conveniente según sean las circunstancias. 
 
 Dado que el ambiente cambia constantemente, las unidades serán agentes casi puramente reactivos. Un agente puramente reactivo es un sistema computacional situado en un ambiente, el cual es capaz de percibir y responder de modo oportuno a los cambios que ocurran en el mismo con  acciones autónomas y sin tomar en cuenta el pasado para lograr sus objetivos. En este caso las unidades son agentes casi puramente reactivos pues para el movimiento de las mismas a través del mapa se tiene en cuenta si una unidad ya estuvo en una posición, con el fin de estimular la exploración del mapa por parte de las unidades.
 
@@ -119,7 +119,7 @@ La arquitectura empleada para definir el comportamiento de las unidades es la Ar
 
 \begin{itemize}
 	\item La toma de decisión se realiza a través de un conjunto de comportamientos para lograr objetivos (reglas de la forma situación $\rightarrow$ acción).
-	\item Las reglas pueden dispararse de manera simultánea por lo que debe un mecanismo para escoger entre ellas.	
+	\item Las reglas pueden dispararse de manera simultánea por lo que debe existir un mecanismo para escoger entre ellas.	
 \end{itemize}
 
 Dado esto se definió un sistema experto que actuará como la función del agente. Este será descrito posteriormente.
@@ -269,7 +269,7 @@ La clase \verb|Simulator| consta de los siguientes atributos y m\'etodos:
  \item \verb|simulator_by_turns|: Se van a sacar los eventos a partir de un intervalo dado y se ejecutar\'an por orden uno a uno seg\'un el tiempo que se le asign\'o cuando se hizo el evento.
  
  
- \item \verb|simulating_k_turns|: Se sacan los $k$ primeros turnos, a partir del atributo \verb|turns| cada turno en un intervalo de tama\~no \verb|interval|
+ \item \verb|simulating_k_turns|: Se realizan los turnos, a partir del atributo \verb|turns|, cada turno en un intervalo de tama\~no \verb|interval|
  \end{itemize}
  
 \end{itemize}

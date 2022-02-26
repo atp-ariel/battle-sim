@@ -10,8 +10,8 @@ class LanchitaDeRegla is NavalUnit -> {
         number self.max_range = max_range;
     };
 
-    function number plus_id(LanchitaDeRegla arch) -> {
-        return arch.id + 1;
+    function number plus_id() -> {
+        return self.id + 1;
     };
 };
 &

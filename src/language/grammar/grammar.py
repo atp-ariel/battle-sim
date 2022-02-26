@@ -141,12 +141,14 @@ class Grammar:
 
     def get_terminals(self) -> List[Terminal]:
         terminals = []
+        terminals_set=set()
 
         for e in self.start.walk():
             for p in e.productions:
                 for sym in p.symbols:
-                    if sym.is_terminal and sym.name != "EPS":
+                    if sym.is_terminal and not sym in terminals_set and sym.name != "EPS":
                         terminals.append(sym)
+                        terminals_set.add(sym)
         return terminals
 
     def get_productions(self) -> List[Production]:

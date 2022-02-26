@@ -9,6 +9,9 @@ class Type_Checker:
     def __init__(self, context):
         self.context = context
         self.bool_ops = set(["eq","neq","lte","lt","gte","gt"])
+        self.return_type = ""
+        self.no_return_type=True
+        self.func_name = None
 
     @visitor(BsFile)
     def visit(self, node: BsFile):
@@ -34,54 +37,43 @@ class Type_Checker:
     def visit(self, node: AttrDef): 
         self.visit(node.init)
         
-        node.computed_type = node.init.computed_type
+        node.computed_type=node.init.computed_type
         if isinstance(node.computed_type,list):
             node.computed_type=node.computed_type[1]
             
-        if node.type != node.computed_type:
+        if not node.context.check_type(node.type,node.computed_type) and node.computed_type != "None":
             raise Exception(f"The type of the variable {node.name} is different from the defined type. Expected {node.type}, Recived {node.computed_type}")
-
-        node._class.define_attribute(node.name,node.computed_type,node.init)
         
     @visitor(FuncDef)
     def visit(self, node: FuncDef):
-        if not node.context.check_func(node.name):
-            if node.arg_types[0]==node.context.name:
-                node.context.define_func(node.name,node.return_type,node.arg_names[1:],node.arg_types[1:])
-            
-            else:
-                node.context.define_func(node.name,node.return_type,node.arg_names,node.arg_types)
-                
-
-        
-        returns_types = set()
+        self.func_name = node.name
+        self.return_type=node.return_type
         for i in node.body:
             self.visit(i)
-            if isinstance(i, Return):
-                if isinstance(i.computed_type,list):
-                    i.computed_type=i.computed_type[1]
-                returns_types.add(i.computed_type)
-                
-        if len(returns_types) == 1:
-            node.computed_type = list(returns_types)[0]
-
-        else:
-            raise Exception("More than one return type in the function")
-
-        if node.return_type!=node.computed_type:
-            #print(f"func {node.name}")
-            raise Exception("The return type is not the one specified for the function {node.name}")
-
+            
+        if node.return_type == "void" and not self.no_return_type:
+            raise Exception(f"There is a return for the void function {node.name} ")
+            
+        elif node.return_type != "void" and self.no_return_type:
+            raise Exception(f"There is not returning any value for the function {node.name} ")
+      
+        self.return_type = ""
+        self.no_return_type=True
+        self.func_name = None
+        
     @visitor(If)
     def visit(self, node: If):
         self.visit(node.condition)
+        
+        if isinstance(node.condition.computed_type, list):
+            node.condition.computed_type=node.condition.computed_type[1]
         
         if node.condition.computed_type != "bool":
             raise Exception("Condition in if statements must be a bool")
 
         for i in node.body:
             self.visit(i)
-
+            
         node.computed_type = None
 
     @visitor(Branch)
@@ -92,12 +84,16 @@ class Type_Checker:
         if not node.else_body is None:
             for e in node.else_body:
                 self.visit(e)
-
+                
         node.computed_type = None
 
     @visitor(WhileDef)
     def visit(self, node: WhileDef):
         self.visit(node.condition)
+        
+        if isinstance(node.condition.computed_type, list):
+            node.condition.computed_type=node.condition.computed_type[1]
+            
         if node.condition.computed_type != "bool":
             raise Exception("Condition in while statements must be a bool")
             
@@ -109,45 +105,71 @@ class Type_Checker:
     @visitor(Decl)
     def visit(self, node: Decl):
         self.visit(node.expression)
-        #print(node.expression.computed_type) 
-        if (not (node.context.check_var(node.name)) or node.context.check_var_type(node.name,node.type)) and node.expression.computed_type == node.type:
-            node.context.define_var(node.name,node.type,node.expression)
+        if isinstance(node.expression.computed_type, list):
+            node.expression.computed_type=node.expression.computed_type[1]
+        if (not node.context.check_var(node.name)) and (node.context.check_type(node.type,node.expression.computed_type) or node.expression.computed_type=="None"):
+            node.context.define_var(node.name,node.type)
             node.computed_type = None
 
         else:
-            #print(f"decl {node.name}")
+            if node.context.check_var(node.name):
+                raise Exception(f"Var {node.name} is already defined")
+                
             raise Exception(f"Type mismatch for for the declaration of the variable {node.name}")
             node.computed_type = None
 
     @visitor(Assign)
     def visit(self, node: Assign):
         self.visit(node.expression)
-        if node.context.check_var_type(node.name, node.expression.computed_type):
-            self.node.context.define_var(node.name,node.type,node.expression)
+        if node.context.check_var_type(node.name, node.expression.computed_type) or node.expression.computed_type=="None":
             node.computed_type = None
 
         else:
-            #print(f"assign {node.name}")
             raise Exception(f"the expected type for the variable {node.name} is not the one received ")
             node.computed_type = None
 
     @visitor(Return)
     def visit(self, node: Return):
-        self.visit(node.expression)
+        node.computed_type = "Null"
+        if not node.expression is None :
+            self.visit(node.expression)
 
-        node.computed_type = node.expression.computed_type
+            node.computed_type = node.expression.computed_type
+            
+        if not node.context.is_in_func_context():
+            raise Exception(f"Return expression most be in a function")
+        
+        if isinstance(node.computed_type,list):
+            node.computed_type=node.computed_type[1]
+                
+        self.no_return_type=False
+            
+        if node.computed_type=="Null" or node.computed_type=="void":
+            self.no_return_type=True
+            return
+        
+        if node.computed_type == "None" and not (self.return_type=="number" or self.return_type=="bool"):
+            return
+                
+        if not node.context.check_type(self.return_type,node.computed_type):
+            raise Exception(f"The return type does not match with the one specified for the function {self.func_name} ")
 
     @visitor(Break)
     def visit(self, node: Break):
         node.computed_type = None
+        
+        if not node.context.is_in_while_context():
+            raise Exception(f"Break expression most be in a loop")
 
     @visitor(Continue)
     def visit(self, node: Continue):
         node.computed_type = None
+        
+        if not node.context.is_in_while_context():
+            raise Exception(f"Continue expression most be in a loop")
 
     @visitor(BinaryExpression)
     def visit(self, node: BinaryExpression):
-        # Ver AritmeticBinaryExpression
         self.visit(node.left)
         self.visit(node.right)
 
@@ -157,10 +179,11 @@ class Type_Checker:
         if isinstance(node.right.computed_type,list):
             node.right.computed_type=node.left.computed_type [1]
 
-        if node.left.computed_type != node.right.computed_type:
-            #print(f"bin {node.left} {node.right}")
+        if node.left.computed_type != node.right.computed_type and node.right.computed_type != "None":
             raise Exception("Type mismatch binary expression")
-            node.computed_type = None
+        
+        if (node.op == "and" or node.op=="or") and node.left.computed_type != "bool":
+            raise Exception(f"Boolean operators are for type bool")
 
         else:
             node.computed_type = node.left.computed_type
@@ -171,18 +194,16 @@ class Type_Checker:
         self.visit(node.right)
 
         if isinstance(node.left.computed_type,list):
-            node.left.computed_type=node.left.computed_type [1]
+            node.left.computed_type=node.left.computed_type[1]
             
         if isinstance(node.right.computed_type,list):
-            node.right.computed_type=node.left.computed_type [1]
+            node.right.computed_type=node.right.computed_type[1]
             
-        if node.left.computed_type != node.right.computed_type:
-                #print(f"aritmetic {node.left} {node.right}")
-                print(f"{node.left}: {node.left.computed_type}")
+        if node.left.computed_type != node.right.computed_type and node.right.computed_type != "None":
                 raise Exception("Type mismatch for aritmetic expression")
 
         else:
-            if node.left.computed_type == "number":
+            if node.left.computed_type == "number" or (node.right.computed_type== "None" and (node.op=="eq" or node.op=="neq")):
                 node.computed_type = node.left.computed_type
                 
                 if node.op in self.bool_ops:
@@ -193,14 +214,24 @@ class Type_Checker:
                 
     @visitor(TernaryExpression)
     def visit(self, node: TernaryExpression):
+        self.visit(node.left)
         self.visit(node.condition)
         self.visit(node.right)
-        self.visit(node.left)
+        
+        if isinstance(node.left.computed_type,list):
+            node.left.computed_type=node.left.computed_type [1]
+            
+        if isinstance(node.right.computed_type,list):
+            node.right.computed_type=node.right.computed_type [1]
+            
+            
+        if isinstance(node.condition.computed_type, list):
+            node.condition.computed_type=node.condition.computed_type[1]
+            
 
         if node.right.computed_type == node.left.computed_type:
-            #print("Ternary")
             if node.condition.computed_type=="bool":
-                node.computed_type = None
+                node.computed_type = node.right.computed_type
                 
             else:
                 raise Exception("Condition most be a bool")
@@ -209,111 +240,99 @@ class Type_Checker:
 
         else:
             raise Exception("Type mismatch for Ternary expression")
-            node.computed_type = None
 
     @visitor(Inversion)
     def visit(self, node: Inversion):
         self.visit(node.expression)
+            
+        if isinstance(node.expression.computed_type, list):
+            node.condition.computed_type=node.condition.computed_type[1]
+            
         if node.expression.computed_type == "bool":
             node.computed_type = "bool"
+            
+        else:
+            raise TypeError(f"Invalid expression for operator 'not'")
 
     @visitor(Primary)
     def visit(self, node: Primary):
         self.visit(node.expression)
-        
-        if node.args is None:
-            print(f"{node.expression} {node.expression.computed_type}")
-            _type = node.context.get_type_object(node.expression.computed_type)
-
-            if _type.is_method(node.name):
-                node.computed_type = _type.get_method(node.name)
-
-           
-            elif _type.is_attribute(node.name):
-                node.computed_type = _type.get_attribute(node.name)
-                
-            elif isinstance(node.expression.computed_type, list) and node.expression.computed_type[0]== 'var':
-                #print(f"node {node.name}: {node.expression.computed_type}")
-                #print(f"{node.expression.computed_type[1]} {node.expression.computed_type[1] in node.context.children}")
-                
-                    
-                if (((node.expression.computed_type[1] in node.context.children) and (node.context.children[node.expression.computed_type[1]].check_var(node.name)))or ((node.context.is_context_father(node.expression.computed_type[1])) and (node.context.get_context_father(node.expression.computed_type[1]).check_var(node.name)))):
-                    if node.expression.computed_type[1] in node.context.children:
-                        exp_type=node.context.children[node.expression.computed_type[1]].get_type(node.name)
-                    
-                    else:
-                        exp_type=node.context.get_context_father(node.expression.computed_type[1]).get_type(node.name)
-                        
-                    if exp_type[0]=='var':
-                        node.computed_type=exp_type[1]
-                        
-                    else:
-                        node.computed_type=node.context.children[node.expression.computed_type[1]].get_return_type(node.name)
-                        
-                else:
-                    raise Exception(f"Name {node.name} is not defined")
-                    
-            else:
-                    raise Exception(f"Name {node.name} is not a var")       
-
-        else:
-            expr_type=node.expression.computed_type
-            
+        expr_type=node.expression.computed_type
+        expr_name=node.expression.name
+        if node.name is None:
             if isinstance(node.expression.computed_type,list):
                 expr_type=expr_type[1]
-                
-            if isinstance(node.expression.computed_type, list) and node.expression.computed_type[0]== 'function':
-                args = [0]*len(node.args)
+                    
+                if node.expression.computed_type[0]== 'function':
+                    args = [0]*len(node.args)
 
-                for i in range(len(node.args)):
-                    self.visit(node.args[i])
-                    args[i] = node.args[i].computed_type
-                    if isinstance(args[i],list):
-                        args[i]=args[i][1]
+                    for i in range(len(node.args)):
+                        self.visit(node.args[i])
+                        args[i] = node.args[i].computed_type
+                        if isinstance(args[i],list):
+                            args[i]=args[i][1]
+                
+                    if node.context.check_func_args(expr_name,args):
+                        node.computed_type=node.context.get_return_type(expr_name)
                         
-                name = node.expression.name
-                if(name=="build_random_map"):
-                    print(node.context.name)
+                    elif isinstance(node.expression, Primary):
+                        _type=node.expression.expression.computed_type
+                        
+                        if isinstance(_type, list):
+                            _type=_type[1]
+                          
+                        _type=node.context.get_type_object(_type)
+                        
+                        if _type.context.check_func_args(expr_name,args):
+                            node.computed_type=_type.context.get_return_type(expr_name)
+                        
+                        else:
+                            raise Exception(f"Function {expr_name} is not a function for the type {_type.name} ")
+                        
+                    else:
+                        raise Exception(f"Some types are incorrect for function {expr_name}")
 
-                if node.context.check_func_args(name,args):
-                    node.computed_type=node.context.get_return_type(name)
+             
+        else:
+            _type = node.expression.computed_type
+            
+            if isinstance(_type, list):
+                _type=_type[1]
                 
-                else:
-                    raise Exception(f"Some types are incorrect for function {name}")
-                    
+            t_object=node.context.get_type_object(_type)
                 
-            elif (((expr_type in node.context.children) and (node.context.children[expr_type].check_var(node.name)))or ((node.context.is_context_father(expr_type)) and (node.context.get_context_father(expr_type).check_var(node.name)))):
-                if expr_type in node.context.children:
-                    exp_type=node.context.children[expr_type].get_type(node.name)
-                    
-                else:
-                    exp_type=node.context.get_context_father(node.expression.computed_type[1]).get_type(node.name)
+            if t_object.is_attribute(node.name):
+                node.computed_type = t_object.context.get_type(node.name)
+                
+            elif isinstance(node.expression, Primary):
+                _type=node.expression.expression.computed_type
                         
-                if exp_type[0]=="var":
-                    node.computed_type=exp_type[1]
+                if isinstance(_type, list):
+                    _type=_type[1]
+                          
+                _type=node.context.get_type_object(_type)
+                if _type.is_attribute(expr_name):
+                    node.computed_type=_type.context.get_type(expr_name)
                         
                 else:
-                    node.computed_type=node.context.children[node.expression.computed_type[1]].get_return_type(node.name)
-                    
+                    raise Exception(f"Variable {node.name} is not a variable for the type {_type.name} ")
+                        
+                
             else:
-                raise Exception(f"Name {node.name} is not a var")
-                
+                raise Exception(f"Attribute {node.name} is not defined for type {_type.name} ")
+                       
     @visitor(Variable)
     def visit(self, node: Variable):
-        #print(f"name {node.name}")
-        #print(f"context {node.context.name}")
-        #print(self.context._var_context.keys())
         
         if node.context.check_var(node.name):
             node.computed_type = node.context.get_type(node.name)
+            return
 
-        else: 
-            for c in node.context.children:
-                if node.context.children[c].check_var(node.name):
-                    node.computed_type=node.context.get_type(node.name)
-                    return
-
-            raise Exception(f"name {node.name} is not defined")
+        elif self.context.check_var(node.name):
+            node.computed_type = self.context.get_type(node.name)
+            return
+        
+        raise Exception(f"Name {node.name} is not defined")
 
     @visitor(Number)
     def visit(self, node: Number):
@@ -325,8 +344,15 @@ class Type_Checker:
 
     @visitor(MyNone)
     def visit(self, node: MyNone):
-        node.computed_type = "MyNone"
+        node.computed_type = "None"
 
     @visitor(MyList)
     def visit(self, node: MyList):
         node.computed_type = "List"
+        
+    @visitor(PExpression)
+    def visit(self,node:PExpression):
+        if not node.expression is None:
+            self.visit(node.expression)
+            node.computed_type=node.expression.computed_type
+            

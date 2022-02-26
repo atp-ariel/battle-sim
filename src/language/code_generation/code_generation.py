@@ -42,7 +42,7 @@ class CodeGenerate:
 
         self.write(f'class {node.name}({node.parent}):\n')
 
-        args = ', '.join(arg.name for arg in node.attributes)
+        args = ', '.join(name for name in node.arg_names)
 
         self.count_tabs += 1
 
@@ -81,6 +81,7 @@ class CodeGenerate:
         self.count_tabs -= 1
 
         for f in node.methods:
+            f.arg_names.insert(0, 'self')
             self.visit(f)
 
         self.count_tabs -= 1
@@ -240,3 +241,11 @@ class CodeGenerate:
     def visit(self, node: MyList):
         args = ', '.join(self.visit(e) for e in node.inner_list)
         return f'[{args}]'
+    
+    @visitor(PExpression)
+    def visit(self, node: PExpression):
+        return f'({self.visit(node.expression)})'
+    
+    @visitor(Inversion)
+    def visit(self, node: Inversion):
+        return f'not {self.visit(node.expression)}'

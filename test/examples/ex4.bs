@@ -9,22 +9,22 @@ class Archer is LandUnit -> {
         number self.life_points = life_points; 
     }; 
 }; 
-& 
+&
+
 function number W(number a) -> { 
-        if a lt 0 and a eq 0 -> { 
-            return -1 * a;  
-        } 
-        elif a gt 1 -> {
-            return 4;
-        } 
-        else -> { 
-            return a; 
-        }; 
-    };
+    if a lt 0 and a eq 0 -> { 
+        return -1 * a;  
+    } 
+    elif a gt 1 -> {
+        return 4;
+    } 
+    else -> { 
+        return a; 
+    }; 
+};
+
 Soldier b = Soldier(1); 
 Soldier bOne = Soldier(3); 
-Archer a = Archer(1, 10); 
-if a eq None -> { 
-    a = a + 1; 
-}; 
-a = [1,2,3, [1,2,3,4] ];
+BSUnit a = Archer(1, 10);
+ 
+a = b;

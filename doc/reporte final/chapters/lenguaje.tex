@@ -29,12 +29,16 @@ El usuario final del proyecto necesita un medio para específicar las condicione
 
 \textbf{Reglas sem\'anticas:}
 \begin{itemize}
-	\item Dos argumentos en una funci\'on no pueden tener el mismo nombre
+	\item Existe un contexto global.
+	\item Las instrucciones definici\'on de clase, definici\'on de funci\'on, ciclo while y las instrucciones condicionales if - elif - else genera cada una su propio contexto.
+	\item Una variable declarada en un contexto no puede volverse a declarar en el mismo contexto o en un contexto descendiente de este.
+	\item Una funci\'on se considera como un caso particular de variable por lo que no pueden compartir nombre seg\'un lo planteado en el punto anterior.  
+	\item Dos argumentos en una funci\'on no pueden tener el mismo nombre.
 	\item Toda funci\'on y variable deben haber sido definidas antes de ser usadas; y todos los tipos de estas (en el caso de la funci\'on el tipo de retorno y de los argumentos) deben haber sido creados. anteriormente (Salvo las funciones y tipos pre-definidos).
-	\item Una vez definida una funci\'on no se puede definir otra vez en el mismo contexto.
-	\item Los argumentos de una funci\'on pueden ser variables definidas globalmente siempre que los tipos coincidan.
-	\item Las funciones y las variables no pueden compartir nombre en el mismo contexto.
+	\item Un llamado a funci\'on se debe hacer de tal forma que la cantidad y cada uno de los tipos de los argumentos con que se llama coincida con lo especificado en la definici\'on de la funci\'on.
 	\item Una variable puede ser asignada tantas veces como se desee, siempre que la asignaci\'on tenga el mismo tipo con que se declar\'o.
+	\item Las operaciones l\'ogicas y condicionales solo admiten objetos de tipo \textbf{bool}.
+	\item Las operaciones aritm\'eticas solo admiten n\'umeros. 
 \end{itemize}
 
 \subsection{Gramática}
@@ -168,6 +172,7 @@ primary ->  primary '.' NAME
         |   primary '(' expressions ')'        
         |   primary '(' ')'             
         |   atom
+        | '(' expression ')'
 
 atom -> NAME                            
     |   'True'                          
@@ -180,7 +185,7 @@ list -> '[' expressions ']'
     |   '[' ']'                         
 \end{verbatim}
 
-Se creó un submódulo de Python para implementar gramáticas de forma más fácil en las secciones siguientes del compilador. Se implementó la jerarquía de clases siguiente:
+Se creó un submódulo de Python para implementar gramáticas de forma más fácil en las secciones siguientes del compilador. Se implementó la jerarquía de clases que se aprecia en la Fig 4.
 
 \begin{figure}
         \centering
@@ -487,6 +492,7 @@ Los nodos expresiones son los siguientes:
 	\item \verb|Bool|: Expresi\'on booleana
 	\item \verb|MyNone|: Expresi\'on None
 	\item \verb|MyList|: Lista
+	\item \verb|PExpression|: Expresi\'on entre par\'entesis
 \end{itemize}
 
 El resto de clases implementadas en este m\'odulo corresponden a los nodos del \'arbol de derivaci\'on, los cuales son utilizados para construir los nodos anteriormente mencionados.
@@ -521,10 +527,6 @@ Para implementar nuevos tipos en el lenguaje se implement\'o una clase \verb|Typ
   \begin{itemize}
   \item \verb|name|: Nombre de la clase o nuevo tipo
   
-  \item \verb|attributes|: Atributos de la clase.
-  
-  \item  \verb|methods|: M\'etodos de la clase
-  
   \item \verb|parent|: Tipo inmediato del cuál hereda este tipo
   
   \item \verb|context|: Contexto en que se encuentran todos los atributos y métodos de este tipo. 
@@ -533,33 +535,48 @@ Para implementar nuevos tipos en el lenguaje se implement\'o una clase \verb|Typ
   \end{itemize}
   
   \item M\'etodos
-  \begin{itemize}
-  \item \verb|get_attribute|:  Devuelve el atributo de la clase que se pide si este existe.
+  \begin{itemize}  
+  \item \verb|define_attribute|: Define un atributo de la clase.
   
-  \item \verb|get_method|: Devuelve el m\'etodo de la clase que se pide si este existe.
-  
-  \item \verb|define_attribute|: Define el atributo de la clase.
-  
-  \item \verb|define_method|: Define el m\'etodo de la clase.
+  \item \verb|define_method|: Define un m\'etodo de la clase.
   
   \item \verb|is_attribute|: Revisa si el atributo existe.
   
-  \item \verb|get_type|:Recive un atributo y devuelve su tipo
+  \item \verb|check_method|: Revisa que el método esté bien definido a partir de los atributos
   
   \item \verb|is_method|: Revisa si el m\'etodo existe.
   
-  \item \verb|is_attribute|: Revisa si el nombre dado se encuentra entre los atributos de la clase
+  \item \verb|is_child|: Revisa si el nombre dado es padre del tipo.
+  \end{itemize}
+  \end{itemize}
+  Estos métodos en su mayoría se apoyan en funciones del contexto para definir y revisar atributos dentro del contexto del tipo creado.
   
-  \item \verb|is_method|: Revisa si el nombre dado se encuentra entre los m\'etodos de la clase
+  Los tipos admitidos en el lenguaje son los siguientes:
+  
+  \begin{itemize}
+  	\item \verb|number|: Que engloba a los n\'umeros.
+  	\item \verb|bool|: Que engloba a las expresiones booleanas
+  	\item \verb|List|: Que engloba a las listas. Una lista cuenta con dos funciones: \verb|append| y \verb|remove| para a\~{n}adir y remover elementos de la misma respectivamente.
+  	\item Todos los tipos descritos durante la explicaci\'on de la simulaci\'on con sus respectivos m\'etodos y atributos. Aqu\'i vale aclarar que de estos los \'unicos tipos instanciables son \verb|LandMap| y \verb|Simulator|.
+  	\item Los nuevos tipos definidos por el usuario que se explican a continuaci\'on (que tambi\'en son instanciables).
   \end{itemize}
-  \end{itemize}
+  
+  En nuestro lenguaje lo primero que se hace una vez que se crea un tipo es revisar si este tiene un padre. En este lenguaje todos los tipos definidos por el usuario deben heredar de \verb|LandUnit|, \verb|NavalUnit| o \verb|StaticObject| en caso contrario se lanzará una excepción. Una vez que se conoce cuál es la clase de la cuál se hereda, se procede a copiar los atributos y tipos definidos en la clase padre. Las funciones heredadas pueden ser modificadas una única vez durante la definición de la clase. Además cada función tiene en su contexto definida la función \verb|super()| que devuelve el tipo de la clase padre y de esta forma se puede llamar a la definición de la función en la clase padre directamente.
+  
+  Adem\'as se tienen como funciones built-in del lenguaje las funciones \verb|build_random_map| y \verb|print|.
+  
+  La función \verb|build_random_map| es una función built-in que devuelve una instancia de \verb|LandMap| y recibe como parámetros un número
+  real entre 0 y 1 que indica el porcentaje de casillas de tierra que se desea tenga el mapa, y dos enteros
+  que indican el número de filas y de columnas que se desea tenga el mapa.
+  
+  La funci\'on \verb|print| recibe un argumento e imprime en consola dicho argumento.
 
 \subsubsection{Context}
 Para definir el contexto en el que se escribe un programa con el lenguaje, se implement\'o la clase \verb|Context|, esta cuenta con los siguientes atributos y m\'etodos 
 \begin{itemize}
 \item Atributos
 \begin{itemize}
-\item \verb|Name|:Nombre del contexto 
+\item \verb|name|: Nombre del contexto 
 
 \item \verb|father|: Contexto padre de este contexto
 
@@ -580,51 +597,64 @@ Para definir el contexto en el que se escribe un programa con el lenguaje, se im
 
 \item M\'etodos
 \begin{itemize}
-\item \verb|check_var|: Revisa si la variable est\'a definida en el contexto
+\item \verb|check_var|: Revisa si la variable est\'a definida en el contexto.
 
-	\item \verb|check_var_type|: Revisa que la variable est\'e definida en el contexto y el tipo corresponda con el tipo de la variable
+	\item \verb|check_var_type|: Revisa que la variable est\'e definida en el contexto y el tipo corresponda con el tipo de la variable.
 	
-	\item \verb|check_func|: Revisa que la funci\'on est\'e definida
+	\item \verb|check_func|: Revisa que la funci\'on est\'e definida.
 	
-	\item \verb|check_func_args|: Revisa si la funci\'on est\'a definida y los tipos de los argumentos coinciden con los tipos de la funci\'on
+	\item \verb|check_func_args|: Revisa si la funci\'on est\'a definida y los tipos de los argumentos coinciden con los tipos de la funci\'on.
 	
-	\item \verb|get_type|: Devuelve el tipo de una variable en el contexto
+	\item \verb|get_type|: Devuelve el tipo de una variable en el contexto.
 	
-	\item \verb|define_var|: Si la variable no existe en el contexto, la crea. En caso contrario le asigna el valor siempre que este corresponda con el tipo de la variable
+	\item \verb|define_var|: Si la variable no existe en el contexto, la crea. 
 	
-	\item \verb|define_func|: Define la funci\'on si no existe en el contexto
+	\item \verb|define_func|: Define la funci\'on si no existe en el contexto. Una función solo puede definirse una vez. En caso de funciones heredadas estas pueden re-definirse una única vez. Cuando se crea una función se crea además un contexto, el contexto que ella define que viene a ser el cuerpo del método.
 	
-	\item \verb|create_child_context|: Crea un contexto hijo
+	\item \verb|create_child_context|: Crea un contexto hijo.
 	
-	\item \verb|create_type|: Crea un nuevo tipo en el contexto
+	\item \verb|create_type|: Crea un nuevo tipo en el contexto. Una vez que se crea un tipo se define una función dentro del contexto donde se crea el tipo y con el mismo nombre de este, la cual será el constructor de la clase. Además, una clase también define un contexto, donde estarán todos sus atributos. Se tiene además una propiedad que dice si el tipo es accesible. Por defecto todos los tipos son accesibles. Si un tipo no es accesible no se podrá instanciar pues no tendrá definida una función constructor. Usualmente esta propiedad es para algunos tipos built-in, por ejemplo \verb|number|, pues no tendría sentido hacer: \verb|number a = number();|.
 	
-	\item \verb|get_return_type|: Dvuelve el tipo de retorno de una funci\'on si esta est\'a definida en el contexto
+	\item \verb|get_return_type|: Devuelve el tipo de retorno de una funci\'on si esta est\'a definida en el contexto.
 	
-	\item \verb|get_type_object|: Devuelve la clase a la que pertenece objeto dado 
+	\item \verb|get_type_object|: Devuelve la clase a la que pertenece un objeto dado. 
 	
-	\item \verb|is_type_defined|: Analiza si el tipo est\'a definido
+	\item \verb|is_type_defined|: Analiza si el tipo est\'a definido.
 	
-	\item \verb|is_context_father|: Revisa si el contexto dado es ancestro de este contexto
+	\item \verb|is_context_father|: Revisa si el contexto dado es ancestro de este contexto.
 	
-	\item \verb|get_context_father|: Devuelve el contexto dado si es ancestro de este contexto
+	\item \verb|get_context_father|: Devuelve el contexto dado si es ancestro de este contexto.
+	
+	\item \verb|is_in_while_context|: Revisa si el contexto actual está definido dentro de un contexto while. De esta forma \verb|break| y \verb|continue| no pueden ser usadas si no están dentro de un bucle.
+	
+	\item \verb|is_in_func_context|: Revisa si el contexto actual está definido dentro de un contexto función pues sería incorrecto usar una expresión de tipo \verb|return| fuera de un método. 
+	
+	\item \verb|check_type|: A este método se le pasan dos tipos y comprueba que el primero sea ancestro del segundo.
+
 	
 \end{itemize}
 
 \end{itemize}
 
-\subsubsection{Visitor}
-Para verificar la correcci\'on de la sem\'antica se implement\'o el patr\'on \verb|Visitor| que visitar\'a el \'arbol de sintaxis abstracta en tres pasadas distintas
+Se definió \verb|Type| como tipo genérico, que no viene a ser un tipo en sí, es más bien una palabra reservada que significa que puede ser sustituida por cualquier tipo existente.
+
+\subsubsection{Pasadas por el AST}
+Para verificar la correcci\'on de la sem\'antica se implement\'o el patr\'on \verb|Visitor| que visitar\'a el \'arbol de sintaxis abstracta en cuatro pasadas distintas
 \begin{itemize}
-\item \verb|Type_Collector|: Es la primera pasada con el patr\'on \verb|Visitor| en este se recogen todos los tipos que se van a definir, para crearlos en el contexto
+\item \verb|Type_Collector|: Es la primera pasada con el patr\'on \verb|Visitor| en este se recogen todos los tipos que se van a definir, para crearlos en el contexto. Además se revisa que los tipos que se crearon sean hijos de  \verb|LandUnit|, \verb|NavalUnit| o \verb|StaticObject| en caso contrario lanza una excepción. Se guardarán además el contexto de que define la clase, el contexto donde se define la clase y el contexto que define el constructor de la misma.
 
-\item \verb|Type_Builder|: Es la segunda pasada con el patr\'on, se toman todos los tipos que se definieron anteriormente y se definen sus m\'etodos y atributos. Adem\'as, se visita cada nodo para definir en qu\'e contexto est\'a y en caso de definir alg\'un contexto, qu\'e contexto define
+\item \verb|Type_Builder|: Es la segunda pasada con el patr\'on, se toman todos los tipos que se definieron anteriormente y se definen sus m\'etodos y atributos. Se guarda además el contexto que define cada función cuando se crea.
 
-\item \verb|Type_Checker|: Es la tercera pasada con el patr\'on, en esta se revisan que los tipos de cada expresi\'on no entren en contradicci\'on
+\item \verb|Type_Context|: Es la tercera pasada del visitor, se visita cada nodo para definir en qu\'e contexto est\'a. Para esto se usa el atributo \verb|current_context| en el cual se guarda el contexto que se está visitando actualmente, actualizándose cada vez que se pasa por un nodo que define un contexto (clases, funciones, condicionales o bucles) y volviendo al valor anterior una vez que se termina ese camino del \'arbol de sintaxis abstracta. 
+
+\item \verb|Type_Checker|: Es la cuarta pasada con el patr\'on, en esta se revisan que los tipos de cada expresi\'on no entren en contradicci\'on. Para esto se revisa en los contextos donde se encuentran los nodos y se utilizan las funciones de la clase \verb|Context|. Se chequea adem\'as que expresiones de \verb|return| solo ocurran dentro de una función y expresiones como \verb|break| y \verb|continue| estén siempre dentro de un bucle.
+
+
 \end{itemize}
 
 \subsection{Generaci\'on de c\'odigo}
 
-Para la generaci\'on de c\'odigo se parte de la ra\'z del AST y haciendo uso del patr\'on ``Visitor'' se visitan cada uno de los nodos del AST. El c\'odigo generado es una cadena en c\'odigo Python, de tal forma que se importan todos los m\'odulos necesarios para realizar una simulaci\'on y el c\'odigo Python generado es equivalente a lo que el usuario program\'o en nuestro lenguaje. El c\'odigo referente a este apartado se encuentra en el m\'odulo src.language.code\_generation.code\_genration. En este aparece implementada la clase \verb|CodeGenerate|, la cual tiene como atributos un \verb|StringIO|, un entero que lleva la cantidad de tabuladores para generar el c\'odigo Python correspondiente y un diccionario que traduce algunos de los s\'imbolos de nuestro lenguaje a s\'imbolos en c\'odigo Python. Adem\'as para cada uno de los nodos del AST se implement\'o la funci\'on \verb|visit|. 
+Para la generaci\'on de c\'odigo se parte de la rai\'z del AST y haciendo uso del patr\'on ``Visitor'' se visitan cada uno de los nodos del AST. El c\'odigo generado es una cadena en c\'odigo Python, de tal forma que se importan todos los m\'odulos necesarios para realizar una simulaci\'on y el c\'odigo Python generado es equivalente a lo que el usuario program\'o en nuestro lenguaje. El c\'odigo referente a este apartado se encuentra en el m\'odulo src.language.code\_generation.code\_genration. En este aparece implementada la clase \verb|CodeGenerate|, la cual tiene como atributos un \verb|StringIO|, un entero que lleva la cantidad de tabuladores para generar el c\'odigo Python correspondiente y un diccionario que traduce algunos de los s\'imbolos de nuestro lenguaje a s\'imbolos en c\'odigo Python. Adem\'as para cada uno de los nodos del AST se implement\'o la funci\'on \verb|visit|. 
 
 Un dato interesante es que para los nodos de tipo \verb|ClassDef| y los nodos de tipo \verb|Statement|, su m\'etodo \verb|visit| correspondiente escribe su c\'odigo correspondiente en el atributo \verb|StringIO| de la clase. Para los nodos de tipo \verb|Expression| se retorna su c\'odigo correspondiente. Esto se hace as\'i dado que en Python casi todo es una instrucci\'on y muchas de estas dependen de expresiones. En el m\'etodo \verb|visit| correspondiente al nodo \verb|BSFile| se escriben todas las importaciones de los m\'odulos necesarios para correr una simulaci\'on; y la cadena del c\'odigo transpilado a Python es la que devuelve este m\'etodo, que devuelve el valor del atributo de tipo \verb|StringIO| de la clase \verb|CodeGenerator|. 
 

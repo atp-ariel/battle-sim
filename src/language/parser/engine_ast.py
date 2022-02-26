@@ -40,7 +40,7 @@ def obtain_expressions(list_expressions: List, expressions: Expressions):
 def obtain_functions(list_func: List, functions: Functions):
     list_func.append(functions.function)
     if functions.functions is not None:
-        obtain_functions(list_func, functions.function)
+        obtain_functions(list_func, functions.functions)
     return list_func
 
 
@@ -123,7 +123,7 @@ def build_func_def2(tokens: List[str], nodes: List):
     name = tokens[len(tokens)-7]
     block = nodes.pop()
     return_type = nodes.pop()
-    func_def = FuncDef(name, return_type, [], [],
+    func_def = FuncDef(name, return_type.type, [], [],
                        obtain_statements([], block))
     nodes.append(func_def)
 
@@ -333,6 +333,14 @@ def build_primary3(tokens: List[str], nodes: List):
     primary = Primary(exp, None, [])
 
     nodes.append(primary)
+    
+def build_primary4(tokens:List[str], nodes:List):
+    exp = Variable('self')
+    name = tokens[len(tokens)-1]
+
+    primary = Primary(exp, name, None)
+
+    nodes.append(primary)
 
 
 def build_Variable(tokens: List[str], nodes: List):
@@ -464,3 +472,7 @@ def build_classes2(tokens: List[str], nodes: List):
     class_def = nodes.pop()
     classes = Classes(class_def, None)
     nodes.append(classes)
+    
+def build_pexpression(tokens: List[str], nodes:List):
+    exp=nodes.pop()
+    nodes.append(PExpression(exp))

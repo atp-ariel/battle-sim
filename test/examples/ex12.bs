@@ -2,12 +2,25 @@ class Soldier is LandUnit -> {
     constructor(number id, number attack) -> {
         number self.id = id;
         number self.attack = attack;
+        bool self.papa = True;
+    };
+
+    function BSUnit pepe(number a)->{
+        number b = a;
+        if a lte 1 ->{
+            return None;
+        };
+        return self.enemy_to_attack();
     };
 };
 class Archer is LandUnit -> {
     constructor(number id, number max_range) -> {
         number self.id = id;
         number self.max_range = max_range;
+    };
+
+    function number calculate_distance(Cell a, Cell b)->{
+        return super().calculate_distance(a,b);
     };
 
     function number plus_id() -> {

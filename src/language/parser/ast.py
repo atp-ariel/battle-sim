@@ -125,6 +125,9 @@ class TernaryExpression(Expression):
 class Inversion(Expression):
     expression: Expression
 
+@dataclass
+class PExpression(Expression):
+    expression: Expression
 
 @dataclass
 class Primary(Expression):
