@@ -315,11 +315,11 @@ class Type_Checker:
                     node.computed_type=_type.context.get_type(expr_name)
                         
                 else:
-                    raise Exception(f"Variable {node.name} is not a variable for the type {_type.name} ")
+                    raise Exception(f"Attribute {node.name} is not defined for type {_type} ")
                         
                 
             else:
-                raise Exception(f"Attribute {node.name} is not defined for type {_type.name} ")
+                raise Exception(f"Attribute {node.name} is not defined for type {_type} ")
                        
     @visitor(Variable)
     def visit(self, node: Variable):
